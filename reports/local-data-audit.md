@@ -1,20 +1,18 @@
 # local data audit
 
-the read-only audit used the six files in `G:\localview\data\bars` on 25 september 2026. exact schemas, per-year row counts, file hashes and the largest flagged gaps and price changes are in [local-data-audit.json](local-data-audit.json). the command reads bounded batches; it does not clean or rewrite the files.
+i read the six files in `G:\localview\data\bars` on 25 september 2026. i didn't edit or fill any bars. [the full audit](local-data-audit.json) has the schemas, yearly counts, hashes and flagged gaps.
 
-| file | rows | first UTC bar | last UTC bar | duplicate / out-of-order | invalid OHLC / nonpositive volume |
-| --- | ---: | --- | --- | ---: | ---: |
-| NQ 1m | 3,462,008 | 2016-08-12 00:00 | 2026-08-09 23:59 | 0 / 0 | 0 / 0 |
-| ES 1m | 3,484,266 | 2016-08-12 00:00 | 2026-08-09 23:59 | 0 / 0 | 0 / 0 |
-| YM 1m | 3,409,043 | 2016-08-14 22:00 | 2026-08-09 23:59 | 0 / 0 | 0 / 0 |
-| GC 1m | 3,482,922 | 2016-08-14 22:00 | 2026-08-09 23:59 | 0 / 0 | 0 / 0 |
-| CL 1m | 3,497,569 | 2016-08-14 22:00 | 2026-08-09 23:59 | 0 / 0 | 0 / 0 |
-| NQ 1s | 60,807,363 | 2021-08-20 00:00 | 2026-08-21 20:59:59 | 0 / 0 | 0 / 0 |
+| file | rows | first UTC bar | last UTC bar |
+| --- | ---: | --- | --- |
+| NQ 1m | 3,462,008 | 2016-08-12 00:00 | 2026-08-09 23:59 |
+| ES 1m | 3,484,266 | 2016-08-12 00:00 | 2026-08-09 23:59 |
+| YM 1m | 3,409,043 | 2016-08-14 22:00 | 2026-08-09 23:59 |
+| GC 1m | 3,482,922 | 2016-08-14 22:00 | 2026-08-09 23:59 |
+| CL 1m | 3,497,569 | 2016-08-14 22:00 | 2026-08-09 23:59 |
+| NQ 1s | 60,807,363 | 2021-08-20 00:00 | 2026-08-21 20:59:59 |
 
-there were no null values in the six exported OHLCV columns. the NQ second bars extend beyond the minute export and overlap most of its history. they are a timing cross-check, not another market observation. the short live file and cached NQ aggregates were excluded from this six-file audit.
+i found no duplicate or out-of-order timestamps, null OHLCV values, invalid OHLC bars or nonpositive volume. the second bars overlap the minute history but extend further; they're a timing check, not another market.
 
-gaps are **candidates**, not repaired bars. the audit uses a regular 18:00–17:00 new york weekly template and flags US federal holidays or longer weekend closures as possible special hours. actual CME holiday and product schedules can differ. short open-session gaps could simply mean no trade: Databento does not publish an OHLCV record for an interval with no trade. longer open-session gaps remain marked for investigation. no missing minute is forward-filled. the unusually large close changes in the JSON are also investigation flags; none were changed or treated as a roll date.
+the gap list is a set of things to check. some gaps are normal market closures or minutes with no trades, while longer open-session gaps need more work. i used a regular weekly schedule and flagged possible holiday hours, since actual [CME hours](https://www.cmegroup.com/trading-hours.html) can differ. [Databento's OHLCV notes](https://databento.com/docs/knowledge-base) say a no-trade interval has no bar. i didn't infer roll dates from large price changes.
 
-the audit ran one source at a time with batches of at most 65,536 rows. the six files took about 34.6 seconds in this run. sampled process RSS peaked at about 178 MiB during the minute-file passes and 508 MiB during the NQ second-file pass. these are observed values on this machine, not guarantees for every system. the exact per-file times and sampled peaks are in the JSON.
-
-references: [Databento OHLCV conventions](https://databento.com/docs/knowledge-base), [CME trading hours and holidays](https://www.cmegroup.com/trading-hours.html).
+the audit took about 35 seconds here. peak sampled memory was about 178 MiB for a minute file and 508 MiB for the second file; per-file measurements are in the JSON.

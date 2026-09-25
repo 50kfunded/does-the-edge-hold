@@ -1,19 +1,21 @@
-# research plan, frozen before the grid
+# research plan
 
-the choices are in [research-plan.json](../research-plan.json), and [research-plan.lock.json](../research-plan.lock.json) records its hash plus the hashes of the six audited source files. the lock was made before running this project's nine-configuration strategy grid. a final run checks both hashes and refuses silent changes.
+i froze the choices in [research-plan.json](../research-plan.json) before running the strategy grid. [the lock](../research-plan.lock.json) records the plan and data hashes, so a later run can catch changes.
 
-the main signal uses 1-hour bars made from start-stamped minute bars. an hour's close is only known at the scheduled end of that hour. the first simulated fill uses an observed minute open at or after that end plus the scenario delay. features restart at each contract change, so a continuous-series price gap cannot become a momentum or mean-reversion signal.
+i'm using 1-hour bars made from the minute files. a signal is known when its hour ends, and the earliest fill is the next available minute open plus the delay. signals restart after each contract roll.
 
-| split | UTC start, inclusive | UTC end, exclusive | NQ minute rows |
-| --- | --- | --- | ---: |
-| development | 2016-08-12 | 2022-01-01 | 1,847,378 |
-| validation | 2022-01-01 | 2024-01-01 | 702,053 |
-| historical final | 2024-01-01 | 2026-08-10 | 912,577 |
+the grid has nine settings: momentum with 12, 24 or 72 hours of history, and mean reversion with 24 or 72 hours of history at entry z-scores of 0.5, 1 or 1.5. i test NQ first, then ES, GC and CL. YM is a separate check because it's another equity index.
 
-the matching counts for ES, YM, GC and CL come from the per-year counts in [the local audit](../reports/local-data-audit.json). NQ is the development market. ES, GC and CL are checks in other markets; YM is reported separately because it is another equity index. the plan uses one timeframe, three momentum lookbacks and six mean-reversion settings. it keeps every result, including failures. the development-period winner is chosen by base-scenario net Sharpe if it has at least 20 entries; validation and later data show how that choice holds up, without changing it. the report also ranks every configuration in each split.
+| part | UTC dates |
+| --- | --- |
+| development | 12 aug 2016 to 1 jan 2022 |
+| validation | 1 jan 2022 to 1 jan 2024 |
+| historical final | 1 jan 2024 to 10 aug 2026 |
 
-the base case assumes $2.50 commission and one tick of slippage **per side**, with an extra one-minute delay. a zero-cost reference, higher-cost case and one-bar delay are also fixed in advance. these are assumed fills from OHLCV bars, not measured bid/ask spreads. each market has $100,000 stated starting capital and at most one full-size futures contract. margin is not treated as a stock purchase price.
+i pick the development winner by net daily Sharpe in the base case, with at least 20 entries. ties go to fewer fills, then the setting's name. i keep the other results, including failed runs, and don't use later results to change the pick.
 
-the local `nq-powell` project already reports results on NQ and other markets through 2026. i therefore call 2024–2026 a **historical final evaluation**, not an untouched holdout. later genuinely new data would need a separate prospective run recorded after this lock. a source-coverage problem can justify a new version of the plan, but the reason and new lock must be committed before any strategy result is viewed.
+the base case is $2.50 commission and one tick of slippage per side, with a one-minute delay. i also test zero cost and delay, $5 plus two ticks per side with a five-minute delay, and the base costs with a 60-minute delay. each market starts with a stated $100,000 and holds one full-size contract or stays flat. these are assumptions from bars, not observed bid/ask fills.
 
-the real-data roll gate is currently unresolved. no empirical P&L grid may run until the date-to-contract schedules pass [the roll check](roll-gate.md). the synthetic example and accounting tests can run now.
+i've already seen NQ and other market results through 2026 in my older `nq-powell` project. that means the last period is a historical check, not untouched data. if the data audit forces a change, i'll record why and freeze a new plan before looking at strategy results.
+
+the [roll check](roll-gate.md) is still unresolved, so the real-data P&L grid is blocked. the synthetic example can run now.
