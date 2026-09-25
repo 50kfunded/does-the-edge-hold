@@ -32,6 +32,14 @@ def main() -> None:
     freeze.add_argument("--plan", type=Path, default=Path("research-plan.json"))
     freeze.add_argument("--audit", type=Path, required=True)
     freeze.add_argument("--output", type=Path, default=Path("research-plan.lock.json"))
+    research = commands.add_parser("research", help="run the locked local study if rolls are verified")
+    research.add_argument("--data-root", type=Path, required=True)
+    research.add_argument("--mapping-root", type=Path, required=True)
+    research.add_argument("--audit", type=Path, default=Path("reports/local-data-audit.json"))
+    research.add_argument("--provenance", type=Path, default=Path("reports/local-provenance.json"))
+    research.add_argument("--plan", type=Path, default=Path("research-plan.json"))
+    research.add_argument("--lock", type=Path, default=Path("research-plan.lock.json"))
+    research.add_argument("--output", type=Path, default=Path("runs/empirical"))
     args = parser.parse_args()
     if args.command == "example":
         from .synthetic import make_bars
@@ -80,6 +88,12 @@ def main() -> None:
 
         lock = freeze_plan(args.plan, args.audit, args.output)
         print(f"frozen plan {lock['plan_sha256'][:12]} at {args.output}")
+    elif args.command == "research":
+        from .experiments import run_empirical
+
+        report = run_empirical(args.data_root, args.mapping_root, args.audit,
+                               args.provenance, args.plan, args.lock, args.output)
+        print(f"completed historical evaluation for {len(report['markets'])} markets at {args.output}")
     else:
         parser.print_help()
 

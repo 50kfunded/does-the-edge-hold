@@ -43,3 +43,13 @@ def test_roll_gap_is_not_profit() -> None:
     assert len(ledger.fills) == 3
     with pytest.raises(ValueError):
         ledger.mark("NQU4", 10_300)
+
+
+def test_small_gross_win_can_fail_after_assumed_costs() -> None:
+    ledger = Ledger(ContractSpec("NQ", 20, 0.25), Costs(5, 1))
+    ledger.buy(T, "NQH4", 100)
+    ledger.sell(T, "NQH4", 100.5)
+    assert ledger.gross_pnl == 10
+    assert ledger.commission_paid == 10
+    assert ledger.slippage_paid == 10
+    assert ledger.net_pnl == -10

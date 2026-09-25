@@ -16,6 +16,8 @@ def test_all_grid_runs_are_kept() -> None:
     assert len({row["run_id"] for row in rows}) == 44  # nine rules + two baselines, four scenarios
     assert len(daily) == 11
     assert not any(row["status"] == "failed" for row in rows)
+    assert {row["scenario"] for row in rows} == {
+        "gross_reference", "base", "higher_cost", "one_bar_late"}
 
 
 def test_empirical_pnl_stops_at_roll_gate(tmp_path) -> None:
