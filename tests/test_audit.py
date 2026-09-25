@@ -12,6 +12,9 @@ def test_session_close_and_short_missing_bar() -> None:
     label, _ = classify_gap(pd.Timestamp("2024-01-09 14:00Z"),
                             pd.Timestamp("2024-01-09 14:03Z"), "1m")
     assert label == "short_no_trade_or_missing_candidate"
+    label, _ = classify_gap(pd.Timestamp("2024-01-09 03:37:31Z"),
+                            pd.Timestamp("2024-01-09 03:38:53Z"), "1s")
+    assert label == "short_no_trade_or_missing_candidate"
 
 
 def test_audit_flags_values_and_order(tmp_path) -> None:

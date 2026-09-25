@@ -13,6 +13,7 @@ import time
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
+import psutil
 from pandas.tseries.holiday import USFederalHolidayCalendar
 
 from .data import iter_parquet, sha256_file, source_path
@@ -34,7 +35,7 @@ def classify_gap(previous: pd.Timestamp, current: pd.Timestamp,
     """Use regular Globex hours; holiday and no-trade labels stay tentative."""
     step = pd.Timedelta(seconds=1 if resolution == "1s" else 60)
     missing = int((current - previous) // step) - 1
-    if missing <= (60 if resolution == "1s" else 5):
+    if missing <= (300 if resolution == "1s" else 5):
         return "short_no_trade_or_missing_candidate", 0
     interior = pd.date_range(previous + pd.Timedelta(minutes=1),
                              current - pd.Timedelta(seconds=1), freq="min", tz="UTC")
@@ -42,7 +43,8 @@ def classify_gap(previous: pd.Timestamp, current: pd.Timestamp,
         return "open_gap_investigate", 0
     local = interior.tz_convert("America/New_York")
     open_minutes = int(_weekly_open(local).sum())
-    if open_minutes <= 2:
+    closed_minutes = len(local) - open_minutes
+    if closed_minutes > 0 and open_minutes <= 2:
         return "regular_weekly_closure_candidate", open_minutes
     if any(day in HOLIDAYS for day in set(local.date)) or (
         (current - previous) >= pd.Timedelta(hours=60) and
@@ -58,6 +60,8 @@ def audit_file(path: str | Path, resolution: str, market: str,
     path = Path(path)
     parquet = pq.ParquetFile(path)
     row_count = 0
+    process = psutil.Process()
+    peak_rss_bytes = process.memory_info().rss
     first = last = None
     peak_batch_rows = 0
     previous_ns = None
@@ -73,6 +77,7 @@ def audit_file(path: str | Path, resolution: str, market: str,
     step_ns = 1_000_000_000 if resolution == "1s" else 60_000_000_000
     for batch in iter_parquet(path, batch_size=batch_size):
         row_count += len(batch)
+        peak_rss_bytes = max(peak_rss_bytes, process.memory_info().rss)
         peak_batch_rows = max(peak_batch_rows, len(batch))
         stamps = batch["ts"]
         batch_min, batch_max = stamps.min(), stamps.max()
@@ -97,7 +102,7 @@ def audit_file(path: str | Path, resolution: str, market: str,
         out_of_order += int(np.sum(delta < 0))
         gap_indices = np.flatnonzero(delta > step_ns)
         gap_slots = delta[gap_indices] // step_ns - 1
-        short_limit = 60 if resolution == "1s" else 5
+        short_limit = 300 if resolution == "1s" else 5
         short = gap_slots <= short_limit
         short_count = int(short.sum())
         gap_classes["short_no_trade_or_missing_candidate"] += short_count
@@ -128,6 +133,7 @@ def audit_file(path: str | Path, resolution: str, market: str,
                 heapq.heapreplace(largest_changes, item)
         previous_ns = int(ns[-1])
         previous_close = float(cl[-1])
+    peak_rss_bytes = max(peak_rss_bytes, process.memory_info().rss)
     return {
         "path": str(path), "sha256": sha256_file(path), "bytes": path.stat().st_size,
         "resolution": resolution, "market": market,
@@ -149,6 +155,7 @@ def audit_file(path: str | Path, resolution: str, market: str,
                                  close=close, label="investigate")
                             for value, at, prior, close in sorted(largest_changes, reverse=True)],
         "peak_batch_rows": peak_batch_rows,
+        "sampled_peak_process_rss_bytes": peak_rss_bytes,
         "runtime_seconds": round(time.perf_counter() - started, 2),
         "session_rule": "regular 18:00-17:00 America/New_York weekly template; holiday hours not verified",
         "gap_note": "a missing OHLCV bar may have had no trade; a label is a candidate, not proof",

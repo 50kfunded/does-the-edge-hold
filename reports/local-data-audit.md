@@ -15,6 +15,6 @@ there were no null values in the six exported OHLCV columns. the NQ second bars 
 
 gaps are **candidates**, not repaired bars. the audit uses a regular 18:00–17:00 new york weekly template and flags US federal holidays or longer weekend closures as possible special hours. actual CME holiday and product schedules can differ. short open-session gaps could simply mean no trade: Databento does not publish an OHLCV record for an interval with no trade. longer open-session gaps remain marked for investigation. no missing minute is forward-filled. the unusually large close changes in the JSON are also investigation flags; none were changed or treated as a roll date.
 
-the audit ran one source at a time with batches of at most 65,536 rows. per-file elapsed times are in the JSON. this bounds the decoded batch size; it does not itself measure peak process memory.
+the audit ran one source at a time with batches of at most 65,536 rows. the six files took about 34.6 seconds in this run. sampled process RSS peaked at about 178 MiB during the minute-file passes and 508 MiB during the NQ second-file pass. these are observed values on this machine, not guarantees for every system. the exact per-file times and sampled peaks are in the JSON.
 
 references: [Databento OHLCV conventions](https://databento.com/docs/knowledge-base), [CME trading hours and holidays](https://www.cmegroup.com/trading-hours.html).
