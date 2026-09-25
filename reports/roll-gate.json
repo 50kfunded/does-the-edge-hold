@@ -1,0 +1,45 @@
+{
+  "status": "unresolved",
+  "roll_policy": "exit at open of final old-contract minute; re-enter at open of first new-contract minute",
+  "markets": {
+    "NQ": {
+      "ready": false,
+      "problems": [
+        "no verified mapping supplied"
+      ]
+    },
+    "ES": {
+      "ready": false,
+      "problems": [
+        "no verified mapping supplied"
+      ]
+    },
+    "YM": {
+      "ready": false,
+      "problems": [
+        "no verified mapping supplied"
+      ]
+    },
+    "GC": {
+      "ready": false,
+      "problems": [
+        "no verified mapping supplied"
+      ]
+    },
+    "CL": {
+      "ready": false,
+      "problems": [
+        "no verified mapping supplied"
+      ]
+    }
+  },
+  "reasons": [
+    "date-to-contract mapping and its evidence are absent",
+    "NQ: no verified mapping supplied",
+    "ES: no verified mapping supplied",
+    "YM: no verified mapping supplied",
+    "GC: no verified mapping supplied",
+    "CL: no verified mapping supplied"
+  ],
+  "scope": "five minute-bar exports; NQ second bars require a separate source match"
+}

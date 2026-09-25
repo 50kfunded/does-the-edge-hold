@@ -1,0 +1,382 @@
+{
+  "files": [
+    {
+      "bytes": 19941173,
+      "duplicate_timestamps": 0,
+      "first_utc": "2016-08-12T00:00:00+00:00",
+      "footer_row_count": 3462008,
+      "gap_counts": {
+        "holiday_or_special_hours_candidate": 120,
+        "open_gap_investigate": 1822,
+        "regular_weekly_closure_candidate": 2425,
+        "short_no_trade_or_missing_candidate": 23113
+      },
+      "gap_note": "a missing OHLCV bar may have had no trade; a label is a candidate, not proof",
+      "invalid_ohlc": 0,
+      "large_change_count": 115,
+      "large_change_rule": "absolute close change >= max(1% of prior absolute close, 100 ticks)",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "market": "NQ",
+      "missing_slots_by_gap_class": {
+        "holiday_or_special_hours_candidate": 127293,
+        "open_gap_investigate": 200511,
+        "regular_weekly_closure_candidate": 1432831,
+        "short_no_trade_or_missing_candidate": 33357
+      },
+      "missing_values": {
+        "close": 0,
+        "high": 0,
+        "low": 0,
+        "open": 0,
+        "ts": 0,
+        "volume": 0
+      },
+      "nonpositive_volume": 0,
+      "out_of_order_timestamps": 0,
+      "path": "G:\\localview\\data\\bars\\NQ_1m.parquet",
+      "peak_batch_rows": 65536,
+      "resolution": "1m",
+      "row_count": 3462008,
+      "rows_by_year": {
+        "2016": 125013,
+        "2017": 334810,
+        "2018": 344491,
+        "2019": 346026,
+        "2020": 346609,
+        "2021": 350429,
+        "2022": 351626,
+        "2023": 350427,
+        "2024": 351726,
+        "2025": 348918,
+        "2026": 211933
+      },
+      "runtime_seconds": 3.14,
+      "sampled_peak_process_rss_bytes": 157061120,
+      "schema": {
+        "close": "float",
+        "high": "float",
+        "low": "float",
+        "open": "float",
+        "ts": "timestamp[ns, tz=UTC]",
+        "volume": "uint32"
+      },
+      "session_rule": "regular 18:00-17:00 America/New_York weekly template; holiday hours not verified",
+      "sha256": "1051771c7d3e65b55d9167c651155b91bef3332c84483197e6ebdb648a047499"
+    },
+    {
+      "bytes": 17069874,
+      "duplicate_timestamps": 0,
+      "first_utc": "2016-08-12T00:00:00+00:00",
+      "footer_row_count": 3484266,
+      "gap_counts": {
+        "holiday_or_special_hours_candidate": 106,
+        "open_gap_investigate": 1352,
+        "regular_weekly_closure_candidate": 2427,
+        "short_no_trade_or_missing_candidate": 12676
+      },
+      "gap_note": "a missing OHLCV bar may have had no trade; a label is a candidate, not proof",
+      "invalid_ohlc": 0,
+      "large_change_count": 96,
+      "large_change_rule": "absolute close change >= max(1% of prior absolute close, 100 ticks)",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "market": "ES",
+      "missing_slots_by_gap_class": {
+        "holiday_or_special_hours_candidate": 127188,
+        "open_gap_investigate": 195922,
+        "regular_weekly_closure_candidate": 1432911,
+        "short_no_trade_or_missing_candidate": 15713
+      },
+      "missing_values": {
+        "close": 0,
+        "high": 0,
+        "low": 0,
+        "open": 0,
+        "ts": 0,
+        "volume": 0
+      },
+      "nonpositive_volume": 0,
+      "out_of_order_timestamps": 0,
+      "path": "G:\\localview\\data\\bars\\ES_1m.parquet",
+      "peak_batch_rows": 65536,
+      "resolution": "1m",
+      "row_count": 3484266,
+      "rows_by_year": {
+        "2016": 132977,
+        "2017": 341043,
+        "2018": 346451,
+        "2019": 346995,
+        "2020": 348169,
+        "2021": 351044,
+        "2022": 352037,
+        "2023": 350819,
+        "2024": 352123,
+        "2025": 350009,
+        "2026": 212599
+      },
+      "runtime_seconds": 2.94,
+      "sampled_peak_process_rss_bytes": 160833536,
+      "schema": {
+        "close": "float",
+        "high": "float",
+        "low": "float",
+        "open": "float",
+        "ts": "timestamp[ns, tz=UTC]",
+        "volume": "uint32"
+      },
+      "session_rule": "regular 18:00-17:00 America/New_York weekly template; holiday hours not verified",
+      "sha256": "47a5239dfcd60d1ed50fcfc9313c9ec2f39c8b3ed2a58e538bc95a3f77b313a4"
+    },
+    {
+      "bytes": 17864999,
+      "duplicate_timestamps": 0,
+      "first_utc": "2016-08-14T22:00:00+00:00",
+      "footer_row_count": 3409043,
+      "gap_counts": {
+        "holiday_or_special_hours_candidate": 190,
+        "open_gap_investigate": 3002,
+        "regular_weekly_closure_candidate": 2410,
+        "short_no_trade_or_missing_candidate": 49696
+      },
+      "gap_note": "a missing OHLCV bar may have had no trade; a label is a candidate, not proof",
+      "invalid_ohlc": 0,
+      "large_change_count": 100,
+      "large_change_rule": "absolute close change >= max(1% of prior absolute close, 100 ticks)",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "market": "YM",
+      "missing_slots_by_gap_class": {
+        "holiday_or_special_hours_candidate": 128055,
+        "open_gap_investigate": 215477,
+        "regular_weekly_closure_candidate": 1429063,
+        "short_no_trade_or_missing_candidate": 70162
+      },
+      "missing_values": {
+        "close": 0,
+        "high": 0,
+        "low": 0,
+        "open": 0,
+        "ts": 0,
+        "volume": 0
+      },
+      "nonpositive_volume": 0,
+      "out_of_order_timestamps": 0,
+      "path": "G:\\localview\\data\\bars\\YM_1m.parquet",
+      "peak_batch_rows": 65536,
+      "resolution": "1m",
+      "row_count": 3409043,
+      "rows_by_year": {
+        "2016": 125428,
+        "2017": 330104,
+        "2018": 344001,
+        "2019": 344312,
+        "2020": 342853,
+        "2021": 346010,
+        "2022": 348066,
+        "2023": 344527,
+        "2024": 341746,
+        "2025": 335617,
+        "2026": 206379
+      },
+      "runtime_seconds": 3.44,
+      "sampled_peak_process_rss_bytes": 180342784,
+      "schema": {
+        "close": "float",
+        "high": "float",
+        "low": "float",
+        "open": "float",
+        "ts": "timestamp[ns, tz=UTC]",
+        "volume": "uint32"
+      },
+      "session_rule": "regular 18:00-17:00 America/New_York weekly template; holiday hours not verified",
+      "sha256": "997ad6aea84e571385a5604fe23c53f9403881ddf41ec64be8c2494ec1ba5bcc"
+    },
+    {
+      "bytes": 23605899,
+      "duplicate_timestamps": 0,
+      "first_utc": "2016-08-14T22:00:00+00:00",
+      "footer_row_count": 3482922,
+      "gap_counts": {
+        "holiday_or_special_hours_candidate": 156,
+        "open_gap_investigate": 1835,
+        "regular_weekly_closure_candidate": 2435,
+        "short_no_trade_or_missing_candidate": 17874
+      },
+      "gap_note": "a missing OHLCV bar may have had no trade; a label is a candidate, not proof",
+      "invalid_ohlc": 0,
+      "large_change_count": 42,
+      "large_change_rule": "absolute close change >= max(1% of prior absolute close, 100 ticks)",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "market": "GC",
+      "missing_slots_by_gap_class": {
+        "holiday_or_special_hours_candidate": 134871,
+        "open_gap_investigate": 81244,
+        "regular_weekly_closure_candidate": 1525614,
+        "short_no_trade_or_missing_candidate": 27149
+      },
+      "missing_values": {
+        "close": 0,
+        "high": 0,
+        "low": 0,
+        "open": 0,
+        "ts": 0,
+        "volume": 0
+      },
+      "nonpositive_volume": 0,
+      "out_of_order_timestamps": 0,
+      "path": "G:\\localview\\data\\bars\\GC_1m.parquet",
+      "peak_batch_rows": 65536,
+      "resolution": "1m",
+      "row_count": 3482922,
+      "rows_by_year": {
+        "2016": 133768,
+        "2017": 346699,
+        "2018": 347107,
+        "2019": 348036,
+        "2020": 350083,
+        "2021": 348357,
+        "2022": 349732,
+        "2023": 346674,
+        "2024": 351320,
+        "2025": 350874,
+        "2026": 210272
+      },
+      "runtime_seconds": 3.02,
+      "sampled_peak_process_rss_bytes": 186724352,
+      "schema": {
+        "close": "float",
+        "high": "float",
+        "low": "float",
+        "open": "float",
+        "ts": "timestamp[ns, tz=UTC]",
+        "volume": "uint32"
+      },
+      "session_rule": "regular 18:00-17:00 America/New_York weekly template; holiday hours not verified",
+      "sha256": "5e38c9e685b7671ecd92b4ee57d1427eb012d7e2ba5bafa155f8a175c1ae3e50"
+    },
+    {
+      "bytes": 25549189,
+      "duplicate_timestamps": 0,
+      "first_utc": "2016-08-14T22:00:00+00:00",
+      "footer_row_count": 3497569,
+      "gap_counts": {
+        "holiday_or_special_hours_candidate": 100,
+        "open_gap_investigate": 462,
+        "regular_weekly_closure_candidate": 2454,
+        "short_no_trade_or_missing_candidate": 26151
+      },
+      "gap_note": "a missing OHLCV bar may have had no trade; a label is a candidate, not proof",
+      "invalid_ohlc": 0,
+      "large_change_count": 267,
+      "large_change_rule": "absolute close change >= max(1% of prior absolute close, 100 ticks)",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "market": "CL",
+      "missing_slots_by_gap_class": {
+        "holiday_or_special_hours_candidate": 133952,
+        "open_gap_investigate": 42199,
+        "regular_weekly_closure_candidate": 1544020,
+        "short_no_trade_or_missing_candidate": 34060
+      },
+      "missing_values": {
+        "close": 0,
+        "high": 0,
+        "low": 0,
+        "open": 0,
+        "ts": 0,
+        "volume": 0
+      },
+      "nonpositive_volume": 0,
+      "out_of_order_timestamps": 0,
+      "path": "G:\\localview\\data\\bars\\CL_1m.parquet",
+      "peak_batch_rows": 65536,
+      "resolution": "1m",
+      "row_count": 3497569,
+      "rows_by_year": {
+        "2016": 134877,
+        "2017": 349402,
+        "2018": 351877,
+        "2019": 351933,
+        "2020": 350429,
+        "2021": 352233,
+        "2022": 350548,
+        "2023": 348882,
+        "2024": 349143,
+        "2025": 346890,
+        "2026": 211355
+      },
+      "runtime_seconds": 2.52,
+      "sampled_peak_process_rss_bytes": 176992256,
+      "schema": {
+        "close": "float",
+        "high": "float",
+        "low": "float",
+        "open": "float",
+        "ts": "timestamp[ns, tz=UTC]",
+        "volume": "uint32"
+      },
+      "session_rule": "regular 18:00-17:00 America/New_York weekly template; holiday hours not verified",
+      "sha256": "7442200390a3485769b09888333a7cc0a0755d771a32e38d84b90adc9271e526"
+    },
+    {
+      "bytes": 352499810,
+      "duplicate_timestamps": 0,
+      "first_utc": "2021-08-20T00:00:00+00:00",
+      "footer_row_count": 60807363,
+      "gap_counts": {
+        "holiday_or_special_hours_candidate": 59,
+        "open_gap_investigate": 230,
+        "regular_weekly_closure_candidate": 1215,
+        "short_no_trade_or_missing_candidate": 15004087
+      },
+      "gap_note": "a missing OHLCV bar may have had no trade; a label is a candidate, not proof",
+      "invalid_ohlc": 0,
+      "large_change_count": 36,
+      "large_change_rule": "absolute close change >= max(1% of prior absolute close, 100 ticks)",
+      "last_utc": "2026-08-21T20:59:59+00:00",
+      "market": "NQ",
+      "missing_slots_by_gap_class": {
+        "holiday_or_special_hours_candidate": 3681749,
+        "open_gap_investigate": 5421884,
+        "regular_weekly_closure_candidate": 43081838,
+        "short_no_trade_or_missing_candidate": 44935566
+      },
+      "missing_values": {
+        "close": 0,
+        "high": 0,
+        "low": 0,
+        "open": 0,
+        "ts": 0,
+        "volume": 0
+      },
+      "nonpositive_volume": 0,
+      "out_of_order_timestamps": 0,
+      "path": "G:\\localview\\data\\bars\\NQ_1s.parquet",
+      "peak_batch_rows": 65536,
+      "resolution": "1s",
+      "row_count": 60807363,
+      "rows_by_year": {
+        "2021": 4134178,
+        "2022": 12980820,
+        "2023": 11831866,
+        "2024": 11702604,
+        "2025": 11783367,
+        "2026": 8374528
+      },
+      "runtime_seconds": 19.53,
+      "sampled_peak_process_rss_bytes": 532992000,
+      "schema": {
+        "close": "float",
+        "high": "float",
+        "low": "float",
+        "open": "float",
+        "ts": "timestamp[ns, tz=UTC]",
+        "volume": "uint32"
+      },
+      "session_rule": "regular 18:00-17:00 America/New_York weekly template; holiday hours not verified",
+      "sha256": "4d8393cf93ea1c5188288ada8cd623c536c6985b9ce741986f7f208f73baf6a7"
+    }
+  ],
+  "generated_utc": "2026-09-25T19:55:03.483257+00:00",
+  "overlap_note": "NQ second and minute files overlap; aggregates are not independent markets",
+  "publication_scope": "aggregate metadata only; per-bar investigation samples stay local",
+  "roll_gate": "unresolved until date-to-contract mapping is verified",
+  "source_root": "G:\\localview\\data\\bars"
+}

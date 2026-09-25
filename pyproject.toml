@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "A small research audit for futures backtests"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["numpy>=1.26", "pandas>=2.2", "pyarrow>=15", "scipy>=1.12", "matplotlib>=3.8"]
+dependencies = ["numpy>=1.26", "pandas>=2.2", "pyarrow>=15", "scipy>=1.12", "matplotlib>=3.8", "psutil>=5"]
 
 [project.optional-dependencies]
 test = ["pytest>=8"]
@@ -22,4 +22,3 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-
