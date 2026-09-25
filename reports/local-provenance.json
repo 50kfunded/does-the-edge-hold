@@ -1,0 +1,146 @@
+{
+  "markets": [
+    {
+      "market": "NQ",
+      "selected_root": "NQc0",
+      "roll_rule_from_cache_name": "calendar",
+      "candidate_roots": {
+        "NQc0": 64200575
+      },
+      "source_files": [
+        {
+          "name": "databento_NQc0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "0f95b808b2e81850fd71d337e4346ab63017ccfab863941f370cbb458a4445cb",
+          "rows": 1752994
+        },
+        {
+          "name": "databento_NQc0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "b6d0f2d25e51a06c041c5e748999fed102174907ce5f91a9b5579f42b89dfb4d",
+          "rows": 1709014
+        },
+        {
+          "name": "databento_NQc0_ohlcv-1m_365d_ctx.parquet",
+          "sha256": "3367aca6b428cb097408541fff24a63da23df82677eeed6a6b5bebc887a1bba9",
+          "rows": 349241
+        }
+      ],
+      "export_rows": 3462008,
+      "reconstructed_rows": 3462008,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    },
+    {
+      "market": "ES",
+      "selected_root": "ESc0",
+      "roll_rule_from_cache_name": "calendar",
+      "candidate_roots": {
+        "ESc0": 58122459
+      },
+      "source_files": [
+        {
+          "name": "databento_ESc0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "c2ed6ea7f2d8c4faa40bf20edcfb3a8d7a6c2897a59d97f322e8822de61f0f44",
+          "rows": 1756362
+        },
+        {
+          "name": "databento_ESc0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "309220639b33abdfe1de4bc1accbe7bfd6c8460d54e7626260f856e382ab1618",
+          "rows": 1727904
+        },
+        {
+          "name": "databento_ESc0_ohlcv-1m_365d_ctx.parquet",
+          "sha256": "d14da0c951ac03bf509f90e6e099c52845fd2fb8f1fb6e7fa3aa1521182bfb23",
+          "rows": 350482
+        }
+      ],
+      "export_rows": 3484266,
+      "reconstructed_rows": 3484266,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    },
+    {
+      "market": "YM",
+      "selected_root": "YMc0",
+      "roll_rule_from_cache_name": "calendar",
+      "candidate_roots": {
+        "YMc0": 53318501
+      },
+      "source_files": [
+        {
+          "name": "databento_YMc0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "ff82439a1ed3f6afafdc4e39a6373ca08af99d90caf5f03db321a0f8ee139d3e",
+          "rows": 1712574
+        },
+        {
+          "name": "databento_YMc0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "1178f566105c108f1285456402a25838c5f0a944c8e5f176f3f607868dc9bbe9",
+          "rows": 1697841
+        }
+      ],
+      "export_rows": 3409043,
+      "reconstructed_rows": 3409043,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    },
+    {
+      "market": "GC",
+      "selected_root": "GCv0",
+      "roll_rule_from_cache_name": "volume",
+      "candidate_roots": {
+        "GCc0": 1246489,
+        "GCv0": 52513674
+      },
+      "source_files": [
+        {
+          "name": "databento_GCv0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "c31cfd9e65e74d82742cedb3adbaf8db8cf43d94a2637b233fc4b9a4f64d646b",
+          "rows": 1746952
+        },
+        {
+          "name": "databento_GCv0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "a15cea89014a440dfc2b623753c29b1cdeacb927197f475d5c0574bfcde14497",
+          "rows": 1737343
+        }
+      ],
+      "export_rows": 3482922,
+      "reconstructed_rows": 3482922,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    },
+    {
+      "market": "CL",
+      "selected_root": "CLv0",
+      "roll_rule_from_cache_name": "volume",
+      "candidate_roots": {
+        "CLv0": 52179638
+      },
+      "source_files": [
+        {
+          "name": "databento_CLv0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "d96fcb2ce38f62f64a954575f9a481a809ec3ea9e0edab9af385a69335af4348",
+          "rows": 1745528
+        },
+        {
+          "name": "databento_CLv0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "051c7d5b12e1f14fa8d696ead633662d3611da7739a8987ca36088dd41328865",
+          "rows": 1753417
+        }
+      ],
+      "export_rows": 3497569,
+      "reconstructed_rows": 3497569,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    }
+  ],
+  "roll_gate": "source rule identified; date-to-contract mapping still required"
+}
