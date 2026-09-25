@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "question": "how much of a futures signal survives later periods, other markets, costs and slower orders?",
+  "primary_market": "NQ",
+  "checks": ["ES", "GC", "CL"],
+  "separate_check": "YM",
+  "source_resolution": "1m",
+  "signal_timeframe": "1h UTC, start-stamped; signal known at scheduled hour end",
+  "secondary_timeframe": null,
+  "signal_families": {
+    "momentum": {
+      "rule": "long when completed close is above the close lookback_hours earlier within the same contract; otherwise flat",
+      "lookback_hours": [12, 24, 72]
+    },
+    "mean_reversion": {
+      "rule": "long when completed close is at least entry_z trailing standard deviations below the prior rolling mean; exit when close reaches or exceeds the prior rolling mean; reset at each contract change",
+      "lookback_hours": [24, 72],
+      "entry_z": [0.5, 1.0, 1.5],
+      "exit_z": 0.0
+    }
+  },
+  "configuration_count": 9,
+  "splits_utc": {
+    "development": ["2016-08-12T00:00:00Z", "2022-01-01T00:00:00Z"],
+    "validation": ["2022-01-01T00:00:00Z", "2024-01-01T00:00:00Z"],
+    "historical_final": ["2024-01-01T00:00:00Z", "2026-08-10T00:00:00Z"]
+  },
+  "selection": {
+    "period": "development only",
+    "metric": "net Sharpe on daily account-capital returns in the base scenario",
+    "minimum_entry_trades": 20,
+    "tie_break": "lower fill count, then configuration id",
+    "validation_and_final_usage": "report the locked development winner and rank changes; never tune on final results"
+  },
+  "execution": {
+    "starting_capital_usd_per_market": 100000,
+    "position": "one full-size contract or flat",
+    "fill": "first observed 1-minute open at or after completed signal bar end plus delay",
+    "roll": "exit at open of final old-contract minute; re-enter at open of first new-contract minute",
+    "scenarios": [
+      {"name": "gross_reference", "commission_usd_per_side": 0.0, "slippage_ticks_per_side": 0.0, "delay_minutes": 0},
+      {"name": "base", "commission_usd_per_side": 2.5, "slippage_ticks_per_side": 1.0, "delay_minutes": 1},
+      {"name": "higher_cost", "commission_usd_per_side": 5.0, "slippage_ticks_per_side": 2.0, "delay_minutes": 5},
+      {"name": "one_bar_late", "commission_usd_per_side": 2.5, "slippage_ticks_per_side": 1.0, "delay_minutes": 60}
+    ]
+  },
+  "baselines": ["flat", "always long with the same scheduled roll policy and costs"],
+  "statistics": {
+    "daily_return": "daily net P&L divided by stated starting capital; no futures price percentage return",
+    "annualization": "252 trading days; sample standard deviation; zero volatility Sharpe is undefined",
+    "uncertainty": "paired moving-block bootstrap of five consecutive trading days, 2000 replicates, seed 1729",
+    "walk_forward": "secondary diagnostic: three calendar years of selection, then the next calendar year of evaluation"
+  },
+  "prior_exposure": "the local nq-powell project already reports NQ and cross-market results by year through 2026. no 2024-2026 period can honestly be called untouched; historical_final is a historical evaluation. no results from this new nine-configuration grid were viewed before this plan was frozen.",
+  "roll_gate": "empirical futures P&L is blocked until all five minute exports have verified date-to-contract schedules and a documented roll policy",
+  "data_change_rule": "a coverage correction can revise the plan only with a written reason and a new lock before viewing strategy performance"
+}

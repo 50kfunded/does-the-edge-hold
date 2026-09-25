@@ -28,6 +28,10 @@ def main() -> None:
     resolve.add_argument("--audit", type=Path, required=True)
     resolve.add_argument("--provenance", type=Path, required=True)
     resolve.add_argument("--output", type=Path, default=Path("runs/roll-mapping"))
+    freeze = commands.add_parser("freeze", help="lock the research plan before grid runs")
+    freeze.add_argument("--plan", type=Path, default=Path("research-plan.json"))
+    freeze.add_argument("--audit", type=Path, required=True)
+    freeze.add_argument("--output", type=Path, default=Path("research-plan.lock.json"))
     args = parser.parse_args()
     if args.command == "example":
         from .synthetic import make_bars
@@ -71,6 +75,11 @@ def main() -> None:
         origin_report = json.loads(args.provenance.read_text(encoding="utf-8"))
         path = resolve_free(audit_report, origin_report, args.output)
         print(f"saved local roll evidence at {path}")
+    elif args.command == "freeze":
+        from .plan import freeze as freeze_plan
+
+        lock = freeze_plan(args.plan, args.audit, args.output)
+        print(f"frozen plan {lock['plan_sha256'][:12]} at {args.output}")
     else:
         parser.print_help()
 
