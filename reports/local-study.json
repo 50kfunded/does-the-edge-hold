@@ -1,0 +1,77 @@
+{
+  "status": "blocked",
+  "plan_sha256": "1bd90988889727c94a951cb5b3c54a8971e873733f26a2b243e896c06f3057d9",
+  "roll_gate": {
+    "status": "unresolved",
+    "roll_policy": "exit at open of final old-contract minute; re-enter at open of first new-contract minute",
+    "markets": {
+      "NQ": {
+        "ready": false,
+        "problems": [
+          "no verified mapping supplied"
+        ]
+      },
+      "ES": {
+        "ready": false,
+        "problems": [
+          "no verified mapping supplied"
+        ]
+      },
+      "YM": {
+        "ready": false,
+        "problems": [
+          "no verified mapping supplied"
+        ]
+      },
+      "GC": {
+        "ready": false,
+        "problems": [
+          "no verified mapping supplied"
+        ]
+      },
+      "CL": {
+        "ready": false,
+        "problems": [
+          "no verified mapping supplied"
+        ]
+      }
+    },
+    "reasons": [
+      "date-to-contract mapping and its evidence are absent",
+      "NQ: no verified mapping supplied",
+      "ES: no verified mapping supplied",
+      "YM: no verified mapping supplied",
+      "GC: no verified mapping supplied",
+      "CL: no verified mapping supplied"
+    ],
+    "scope": "five minute-bar exports; NQ second bars require a separate source match"
+  },
+  "empirical_pnl_calculated": false,
+  "split_counts": {
+    "NQ": {
+      "development": 1847378,
+      "validation": 702053,
+      "historical_final": 912577
+    },
+    "ES": {
+      "development": 1866679,
+      "validation": 702856,
+      "historical_final": 914731
+    },
+    "YM": {
+      "development": 1832708,
+      "validation": 692593,
+      "historical_final": 883742
+    },
+    "GC": {
+      "development": 1874050,
+      "validation": 696406,
+      "historical_final": 912466
+    },
+    "CL": {
+      "development": 1890751,
+      "validation": 699430,
+      "historical_final": 907388
+    }
+  }
+}

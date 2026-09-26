@@ -141,6 +141,5 @@
       "verified_match": true,
       "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
     }
-  ],
-  "roll_gate": "source rule identified; date-to-contract mapping still required"
+  ]
 }

@@ -1,0 +1,70 @@
+{
+  "scope": "synthetic only",
+  "configuration_count": 9,
+  "signal_families": {
+    "momentum": {
+      "lookback_hours": [
+        12,
+        24,
+        72
+      ]
+    },
+    "mean_reversion": {
+      "lookback_hours": [
+        24,
+        72
+      ],
+      "entry_z": [
+        0.5,
+        1,
+        1.5
+      ]
+    }
+  },
+  "splits_utc": {
+    "development": [
+      "2024-01-08T00:00:00Z",
+      "2024-01-18T00:00:00Z"
+    ],
+    "validation": [
+      "2024-01-18T00:00:00Z",
+      "2024-01-28T00:00:00Z"
+    ],
+    "historical_final": [
+      "2024-01-28T00:00:00Z",
+      "2024-02-07T00:00:00Z"
+    ]
+  },
+  "selection": {
+    "minimum_entry_trades": 3
+  },
+  "execution": {
+    "starting_capital_usd_per_market": 100000,
+    "scenarios": [
+      {
+        "name": "gross_reference",
+        "commission_usd_per_side": 0,
+        "slippage_ticks_per_side": 0,
+        "delay_minutes": 0
+      },
+      {
+        "name": "base",
+        "commission_usd_per_side": 2.5,
+        "slippage_ticks_per_side": 1,
+        "delay_minutes": 1
+      },
+      {
+        "name": "higher_cost",
+        "commission_usd_per_side": 5,
+        "slippage_ticks_per_side": 2,
+        "delay_minutes": 5
+      },
+      {
+        "name": "one_bar_late",
+        "commission_usd_per_side": 2.5,
+        "slippage_ticks_per_side": 1,
+        "delay_minutes": 60
+      }
+    ]
+  }
+}
