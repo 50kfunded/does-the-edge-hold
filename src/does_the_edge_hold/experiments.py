@@ -164,10 +164,16 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
     verify(plan, audit, lock)
     decision = assess(audit, origin, mapping_root, plan=plan)
     require_ready(decision)
-    hashes = {row["market"]: row["sha256"] for row in audit["files"]
+    hashes = {row["market"]: lock["source_hashes"][f"{row['market']}_1m"] for row in audit["files"]
               if row["resolution"] == "1m"}
     for market in decision["included"]:
-        if sha256_file(source_path(data_root, market)) != hashes[market]:
+        path = source_path(data_root, market)
+        if lock.get("identity_version") == 2:
+            from .semantic import semantic_file
+            observed_hash = semantic_file(path)["sha256"]
+        else:
+            observed_hash = sha256_file(path)
+        if observed_hash != hashes[market]:
             raise ValueError(f"{market} source file changed since the frozen audit")
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
@@ -182,6 +188,7 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
         instructions = read_instructions(Path(mapping_root) / f"{market}_instructions.csv")
         manifest = market_manifest(market, lock["plan_sha256"], hashes[market], MarketAdapter(SPECS[market]),
                                    instructions, evidence_hashes)
+        manifest["artifact_sha256"] = sha256_file(source_path(data_root, market))
         write_manifest(manifest, output / f"{market}_execution.json")
         rows, daily = run_market(minutes, market, plan, lock["plan_sha256"], hashes[market],
                                  roll_instructions=instructions,

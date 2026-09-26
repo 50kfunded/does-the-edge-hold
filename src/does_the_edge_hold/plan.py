@@ -71,6 +71,10 @@ def _digest(value: object) -> str:
 
 
 def source_hashes(audit: dict, *, semantic=False) -> dict[str, str]:
+    if semantic:
+        from .semantic import SCHEMA
+        if any(not row.get("semantic") or row["semantic"].get("schema") != SCHEMA for row in audit["files"]):
+            raise ValueError("semantic lock needs a valid canonical identity for every audited source")
     return {f"{item['market']}_{item['resolution']}": item["semantic"]["sha256"] if semantic else item["sha256"]
             for item in audit["files"]}
 
@@ -81,6 +85,8 @@ def freeze(plan_path: str | Path, audit_path: str | Path,
     audit = json.loads(Path(audit_path).read_text(encoding="utf-8"))
     validate(plan)
     semantic = plan.get("data_identity") == "ohlcv-utc-ns-f64-v1"
+    if plan.get("data_identity") not in (None, "ohlcv-utc-ns-f64-v1"):
+        raise ValueError("unsupported data identity version")
     lock = {"plan_sha256": _digest(plan), "source_hashes": source_hashes(audit, semantic=semantic),
             "frozen_utc": datetime.now(timezone.utc).isoformat(),
             "version": plan["version"]}

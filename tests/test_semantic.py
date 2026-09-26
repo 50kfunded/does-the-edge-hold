@@ -25,3 +25,11 @@ def test_bad_observations_are_not_sorted_or_filled(bad):
     if bad == "null": bars.loc[3, "close"] = np.nan
     if bad == "infinite": bars.loc[3, "close"] = np.inf
     with pytest.raises(ValueError): semantic_digest([bars])
+
+def test_timezone_timestamp_unit_and_batch_boundaries():
+    bars = make_bars(minutes=240).drop(columns="contract")
+    same = bars.copy()
+    same["ts"] = same.ts.dt.tz_convert("America/New_York").dt.as_unit("us")
+    assert semantic_digest([bars]) == semantic_digest([same])
+    with pytest.raises(ValueError, match="across batches"):
+        semantic_digest([bars.iloc[:10], bars.iloc[9:]])

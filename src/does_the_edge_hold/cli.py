@@ -41,6 +41,7 @@ def main() -> None:
     audit.add_argument("--data-root", type=Path, required=True)
     audit.add_argument("--output", type=Path, default=Path("runs/audit.json"))
     audit.add_argument("--skip-seconds", action="store_true")
+    audit.add_argument("--semantic", action="store_true", help="also validate and hash canonical observations for version-2 locks")
     audit.add_argument("--public-summary", action="store_true",
                        help="omit per-bar investigation samples for publishing")
     origin = commands.add_parser("provenance", help="compare exports with the local source cache")
@@ -111,7 +112,7 @@ def main() -> None:
     elif args.command == "audit":
         from .audit import audit_sources, public_summary, write_audit
 
-        report = audit_sources(args.data_root, include_seconds=not args.skip_seconds)
+        report = audit_sources(args.data_root, include_seconds=not args.skip_seconds, include_semantic=args.semantic)
         if args.public_summary:
             report = public_summary(report)
         write_audit(report, args.output)

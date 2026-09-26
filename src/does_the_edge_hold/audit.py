@@ -180,14 +180,22 @@ def audit_file(path: str | Path, resolution: str, market: str,
     }
 
 
-def audit_sources(root: str | Path, *, include_seconds: bool = True, markets=None) -> dict:
+def audit_sources(root: str | Path, *, include_seconds: bool = True, markets=None, include_semantic=False) -> dict:
     files = [(market, "1m") for market in (markets if markets is not None else ("NQ", "ES", "YM", "GC", "CL"))]
     if include_seconds:
         files.append(("NQ", "1s"))
     results = []
     for market, resolution in files:
         print(f"auditing {market} {resolution}...", file=sys.stderr, flush=True)
-        results.append(audit_file(source_path(root, market, resolution), resolution, market))
+        path = source_path(root, market, resolution)
+        result = audit_file(path, resolution, market)
+        if include_semantic:
+            from .semantic import semantic_file
+            try:
+                result["semantic"] = semantic_file(path)
+            except ValueError as exc:
+                result["semantic_error"] = str(exc)
+        results.append(result)
     return {"generated_utc": datetime.now(timezone.utc).isoformat(),
             "source_root": str(Path(root).resolve()),
             "files": results,

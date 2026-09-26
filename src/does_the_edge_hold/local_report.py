@@ -41,7 +41,7 @@ def run_local_report(data_root: Path, cache_root: Path, output: Path,
     markets = [key.removesuffix("_1m") for key in locked if key.endswith("_1m")]
     roles = universe(plan)
     active = list(dict.fromkeys(roles["required"] + roles["optional"]))
-    audit = audit_sources(data_root, markets=markets, include_seconds="NQ_1s" in locked)
+    audit = audit_sources(data_root, markets=markets, include_seconds="NQ_1s" in locked, include_semantic=lock.get("identity_version") == 2)
     audit_path, origin_path = output / "audit-detailed.json", output / "provenance.json"
     write_audit(audit, audit_path)
     write_audit(public_summary(audit), output / "audit-public.json")
