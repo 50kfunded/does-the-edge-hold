@@ -15,8 +15,8 @@ class RollGateError(ValueError):
 def read_schedule(path: str | Path) -> pd.DataFrame:
     """Read a CSV with `effective_at,contract`, sorted in UTC."""
     schedule = pd.read_csv(path)
-    if list(schedule.columns) != ["effective_at", "contract"]:
-        raise RollGateError("roll CSV needs exactly effective_at,contract")
+    if not {"effective_at", "contract"}.issubset(schedule.columns):
+        raise RollGateError("roll CSV needs effective_at,contract")
     schedule["effective_at"] = pd.to_datetime(schedule["effective_at"], utc=True,
                                                 errors="raise")
     if schedule.empty or schedule["contract"].isna().any():
@@ -25,6 +25,12 @@ def read_schedule(path: str | Path) -> pd.DataFrame:
         raise RollGateError("roll dates must be strictly increasing")
     if schedule["contract"].astype(str).str.strip().eq("").any():
         raise RollGateError("roll schedule has blank contracts")
+    if "end_at" in schedule:
+        schedule["end_at"] = pd.to_datetime(schedule["end_at"], utc=True, errors="raise")
+        if schedule.end_at.isna().any() or (schedule.end_at <= schedule.effective_at).any():
+            raise RollGateError("invalid interval end")
+        if any(schedule.effective_at.iloc[i + 1] != schedule.end_at.iloc[i] for i in range(len(schedule) - 1)):
+            raise RollGateError("identity intervals have gaps or overlap")
     return schedule
 
 
@@ -41,6 +47,8 @@ def attach_contracts(bars: pd.DataFrame, schedule: pd.DataFrame) -> pd.DataFrame
     pos = np.searchsorted(starts.to_numpy(), ts.to_numpy(), side="right") - 1
     if (pos < 0).any():
         raise RollGateError("schedule does not cover the first bar")
+    if "end_at" in schedule and (ts.to_numpy() >= pd.to_datetime(schedule.end_at, utc=True).to_numpy()[pos]).any():
+        raise RollGateError("identity interval does not cover a bar")
     out = bars.copy()
     out["contract"] = schedule["contract"].to_numpy()[pos]
     if out["contract"].isna().any():
