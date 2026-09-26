@@ -13,7 +13,7 @@ from .ledger import Costs
 from .daily_clock import DailyClock
 from .execution import seal, write_manifest
 from .adapters import MarketAdapter
-from .signals import REGISTRY
+from .signals import REGISTRY, extension_identity
 from .metrics import daily_pnl, summarize
 from .plan import verify
 from .roll_gate import assess, require_ready, read_instructions
@@ -40,7 +40,8 @@ def market_manifest(market, plan_hash, source_hash, adapter, roll_instructions=N
     return seal(plan_hash, {market: source_hash},
         evidence={"roll_instructions": [] if roll_instructions is None else roll_instructions.astype(str).to_dict("records"),
                   "adapter": {"spec": adapter.spec.__dict__, "kind": adapter.kind, "bar_minutes": adapter.bar_minutes},
-                  "additional": extra_evidence or {}},
+                  "additional": extra_evidence or {},
+                  "extensions": {name: extension_identity(name) for name in REGISTRY}},
         callables={"decisions": decisions, "simulate": simulate, "aggregate": hourly_from_minutes,
                    "summarize": summarize, "daily_pnl": daily_pnl, "grid": grid_from_plan,
                    "adapter": type(adapter).signal_bars, "ledger_buy": adapter.ledger_factory.buy,
@@ -88,6 +89,7 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
                       "slippage_ticks_per_side": scenario["slippage_ticks_per_side"],
                       "fee_bps": scenario.get("fee_bps", 0), "slippage_bps": scenario.get("slippage_bps", 0),
                       "delay_minutes": scenario["delay_minutes"]}
+            common["causal_check"] = targets.attrs.get("causal_check", {"status": "built_in"}) if signal_error is None else {"status": "failed"}
             try:
                 if signal_error is not None:
                     raise signal_error

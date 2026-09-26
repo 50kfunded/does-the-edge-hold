@@ -8,4 +8,4 @@ def breakout(bars, spec):
     return pd.DataFrame({"known_at": bars.known_at, "target": (bars.close > prior_high).astype(int)})
 
 def register():
-    register_signal("breakout", breakout)
+    register_signal("breakout", breakout, inputs=["known_at", "contract", "close", "high"])
