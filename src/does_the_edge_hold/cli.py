@@ -15,6 +15,8 @@ def main() -> None:
     audit.add_argument("--data-root", type=Path, required=True)
     audit.add_argument("--output", type=Path, default=Path("runs/audit.json"))
     audit.add_argument("--skip-seconds", action="store_true")
+    audit.add_argument("--public-summary", action="store_true",
+                       help="omit per-bar investigation samples for publishing")
     origin = commands.add_parser("provenance", help="compare exports with the local source cache")
     origin.add_argument("--data-root", type=Path, required=True)
     origin.add_argument("--cache-root", type=Path, required=True)
@@ -50,9 +52,11 @@ def main() -> None:
         bars.to_parquet(path, index=False)
         print(f"made {len(bars):,} synthetic minute bars at {path}")
     elif args.command == "audit":
-        from .audit import audit_sources, write_audit
+        from .audit import audit_sources, public_summary, write_audit
 
         report = audit_sources(args.data_root, include_seconds=not args.skip_seconds)
+        if args.public_summary:
+            report = public_summary(report)
         write_audit(report, args.output)
         print(f"audited {len(report['files'])} source files at {args.output}")
     elif args.command == "provenance":
