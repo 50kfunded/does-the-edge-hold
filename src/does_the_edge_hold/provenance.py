@@ -24,7 +24,7 @@ def cache_candidates(cache_root: str | Path, market: str) -> dict[str, list[Path
 
 
 def verify_minute_origin(bars_root: str | Path, cache_root: str | Path,
-                         market: str) -> dict:
+                         market: str, *, original_precision=False) -> dict:
     """Recreate the builder's cache choice and compare every exported bar."""
     market = market.upper()
     candidates = cache_candidates(cache_root, market)
@@ -40,11 +40,12 @@ def verify_minute_origin(bars_root: str | Path, cache_root: str | Path,
     same_times = same_rows and reconstructed.index.equals(export.index)
     same_values = same_times
     if same_times:
-        for name in ("open", "high", "low", "close"):
-            same_values &= bool(np.array_equal(reconstructed[name].to_numpy(dtype="float32"),
-                                                export[name].to_numpy(dtype="float32"), equal_nan=True))
-        same_values &= bool(np.array_equal(reconstructed["volume"].to_numpy(dtype="uint32"),
-                                            export["volume"].to_numpy(dtype="uint32")))
+        for name in ("open", "high", "low", "close", "volume"):
+            dtype = None if original_precision else "uint32" if name == "volume" else "float32"
+            same_values &= bool(np.array_equal(reconstructed[name].to_numpy(dtype=dtype),
+                                                export[name].to_numpy(dtype=dtype), equal_nan=True))
+            if original_precision:
+                same_values &= reconstructed[name].dtype == export[name].dtype
     return {
         "market": market, "selected_root": selected,
         "roll_rule_from_cache_name": "calendar" if "c" in selected else "volume",
@@ -56,5 +57,7 @@ def verify_minute_origin(bars_root: str | Path, cache_root: str | Path,
         "export_rows": len(export), "reconstructed_rows": len(reconstructed),
         "matching_timestamps": bool(same_times), "matching_values": bool(same_values),
         "verified_match": bool(same_times and same_values),
+        "comparison": "exact values and dtypes; no precision cast" if original_precision else "legacy export float32/uint32 comparison",
+        "trust_boundary": "local transformation chain, not authenticated vendor delivery",
         "mapping_status": "not supplied by OHLCV export or cached Parquet slices",
     }

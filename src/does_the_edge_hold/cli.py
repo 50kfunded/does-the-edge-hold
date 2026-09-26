@@ -9,6 +9,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="edge-hold")
     parser.add_argument("--version", action="version", version="%(prog)s 0.1.0")
     commands = parser.add_subparsers(dest="command")
+    intraday_audit = commands.add_parser("intraday-audit", help="check exact-precision sources and fixed weekday windows")
+    intraday_audit.add_argument("--data-root", type=Path, required=True)
+    intraday_audit.add_argument("--cache-root", type=Path, required=True)
+    intraday_audit.add_argument("--plan", type=Path, default=Path("research/intraday/plan.json"))
+    intraday_audit.add_argument("--output", type=Path, required=True)
+    intraday_audit.add_argument("--source-code", nargs="*", type=Path, default=[])
+    intraday_freeze = commands.add_parser("intraday-freeze", help="lock the separate within-date protocol before strategy returns")
+    intraday_freeze.add_argument("--plan", type=Path, default=Path("research/intraday/plan.json"))
+    intraday_freeze.add_argument("--audit", type=Path, required=True)
+    intraday_freeze.add_argument("--output", type=Path, default=Path("research/intraday/plan.lock.json"))
     public_fetch = commands.add_parser("public-fetch", help="snapshot public daily spot candles without an account")
     public_fetch.add_argument("--output", type=Path, required=True)
     public_run = commands.add_parser("public-study", help="run the separately locked spot protocol")
@@ -60,7 +70,15 @@ def main() -> None:
     local.add_argument("--lock", type=Path, default=Path("research-plan.lock.json"))
     local.add_argument("--output", type=Path, default=Path("runs/local"))
     args = parser.parse_args()
-    if args.command == "public-fetch":
+    if args.command == "intraday-audit":
+        from .intraday_audit import run_audit
+        result = run_audit(args.data_root, args.cache_root, args.plan, args.output, local_code_paths=args.source_code)
+        print(f"source-day evidence: {result['readiness']['status']}; {args.output / 'audit.json'}")
+    elif args.command == "intraday-freeze":
+        from .intraday_plan import freeze
+        result = freeze(args.plan, args.audit, args.output)
+        print(f"frozen source-day protocol {result['plan_sha256']}")
+    elif args.command == "public-fetch":
         import json
         from .public_data import fetch
         print(json.dumps(fetch(args.output), indent=2))

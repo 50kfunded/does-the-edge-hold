@@ -1,0 +1,453 @@
+{
+  "schema": 1,
+  "plan_sha256": "71cbc574f4f600b13617517c5b6808fd43bcd2d80608cc4c17588156f827e522",
+  "sources": [
+    {
+      "market": "NQ",
+      "artifact_sha256": "e821f06b57d03fab2e83ec153a70b53fe9c075abb11b597cedf51d051e061eff",
+      "semantic": {
+        "schema": "ohlcv-utc-ns-f64-v1",
+        "rows": 3462008,
+        "sha256": "31730f2167fe84b8f8e8b5b729a9805062db7fd4f015d6ad02bc7af19566cfaf"
+      },
+      "rows": 3462008,
+      "schema": {
+        "open": "double",
+        "high": "double",
+        "low": "double",
+        "close": "double",
+        "volume": "int64",
+        "ts": "timestamp[ns, tz=UTC]"
+      },
+      "first_utc": "2016-08-12T00:00:00+00:00",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "quality_ready": true,
+      "quality": {
+        "original_float64_int64": true,
+        "minute_aligned": true,
+        "positive_volume": true,
+        "semantic_checks": "finite OHLCV, valid OHLC, unique ordered UTC timestamps"
+      }
+    },
+    {
+      "market": "ES",
+      "artifact_sha256": "f037d66570d55faea5738785209b5124c08127362bff8587700d7a511a2be25b",
+      "semantic": {
+        "schema": "ohlcv-utc-ns-f64-v1",
+        "rows": 3484266,
+        "sha256": "9b39f85c03df363ba4ec3fd9c8d9d9ea40a7d9fe7ada204984aa02e97e9e159c"
+      },
+      "rows": 3484266,
+      "schema": {
+        "open": "double",
+        "high": "double",
+        "low": "double",
+        "close": "double",
+        "volume": "int64",
+        "ts": "timestamp[ns, tz=UTC]"
+      },
+      "first_utc": "2016-08-12T00:00:00+00:00",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "quality_ready": true,
+      "quality": {
+        "original_float64_int64": true,
+        "minute_aligned": true,
+        "positive_volume": true,
+        "semantic_checks": "finite OHLCV, valid OHLC, unique ordered UTC timestamps"
+      }
+    },
+    {
+      "market": "YM",
+      "artifact_sha256": "173cea9d028bdac283e7b790fb95d450ef4eacda747a777b6204c7366be54270",
+      "semantic": {
+        "schema": "ohlcv-utc-ns-f64-v1",
+        "rows": 3409043,
+        "sha256": "55a86372f17ce7ee52edb4f9e44881f0d74152d80ea9d87ab311a9cbc075f306"
+      },
+      "rows": 3409043,
+      "schema": {
+        "open": "double",
+        "high": "double",
+        "low": "double",
+        "close": "double",
+        "volume": "int64",
+        "ts": "timestamp[ns, tz=UTC]"
+      },
+      "first_utc": "2016-08-14T22:00:00+00:00",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "quality_ready": true,
+      "quality": {
+        "original_float64_int64": true,
+        "minute_aligned": true,
+        "positive_volume": true,
+        "semantic_checks": "finite OHLCV, valid OHLC, unique ordered UTC timestamps"
+      }
+    },
+    {
+      "market": "GC",
+      "artifact_sha256": "bfc6b7289fe0917368d41086197430918974b4e177f18aae86a179aa8c854176",
+      "semantic": {
+        "schema": "ohlcv-utc-ns-f64-v1",
+        "rows": 3482922,
+        "sha256": "8c902250361f7be632a22bb60db53e94a1a42d0fd814f75c27f9cbb69ed40416"
+      },
+      "rows": 3482922,
+      "schema": {
+        "open": "double",
+        "high": "double",
+        "low": "double",
+        "close": "double",
+        "volume": "int64",
+        "ts": "timestamp[ns, tz=UTC]"
+      },
+      "first_utc": "2016-08-14T22:00:00+00:00",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "quality_ready": true,
+      "quality": {
+        "original_float64_int64": true,
+        "minute_aligned": true,
+        "positive_volume": true,
+        "semantic_checks": "finite OHLCV, valid OHLC, unique ordered UTC timestamps"
+      }
+    },
+    {
+      "market": "CL",
+      "artifact_sha256": "7130d457edd6be2f81b8c53492d911e5d9ec59af07840618b6891a3f571d765b",
+      "semantic": {
+        "schema": "ohlcv-utc-ns-f64-v1",
+        "rows": 3497569,
+        "sha256": "8bef19bd3e7a43f17419d67f2a0c533ba77bd4ff44b75dbddc4100a405293790"
+      },
+      "rows": 3497569,
+      "schema": {
+        "open": "double",
+        "high": "double",
+        "low": "double",
+        "close": "double",
+        "volume": "int64",
+        "ts": "timestamp[ns, tz=UTC]"
+      },
+      "first_utc": "2016-08-14T22:00:00+00:00",
+      "last_utc": "2026-08-09T23:59:00+00:00",
+      "quality_ready": true,
+      "quality": {
+        "original_float64_int64": true,
+        "minute_aligned": true,
+        "positive_volume": true,
+        "semantic_checks": "finite OHLCV, valid OHLC, unique ordered UTC timestamps"
+      }
+    }
+  ],
+  "origins": [
+    {
+      "market": "NQ",
+      "selected_root": "NQc0",
+      "roll_rule_from_cache_name": "calendar",
+      "candidate_roots": {
+        "NQc0": 64200575
+      },
+      "source_files": [
+        {
+          "name": "databento_NQc0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "0f95b808b2e81850fd71d337e4346ab63017ccfab863941f370cbb458a4445cb",
+          "rows": 1752994
+        },
+        {
+          "name": "databento_NQc0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "b6d0f2d25e51a06c041c5e748999fed102174907ce5f91a9b5579f42b89dfb4d",
+          "rows": 1709014
+        },
+        {
+          "name": "databento_NQc0_ohlcv-1m_365d_ctx.parquet",
+          "sha256": "3367aca6b428cb097408541fff24a63da23df82677eeed6a6b5bebc887a1bba9",
+          "rows": 349241
+        }
+      ],
+      "export_rows": 3462008,
+      "reconstructed_rows": 3462008,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "comparison": "exact values and dtypes; no precision cast",
+      "trust_boundary": "local transformation chain, not authenticated vendor delivery",
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    },
+    {
+      "market": "ES",
+      "selected_root": "ESc0",
+      "roll_rule_from_cache_name": "calendar",
+      "candidate_roots": {
+        "ESc0": 58122459
+      },
+      "source_files": [
+        {
+          "name": "databento_ESc0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "c2ed6ea7f2d8c4faa40bf20edcfb3a8d7a6c2897a59d97f322e8822de61f0f44",
+          "rows": 1756362
+        },
+        {
+          "name": "databento_ESc0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "309220639b33abdfe1de4bc1accbe7bfd6c8460d54e7626260f856e382ab1618",
+          "rows": 1727904
+        },
+        {
+          "name": "databento_ESc0_ohlcv-1m_365d_ctx.parquet",
+          "sha256": "d14da0c951ac03bf509f90e6e099c52845fd2fb8f1fb6e7fa3aa1521182bfb23",
+          "rows": 350482
+        }
+      ],
+      "export_rows": 3484266,
+      "reconstructed_rows": 3484266,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "comparison": "exact values and dtypes; no precision cast",
+      "trust_boundary": "local transformation chain, not authenticated vendor delivery",
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    },
+    {
+      "market": "YM",
+      "selected_root": "YMc0",
+      "roll_rule_from_cache_name": "calendar",
+      "candidate_roots": {
+        "YMc0": 53318501
+      },
+      "source_files": [
+        {
+          "name": "databento_YMc0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "ff82439a1ed3f6afafdc4e39a6373ca08af99d90caf5f03db321a0f8ee139d3e",
+          "rows": 1712574
+        },
+        {
+          "name": "databento_YMc0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "1178f566105c108f1285456402a25838c5f0a944c8e5f176f3f607868dc9bbe9",
+          "rows": 1697841
+        }
+      ],
+      "export_rows": 3409043,
+      "reconstructed_rows": 3409043,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "comparison": "exact values and dtypes; no precision cast",
+      "trust_boundary": "local transformation chain, not authenticated vendor delivery",
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    },
+    {
+      "market": "GC",
+      "selected_root": "GCv0",
+      "roll_rule_from_cache_name": "volume",
+      "candidate_roots": {
+        "GCc0": 1246489,
+        "GCv0": 52513674
+      },
+      "source_files": [
+        {
+          "name": "databento_GCv0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "c31cfd9e65e74d82742cedb3adbaf8db8cf43d94a2637b233fc4b9a4f64d646b",
+          "rows": 1746952
+        },
+        {
+          "name": "databento_GCv0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "a15cea89014a440dfc2b623753c29b1cdeacb927197f475d5c0574bfcde14497",
+          "rows": 1737343
+        }
+      ],
+      "export_rows": 3482922,
+      "reconstructed_rows": 3482922,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "comparison": "exact values and dtypes; no precision cast",
+      "trust_boundary": "local transformation chain, not authenticated vendor delivery",
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    },
+    {
+      "market": "CL",
+      "selected_root": "CLv0",
+      "roll_rule_from_cache_name": "volume",
+      "candidate_roots": {
+        "CLv0": 52179638
+      },
+      "source_files": [
+        {
+          "name": "databento_CLv0_ohlcv-1m_1825d_ctx.parquet",
+          "sha256": "d96fcb2ce38f62f64a954575f9a481a809ec3ea9e0edab9af385a69335af4348",
+          "rows": 1745528
+        },
+        {
+          "name": "databento_CLv0_ohlcv-1m_1825d_off1825_ctx.parquet",
+          "sha256": "051c7d5b12e1f14fa8d696ead633662d3611da7739a8987ca36088dd41328865",
+          "rows": 1753417
+        }
+      ],
+      "export_rows": 3497569,
+      "reconstructed_rows": 3497569,
+      "matching_timestamps": true,
+      "matching_values": true,
+      "verified_match": true,
+      "comparison": "exact values and dtypes; no precision cast",
+      "trust_boundary": "local transformation chain, not authenticated vendor delivery",
+      "mapping_status": "not supplied by OHLCV export or cached Parquet slices"
+    }
+  ],
+  "source_docs": {
+    "schema": 1,
+    "reviewed_utc_date": "2026-09-27",
+    "symbology_url": "https://databento.com/docs/standards-and-conventions/symbology",
+    "historical_url": "https://databento.com/docs/api-reference-historical/symbology/symbology-resolve",
+    "basis": "Historical continuous symbols select an unadjusted tradable instrument for a date. Historical resolver validity uses inclusive/exclusive UTC dates. Calendar rank zero selects the front expiry. These support within-UTC-date continuity as an inference; they do not recover the actual instrument ID.",
+    "decision": "allow conditional within-date accounting for exact-matched calendar NQ/ES/YM; no cross-date holdings or return marks",
+    "excluded_volume_rule": "GC/CL descriptive only; this protocol does not establish operational as-of availability of their volume mapping",
+    "limitations": "local files and filename/source-code chain are not authenticated vendor delivery; no contract names, quotes, tick-time fills or signed mappings supplied",
+    "historical_semantics_reviewed": true
+  },
+  "readiness": {
+    "status": "conditional_source_day_ready",
+    "primary_ready": true,
+    "included": [
+      "NQ",
+      "ES",
+      "YM"
+    ],
+    "excluded": {
+      "GC": [
+        "descriptive only; volume mapping as-of availability not established in this protocol"
+      ],
+      "CL": [
+        "descriptive only; volume mapping as-of availability not established in this protocol"
+      ]
+    },
+    "contract_identity": "unknown",
+    "basis": "historical source-rule inference within UTC date only",
+    "original_roll_aware_study": "blocked independently; this decision cannot authorize it"
+  },
+  "splits": {
+    "NQ": {
+      "development": {
+        "candidate_weekdays": 1406,
+        "complete": 1122,
+        "partial": 269,
+        "empty": 15
+      },
+      "validation": {
+        "candidate_weekdays": 520,
+        "complete": 503,
+        "partial": 13,
+        "empty": 4
+      },
+      "historical_final": {
+        "candidate_weekdays": 680,
+        "complete": 642,
+        "partial": 30,
+        "empty": 8
+      }
+    },
+    "ES": {
+      "development": {
+        "candidate_weekdays": 1406,
+        "complete": 1221,
+        "partial": 170,
+        "empty": 15
+      },
+      "validation": {
+        "candidate_weekdays": 520,
+        "complete": 504,
+        "partial": 12,
+        "empty": 4
+      },
+      "historical_final": {
+        "candidate_weekdays": 680,
+        "complete": 653,
+        "partial": 19,
+        "empty": 8
+      }
+    },
+    "YM": {
+      "development": {
+        "candidate_weekdays": 1406,
+        "complete": 1026,
+        "partial": 364,
+        "empty": 16
+      },
+      "validation": {
+        "candidate_weekdays": 520,
+        "complete": 470,
+        "partial": 46,
+        "empty": 4
+      },
+      "historical_final": {
+        "candidate_weekdays": 680,
+        "complete": 467,
+        "partial": 205,
+        "empty": 8
+      }
+    },
+    "GC": {
+      "development": {
+        "candidate_weekdays": 1406,
+        "complete": 1312,
+        "partial": 77,
+        "empty": 17
+      },
+      "validation": {
+        "candidate_weekdays": 520,
+        "complete": 496,
+        "partial": 19,
+        "empty": 5
+      },
+      "historical_final": {
+        "candidate_weekdays": 680,
+        "complete": 640,
+        "partial": 31,
+        "empty": 9
+      }
+    },
+    "CL": {
+      "development": {
+        "candidate_weekdays": 1406,
+        "complete": 1337,
+        "partial": 52,
+        "empty": 17
+      },
+      "validation": {
+        "candidate_weekdays": 520,
+        "complete": 490,
+        "partial": 25,
+        "empty": 5
+      },
+      "historical_final": {
+        "candidate_weekdays": 680,
+        "complete": 642,
+        "partial": 29,
+        "empty": 9
+      }
+    }
+  },
+  "mask_hashes": {
+    "NQ": "7453d8f230dd1ef7fc361e23f107762c1d6acd102f692da6cec81296535d87ef",
+    "ES": "1e27b084bd7d65c7a25a9ad28cecc9fe6c42168cea48d5f1f581965ab4839745",
+    "YM": "b8602e632fb6940db0d5eba01c45a618c5ff287df0d70740384aee615a551e4a",
+    "GC": "4e2c00301de7840a1665dcac0b9bd505b1459f2ebf62cafae49236e3fd7958ee",
+    "CL": "a3abdc007f9f1845ee98a9cc516a387ba3c983d7a555e2f2a1e521596ab6bd9f"
+  },
+  "coverage_table_hashes": {
+    "NQ": "f201f6f15a5195a2ca68f519ab9e0f6910d5fea17777badaf87bacd51c8ea143",
+    "ES": "c2b4915c8e7ae73119f9e8f256ad10155938cb817d544abd3a888b20f160dbdc",
+    "YM": "f4df5847fd1bec4486d409a25b71d375e69cddb9fba8f2e2fd147b6d7c4ca85a",
+    "GC": "553aef7d43b4400ca1a5ce675e10a5fa7fa9e75bb584675c77465161e0cce7a8",
+    "CL": "9747dbf5a299fa4975ab7a22583ca997e84024401312b68c03a0d31363744770"
+  },
+  "local_source_code": [
+    {
+      "name": "data_store.py",
+      "sha256": "34414d7e1fb94ac64c24002c6f6e52be8b5769e180ab8baa0407f71304f58f9f"
+    },
+    {
+      "name": "data.py",
+      "sha256": "61c5b592351426f08f2c0771ed78713d1287fe658855c8ef66d42bba463cd000"
+    }
+  ],
+  "eligibility": "ex-post exact 240-minute windows only; same source-quality mask for all rules, baselines and scenarios; retrospective conditional returns, not a live 09:00 filter",
+  "runtime_seconds": 36.68745350000245
+}
