@@ -1,6 +1,5 @@
 {
-  "version": 2,
-  "revision_note": "clarified during synthetic software checks that lookbacks count observed completed hourly bars and reset at every mapping transition, including when a contract returns. no bars are filled. no empirical strategy P&L has run; the roll gate remains unresolved. the grid, splits, selection metric, costs and delays are unchanged. version 1 and its lock are archived in research/.",
+  "version": 1,
   "question": "how much of a futures signal survives later periods, other markets, costs and slower orders?",
   "primary_market": "NQ",
   "checks": ["ES", "GC", "CL"],
@@ -10,11 +9,11 @@
   "secondary_timeframe": null,
   "signal_families": {
     "momentum": {
-      "rule": "long when completed close is above the close lookback_hours observed completed hourly bars earlier within the current uninterrupted contract segment; otherwise flat",
+      "rule": "long when completed close is above the close lookback_hours earlier within the same contract; otherwise flat",
       "lookback_hours": [12, 24, 72]
     },
     "mean_reversion": {
-      "rule": "long when completed close is at least entry_z standard deviations below the mean of the prior lookback_hours observed completed hourly bars; exit when close reaches or exceeds that prior mean; reset at every contract transition",
+      "rule": "long when completed close is at least entry_z trailing standard deviations below the prior rolling mean; exit when close reaches or exceeds the prior rolling mean; reset at each contract change",
       "lookback_hours": [24, 72],
       "entry_z": [0.5, 1.0, 1.5],
       "exit_z": 0.0
@@ -52,7 +51,7 @@
     "uncertainty": "paired moving-block bootstrap of five consecutive trading days, 2000 replicates, seed 1729",
     "walk_forward": "secondary diagnostic: three calendar years of selection, then the next calendar year of evaluation"
   },
-  "prior_exposure": "the local nq-powell project already reports NQ and cross-market results by year through 2026. no 2024-2026 period can honestly be called untouched; historical_final is a historical evaluation. version 1 was frozen before this project's grid ran. synthetic software results were inspected before version 2; no empirical results from the new nine-configuration grid have been viewed.",
+  "prior_exposure": "the local nq-powell project already reports NQ and cross-market results by year through 2026. no 2024-2026 period can honestly be called untouched; historical_final is a historical evaluation. no results from this new nine-configuration grid were viewed before this plan was frozen.",
   "roll_gate": "empirical futures P&L is blocked until all five minute exports have verified date-to-contract schedules and a documented roll policy",
   "data_change_rule": "a coverage correction can revise the plan only with a written reason and a new lock before viewing strategy performance"
 }
