@@ -1,30 +1,30 @@
-# local study
+# my local futures check
 
-i checked the six local Parquet files and compared the five minute exports with their source cache.
+i regenerated the six-file audit and five minute-cache comparisons after the repair. all source hashes still match the lock. i read the G: files without changing them.
 
-**the roll gate is unresolved, so i haven't run the empirical P&L grid.** it needs verified contract mapping and causal execution timing. the public example uses synthetic contracts and stays separate.
+**the futures P&L study is still blocked.** no market has the real identity mapping and independently supported advance roll instructions. NQ remains the required primary; a valid optional subset cannot replace it.
 
-GC and CL also need a causal volume-roll policy: a historical switch date alone doesn't justify exiting at the last old-contract minute's open. the current runner blocks that case.
+| source | rows | cache origin |
+| --- | ---: | --- |
+| NQ 1m | 3,462,008 | NQc0 |
+| ES 1m | 3,484,266 | ESc0 |
+| YM 1m | 3,409,043 | YMc0 |
+| GC 1m | 3,482,922 | GCv0 |
+| CL 1m | 3,497,569 | CLv0 |
+| NQ 1s | 60,807,363 | ingestion code names NQ.c.0; reconstruction unverified |
 
-| file | rows | first UTC bar | last UTC bar |
-| --- | ---: | --- | --- |
-| NQ 1m | 3,462,008 | 2016-08-12T00:00:00+00:00 | 2026-08-09T23:59:00+00:00 |
-| ES 1m | 3,484,266 | 2016-08-12T00:00:00+00:00 | 2026-08-09T23:59:00+00:00 |
-| YM 1m | 3,409,043 | 2016-08-14T22:00:00+00:00 | 2026-08-09T23:59:00+00:00 |
-| GC 1m | 3,482,922 | 2016-08-14T22:00:00+00:00 | 2026-08-09T23:59:00+00:00 |
-| CL 1m | 3,497,569 | 2016-08-14T22:00:00+00:00 | 2026-08-09T23:59:00+00:00 |
-| NQ 1s | 60,807,363 | 2021-08-20T00:00:00+00:00 | 2026-08-21T20:59:59+00:00 |
+the audit still finds no duplicates, out-of-order timestamps, missing values, invalid OHLC or nonpositive volume. gaps are labelled as candidates, not verified product closures. detailed bar samples stay local.
 
-## minute rows in each part
-
-| market | development | validation | historical final |
+| market | development rows | validation rows | final rows |
 | --- | ---: | ---: | ---: |
-| NQ | 1,847,378 | 702,053 | 912,577 |
-| ES | 1,866,679 | 702,856 | 914,731 |
-| YM | 1,832,708 | 692,593 | 883,742 |
-| GC | 1,874,050 | 696,406 | 912,466 |
-| CL | 1,890,751 | 699,430 | 907,388 |
+| NQ | 1,847,378 | 702,053 | 912,457 |
+| ES | 1,866,679 | 702,856 | 914,611 |
+| YM | 1,832,708 | 692,593 | 883,639 |
+| GC | 1,874,050 | 696,406 | 912,347 |
+| CL | 1,890,751 | 699,430 | 907,268 |
 
-NQ, ES and YM matched calendar continuous series. GC and CL matched volume continuous series. the second bars overlap the minute data; i haven't used them for fill claims.
+these counts now use the declared New York session dates. the final partial Monday session is outside the final split. the original audit's UTC coverage dates stay unchanged.
 
-i'd already seen results through 2026 in an older project. the final period is a historical check, not an untouched holdout. detailed bar samples stay in the local run folder; the public audit contains aggregate metadata.
+[audit](local-data-audit.json) · [cache provenance](local-provenance.json) · [regenerated status](repair/local-regeneration.json) · [missing artifacts](../docs/roll-gate.md)
+
+the separate [public spot study](public-spot/report.md) is real empirical work, but it doesn't validate these futures files.

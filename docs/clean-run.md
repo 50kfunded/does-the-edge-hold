@@ -1,13 +1,16 @@
-# clean run
+# the clean checkout
 
-i cloned the public repo into a separate folder and installed a wheel in a fresh Python 3.12 environment. i then fetched the final timestamp and roll-gate fixes locally, before Push 5. no market files were copied into that checkout, and Databento wasn't installed.
+i cloned the public repair branch at `2770e86`, built a wheel there and installed it in a fresh Python 3.12 environment. system packages were disabled. no vendor files were copied and Databento wasn't installed.
 
-all 30 tests passed. `edge-hold example` ran 44 cases on 43,200 synthetic minutes, with no failed runs, and generated the tables and plots in about 9.3 seconds. its metrics matched the development run; the Parquet file hash can differ when writer metadata changes between library versions.
+all 55 tests passed. the installed command ran 55 synthetic cases on 43,200 minute bars, with no failures, and generated the report and three plots in about 21.4 seconds. package source digests matched the development code; every financial metric matched within the declared numerical tolerance. the input Parquet hash differed with the pandas writer version, so i compared the financial results and recorded both environments.
 
-i used the same installed code with `local-report --data-root G:\localview\data\bars --cache-root G:\nq-powell\data\cache`. the six source hashes still matched the frozen lock. the audit took about 35 seconds; the regenerated study stayed blocked because the mapping and a causal volume-roll policy were missing.
+i then fetched `a5c53c1` and passed its extra stale-seal regression. that change added test assertions, with no package-code change. [GitHub's check](https://github.com/50kfunded/does-the-edge-hold/actions/runs/36275256718) passed on Python 3.11 and 3.12.
 
-i also checked the tracked files and reachable Git history for vendor bars, mapping files, keys and per-bar audit samples. the public audit only has aggregate metadata. the detailed samples are in an ignored local folder.
+the same wheel ran `local-report` against `G:\localview\data\bars` and the local cache. all six source hashes still matched the frozen lock. it regenerated the audit and stayed blocked before empirical futures P&L.
 
-[reproducibility.json](../reports/reproducibility.json) records the checked revision and package versions. the [GitHub check](../.github/workflows/check.yml) repeats the tests, synthetic example and public-file scan on Python 3.11 and 3.12.
+the tracked-file and reachable-history scan found no vendor bars, mapping/instruction files, keys or per-bar audit samples. raw public responses also stayed local. the final publishing scan uses `python scripts/check_public.py`.
 
-to repeat the local publishing check, run `python scripts/check_public.py` from the repo root. the empirical runner still needs real roll evidence before it can be tested on the full market history.
+[reproducibility.json](../reports/reproducibility.json) records the wheel, package versions, source digests and checked revisions. [the older receipt](../reports/repair/pre-review-reproducibility.json) remains separate evidence for the original pre-Push-5 check.
+
+later commits update docs and derived sample artifacts. they don't turn synthetic checks into futures validation.
+

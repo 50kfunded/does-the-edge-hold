@@ -1,23 +1,28 @@
-# research plan
+# the choices i froze
 
-i froze the first plan before running the strategy grid. the current choices are in [research-plan.json](../research-plan.json), and [the lock](../research-plan.lock.json) records the plan and data hashes.
+i kept [v1](../research/v1-plan.json) and [v2](../research/v2-plan.json), with their original locks. [futures v3](../research-plan.json) fixes the reviewed timing, daily clock and matched scenarios. no empirical futures grid has run.
 
-i kept [the first plan](../research/v1-plan.json) and [its lock](../research/v1-plan.lock.json). version 2 makes one detail clearer: the lookback counts observed hourly bars, so it can cross a market closure. i noticed the wording while checking the synthetic run. the settings and splits stayed the same, and the real-data grid hasn't run.
+the futures plan keeps NQ primary, with ES/GC/CL as checks and YM reported separately. it uses one-hour signals: momentum at 12/24/72 completed bars and mean reversion at 24/72 bars with entry z of 0.5/1/1.5. that's nine settings. lookbacks count observed bars; history resets at each contract change.
 
-i'm using 1-hour bars made from the minute files. a signal is known when its hour ends, and the earliest fill is the next available minute open plus the delay. signals restart after each contract roll.
+| part | futures session-date labels | separate public spot UTC dates |
+| --- | --- | --- |
+| development | 2016-08-12 to 2022-01-01 | 2017-01-01 to 2022-01-01 |
+| validation | 2022-01-01 to 2024-01-01 | 2022-01-01 to 2024-01-01 |
+| historical final | 2024-01-01 to 2026-08-10 | 2024-01-01 to 2026-09-01 |
 
-the grid has nine settings: momentum with 12, 24 or 72 observed hourly bars, and mean reversion with 24 or 72 bars at entry z-scores of 0.5, 1 or 1.5. i test NQ first and keep its development pick for ES, GC and CL. YM is a separate check because it's another equity index.
+ends are exclusive. the futures bounds refer to New York session-date labels stored at UTC midnight. the terminal partial Monday session is outside the final split. the whole-run diagnostic still retains observed data.
 
-| part | UTC dates |
-| --- | --- |
-| development | 12 aug 2016 to 1 jan 2022 |
-| validation | 1 jan 2022 to 1 jan 2024 |
-| historical final | 1 jan 2024 to 10 aug 2026 |
+futures base costs are $2.50 plus one tick per side, delayed one minute. zero cost and higher cost keep that delay. a 60-minute delay keeps base costs; combined stress changes both. starting capital is $100k per full contract. the development choice needs 20 entries and the highest base net daily Sharpe; ties use fewer fills then configuration ID.
 
-i pick the development winner by net daily Sharpe in the base case, with at least 20 entries. ties go to fewer fills, then the setting's name. i keep the other results, including failed runs, and don't use later results to change the pick.
+## the separate spot case
 
-the base case is $2.50 commission and one tick of slippage per side, with a one-minute delay. i also test zero cost and delay, $5 plus two ticks per side with a five-minute delay, and the base costs with a 60-minute delay. each market starts with a stated $100,000 and holds one full-size contract or stays flat. these are assumptions from bars, not observed bid/ask fills.
+i audited the coverage, then froze [the spot plan](../research/public-spot/plan.json) before strategy returns. it uses 14 settings: momentum at 7/14/30/60/120 daily bars, and mean reversion at 14/30/60 bars with the same three entry z values. BTC is primary; the BTC choice is carried to ETH. both are required in this case.
 
-i've already seen NQ and other market results through 2026 in my older `nq-powell` project. that means the last period is a historical check, not untouched data. if the data audit forces a change, i'll record why and freeze a new plan before looking at strategy results.
+base costs are assumed 10 bps fee and 5 bps slippage per side, with one extra day after the completed daily signal. cost-only stress doubles the rates; delay-only stress adds two or three days instead; combined stress does both. one coin is funded from $1m cash, with no borrowing or interest. the development minimum is ten entries.
 
-the [roll check](roll-gate.md) is still unresolved, so the real-data P&L grid is blocked. the synthetic example can run now.
+both plans predeclare gross-to-net survival, selected vs typical later results, rank stability, cross-market transfer and matched cost/delay effects. paired circular block lengths are 3/5/10, with 2,000 draws and seed 1729. yearly selection is a continuous-state diagnostic, not an executed switching portfolio.
+
+i'd already seen futures results through 2026 in the older project. broad crypto history was also known. these are historical evaluations, not pristine holdouts. a prospective check needs its future dates and fixed choices committed before those results exist.
+
+the protocol lock records choices and audited source hashes. a separate execution manifest seals code, actual callables, instrument/accounting metadata, roll evidence and dependency versions. output folders refuse overwrites; implementation changes get new run identities.
+

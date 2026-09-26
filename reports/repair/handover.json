@@ -1,0 +1,397 @@
+{
+  "status": "research prototype; software repair and real public spot case delivered; original futures objective unfinished",
+  "approved_stages": 12,
+  "reviewed_baseline": "f2fd1a1ea71b8a3214795ca570ffd3fdbb486c1d",
+  "checked_code_revision": "2770e865be2093b1f2149db306d0f0f001c656f3",
+  "checked_additional_tests_revision": "a5c53c10f1c0690762fc8e36bda2e3d5c3d070fb",
+  "github_check": {
+    "id": 36275256718,
+    "conclusion": "success",
+    "url": "https://github.com/50kfunded/does-the-edge-hold/actions/runs/36275256718"
+  },
+  "futures_protocol": {
+    "frozen_utc": "2026-09-26T11:33:06.068353+00:00",
+    "plan_sha256": "01740b8c393962fced7960b1228b90d6451bedafda65f955a8a64b19b53ca0bf",
+    "source_hashes": {
+      "CL_1m": "7442200390a3485769b09888333a7cc0a0755d771a32e38d84b90adc9271e526",
+      "ES_1m": "47a5239dfcd60d1ed50fcfc9313c9ec2f39c8b3ed2a58e538bc95a3f77b313a4",
+      "GC_1m": "5e38c9e685b7671ecd92b4ee57d1427eb012d7e2ba5bafa155f8a175c1ae3e50",
+      "NQ_1m": "1051771c7d3e65b55d9167c651155b91bef3332c84483197e6ebdb648a047499",
+      "NQ_1s": "4d8393cf93ea1c5188288ada8cd623c536c6985b9ce741986f7f208f73baf6a7",
+      "YM_1m": "997ad6aea84e571385a5604fe23c53f9403881ddf41ec64be8c2494ec1ba5bcc"
+    },
+    "version": 3
+  },
+  "spot_protocol": {
+    "frozen_utc": "2026-09-26T21:35:51.145959+00:00",
+    "plan_sha256": "8789728207a05be9c0419ec2792b04337fc8dbc3fac2ae705c767581ad3092f6",
+    "source_hashes": {
+      "BTC-USD_1d": "4bab0fac667351f73517e42e5d1d40e923467e544345636d7ebdb8ca72e272ff",
+      "ETH-USD_1d": "d268c8ec8a1e08a3e3ea6c9378d2cf6b174852af1671e302b5a0ac2de72ade36"
+    },
+    "version": 1
+  },
+  "spot_universe": [
+    "BTC-USD",
+    "ETH-USD"
+  ],
+  "futures_included": [],
+  "futures_excluded": {
+    "NQ": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ],
+    "ES": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ],
+    "GC": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ],
+    "CL": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ],
+    "YM": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ]
+  },
+  "public_result": {
+    "status": "historical_public_spot",
+    "primary": "BTC-USD",
+    "included": [
+      "BTC-USD",
+      "ETH-USD"
+    ],
+    "excluded": {},
+    "futures_status": "blocked; no mapping or advance-policy evidence",
+    "markets": {
+      "BTC-USD": {
+        "run_count": 96,
+        "failed_runs": 0,
+        "development_winner": "mom-30",
+        "primary_pick": "mom-30",
+        "execution_sha256": "a9632ef0f52627e53fa442bf970953cac5101f08349c33bf6bfccf7c08622976"
+      },
+      "ETH-USD": {
+        "run_count": 96,
+        "failed_runs": 0,
+        "development_winner": "mom-14",
+        "primary_pick": "mom-30",
+        "execution_sha256": "97953f8084a72bd69f0e35ea367aab432aa5e75b81f0d5a3d34dfceb0f8e0383"
+      }
+    }
+  },
+  "clean_check": {
+    "checked_code_revision": "2770e865be2093b1f2149db306d0f0f001c656f3",
+    "clean_checkout_revision": "a5c53c10f1c0690762fc8e36bda2e3d5c3d070fb",
+    "python": "3.12.10",
+    "packages": {
+      "numpy": "2.5.3",
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "matplotlib": "3.11.2",
+      "psutil": "7.2.2",
+      "pytest": "9.1.1",
+      "scipy": "1.18.1"
+    },
+    "include_system_site_packages": false,
+    "databento_installed": false,
+    "wheel_sha256": "0823c4d50f916b1f0da718c9a4f2593c502d90d92c2651c676af52d460276f5d",
+    "install": "fresh public GitHub clone, non-editable wheel in an isolated venv",
+    "tests": 55,
+    "synthetic_cases": 55,
+    "synthetic_rows": 43200,
+    "synthetic_failed_runs": 0,
+    "synthetic_financial_metrics_match": true,
+    "package_source_digests_match_development": true,
+    "synthetic_runtime_seconds": 21.360420699995302,
+    "public_file_and_history_scan_passed": true,
+    "full_test_revision": "2770e865be2093b1f2149db306d0f0f001c656f3",
+    "additional_seal_regression_revision": "a5c53c10f1c0690762fc8e36bda2e3d5c3d070fb",
+    "local_source_hashes_match_frozen_lock": true,
+    "local_study_status": "blocked",
+    "empirical_futures_pnl_calculated": false,
+    "local_audit_seconds_sum": 32.24,
+    "local_file_count": 6,
+    "tested_source_code_sha256": {
+      "__init__.py": "844ac694e3ad0f2c6d6db30ff23c5a229578a26a031807d148a2ad8019cf29bc",
+      "adapters.py": "d846d0a2b48b672dee4ad72598e28249593c79049ca38a62a8ed54fa0e5ae26a",
+      "audit.py": "f2b4a03f4a81e69cf6c5f7fcbf77437855dcaf88cd31a3a30a9a69b08f9dcc4c",
+      "cli.py": "53ef5b144be16a9a9a94dbccbcece0e1a5c48fe9c9d9a69fef7e40661db71b36",
+      "daily_clock.py": "e3c0e0f87af24f0b59b4882c2da1e9107969b78a8019f63eb00543c60b58d246",
+      "data.py": "61e26c165696eb866a2e5c4f6f4e55a113ba6ef47f37eb090f38197f530448ce",
+      "example.py": "3a2c4c1d71cc561c0b4a638c559229e90df37edc1bca58f539b885a023e137b5",
+      "execution.py": "897c1e8f5d041f7c6daf6bed8b8a5776628f1a53074593aef92b9ecfd2780a6d",
+      "experiments.py": "8c9bb0ffda966662b2fdfe3fe2d21a8de65dd9919336e05520883359ef55b158",
+      "ledger.py": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329",
+      "local_report.py": "a558bb2b4a997d8809ab1c8c777a18b35eb54f92db96da4c4df930c10e351cbe",
+      "metrics.py": "13ca8d80f27f9e8e4cdc15cd6abf48f18ab3dfbddd5d11afe917aefbbd21877b",
+      "plan.py": "fb0a365923db35111bdadfe8330f35b1a7d0e4278a9def9efd0d23d6d3f916b9",
+      "provenance.py": "1172bc2f0e947a213812d023ea0e06f84ac56415449ff51c40e78b7d8241fd9c",
+      "public_data.py": "b573e9a69f9ab62fd46bb3144cab3c3447d9b02d11cc7e32d8af2c0196467752",
+      "public_study.py": "180b151d0e7d22bdcd2354f2efef86d895b10b403fbd4dfa2ee6df990494d7cf",
+      "reporting.py": "758876b6c20e530ff5516fb9f7f4946465ab0b872f98a1120e4ab302a62057d4",
+      "resolve.py": "7b812fad3ad17b6ef1a47edb03b6d6b5333735b018f9a5ab1c83542d2fb69f74",
+      "roll_gate.py": "94f85b8a205d6215bf60573210e62cddf191ff3eab0ceff5eeb3b9778cce734c",
+      "rolls.py": "d47a9189b800e32885bb1c1f977bf7cd20c58da9559cc4b150c427952e98cb98",
+      "signals.py": "2aa72b2c807f9ea8ca9322d70ef5776b474245d147c8d25b8820c966390887c0",
+      "specs.py": "a11d9eb9709a088a89e257e91143fded6a7ba852356befeb2c15530d277ce68e",
+      "spot.py": "8d1c8eb668736f38c12ecfd0732627339239199210dcde02733570608b7598c5",
+      "synthetic.py": "71badced0678ea224967eec8bcdb2df5810cf3bb3efa56a0544533713c9aae4d",
+      "timing.py": "5ce257d5e922e01d7ac3bbdc3a245dfa3c4d6c2c8dd5814c0d06b0bd47783603",
+      "uncertainty.py": "5bbb86f071df89f927903f50ca134ec2f6c74901bc6f47f566255d24bb71a384",
+      "walk_forward.py": "6f38018c3600a4cf2af5edc94e10af4b709e01d76b851ffe3e207a102d32f66b"
+    }
+  },
+  "benchmarks": {
+    "10000": {
+      "scope": "synthetic full grid",
+      "rows": 10000,
+      "run_count": 55,
+      "failed_runs": 0,
+      "audit_rows": 10000,
+      "exact_cache_match": true,
+      "phases": {
+        "generation": {
+          "seconds": 0.03436900000087917,
+          "peak_rss_bytes": 137142272,
+          "initial_rss_bytes": 129093632
+        },
+        "ingestion": {
+          "seconds": 0.02067920000263257,
+          "peak_rss_bytes": 140828672,
+          "initial_rss_bytes": 137121792
+        },
+        "audit": {
+          "seconds": 0.01794299999892246,
+          "peak_rss_bytes": 142524416,
+          "initial_rss_bytes": 140820480
+        },
+        "provenance": {
+          "seconds": 0.027145499996549916,
+          "peak_rss_bytes": 148119552,
+          "initial_rss_bytes": 142520320
+        },
+        "evaluation": {
+          "seconds": 6.289973400002054,
+          "peak_rss_bytes": 152387584,
+          "initial_rss_bytes": 148254720
+        },
+        "report": {
+          "seconds": 0.5620465999963926,
+          "peak_rss_bytes": 166457344,
+          "initial_rss_bytes": 152367104
+        }
+      },
+      "environment": {
+        "python": "3.12.10",
+        "platform": "Windows-10-10.0.19045-SP0",
+        "logical_cpus": 12,
+        "physical_cpus": 6,
+        "ram_bytes": 25674412032,
+        "packages": {
+          "numpy": "2.5.3",
+          "pandas": "3.0.5",
+          "pyarrow": "25.0.1",
+          "psutil": "7.2.2"
+        },
+        "git_revision": "02f08002f2db9f89db1e3265c837f0a7c29e92b8",
+        "rss_method": "absolute process RSS sampled every 10 ms; includes retained inputs and allocator memory, excludes child processes; one fresh worker per size",
+        "background_activity": "development snapshot; interactive Windows host"
+      },
+      "limits": "one whole market is loaded for evaluation/provenance; audit uses bounded batches; no streaming execution claim"
+    },
+    "100000": {
+      "scope": "synthetic full grid",
+      "rows": 100000,
+      "run_count": 55,
+      "failed_runs": 0,
+      "audit_rows": 100000,
+      "exact_cache_match": true,
+      "phases": {
+        "generation": {
+          "seconds": 0.13959290000639157,
+          "peak_rss_bytes": 157659136,
+          "initial_rss_bytes": 128991232
+        },
+        "ingestion": {
+          "seconds": 0.04291920000105165,
+          "peak_rss_bytes": 183148544,
+          "initial_rss_bytes": 152338432
+        },
+        "audit": {
+          "seconds": 0.0580915999962599,
+          "peak_rss_bytes": 200220672,
+          "initial_rss_bytes": 183144448
+        },
+        "provenance": {
+          "seconds": 0.04504119999910472,
+          "peak_rss_bytes": 204636160,
+          "initial_rss_bytes": 190943232
+        },
+        "evaluation": {
+          "seconds": 43.16669140000158,
+          "peak_rss_bytes": 229597184,
+          "initial_rss_bytes": 197439488
+        },
+        "report": {
+          "seconds": 0.5662923999989289,
+          "peak_rss_bytes": 210948096,
+          "initial_rss_bytes": 194859008
+        }
+      },
+      "environment": {
+        "python": "3.12.10",
+        "platform": "Windows-10-10.0.19045-SP0",
+        "logical_cpus": 12,
+        "physical_cpus": 6,
+        "ram_bytes": 25674412032,
+        "packages": {
+          "numpy": "2.5.3",
+          "pandas": "3.0.5",
+          "pyarrow": "25.0.1",
+          "psutil": "7.2.2"
+        },
+        "git_revision": "02f08002f2db9f89db1e3265c837f0a7c29e92b8",
+        "rss_method": "absolute process RSS sampled every 10 ms; includes retained inputs and allocator memory, excludes child processes; one fresh worker per size",
+        "background_activity": "read-only local-data audit ran concurrently during part of evaluation"
+      },
+      "limits": "one whole market is loaded for evaluation/provenance; audit uses bounded batches; no streaming execution claim"
+    },
+    "1000000": {
+      "scope": "synthetic full grid",
+      "rows": 1000000,
+      "run_count": 55,
+      "failed_runs": 0,
+      "audit_rows": 1000000,
+      "exact_cache_match": true,
+      "execution_sha256": "e9a50590f080c6d834e3b7af70b51358b9fe47e865a19a82379327f2d6f9277c",
+      "phases": {
+        "generation": {
+          "seconds": 0.7820002999942517,
+          "peak_rss_bytes": 301154304,
+          "initial_rss_bytes": 129282048
+        },
+        "ingestion": {
+          "seconds": 0.3600834000026225,
+          "peak_rss_bytes": 302460928,
+          "initial_rss_bytes": 192155648
+        },
+        "audit": {
+          "seconds": 0.5482592000043951,
+          "peak_rss_bytes": 319389696,
+          "initial_rss_bytes": 302448640
+        },
+        "provenance": {
+          "seconds": 0.23928819999855477,
+          "peak_rss_bytes": 435789824,
+          "initial_rss_bytes": 308305920
+        },
+        "evaluation": {
+          "seconds": 404.6298225999999,
+          "peak_rss_bytes": 548499456,
+          "initial_rss_bytes": 402366464
+        },
+        "report": {
+          "seconds": 1.4106360000005225,
+          "peak_rss_bytes": 441413632,
+          "initial_rss_bytes": 382914560
+        }
+      },
+      "environment": {
+        "python": "3.12.10",
+        "platform": "Windows-10-10.0.19045-SP0",
+        "logical_cpus": 12,
+        "physical_cpus": 6,
+        "ram_bytes": 25674412032,
+        "packages": {
+          "numpy": "2.5.3",
+          "pandas": "3.0.5",
+          "pyarrow": "25.0.1",
+          "psutil": "7.2.2"
+        },
+        "git_revision": "02f08002f2db9f89db1e3265c837f0a7c29e92b8",
+        "rss_method": "absolute process RSS sampled every 10 ms; includes retained inputs and allocator memory, excludes child processes; one fresh worker per size",
+        "background_activity": "documentation work and one test run overlapped; no concurrent benchmark worker"
+      },
+      "limits": "one whole market is loaded for evaluation/provenance; audit uses bounded batches; no streaming execution claim"
+    },
+    "public-spot": {
+      "scope": "real public spot; complete 192-run declared grid",
+      "rows": 7060,
+      "run_count": 192,
+      "matches_published_financial_metrics": true,
+      "phases": {
+        "provenance_and_replay": {
+          "seconds": 0.31320530000084545,
+          "peak_rss_bytes": 144928768,
+          "initial_rss_bytes": 129470464
+        },
+        "ingestion": {
+          "seconds": 0.004605300004186574,
+          "peak_rss_bytes": 141758464,
+          "initial_rss_bytes": 141295616
+        },
+        "audit": {
+          "seconds": 0.015621700003976002,
+          "peak_rss_bytes": 141758464,
+          "initial_rss_bytes": 141754368
+        },
+        "evaluation": {
+          "seconds": 127.24450989999605,
+          "peak_rss_bytes": 158724096,
+          "initial_rss_bytes": 141754368
+        },
+        "uncertainty_and_report": {
+          "seconds": 4.164213299998664,
+          "peak_rss_bytes": 252469248,
+          "initial_rss_bytes": 158670848
+        }
+      },
+      "environment": {
+        "python": "3.12.10",
+        "platform": "Windows-10-10.0.19045-SP0",
+        "logical_cpus": 12,
+        "physical_cpus": 6,
+        "ram_bytes": 25674412032,
+        "packages": {
+          "numpy": "2.5.3",
+          "pandas": "3.0.5",
+          "pyarrow": "25.0.1",
+          "psutil": "7.2.2"
+        },
+        "git_revision": "2a59fed34f520fc14f5a579c7c1b45be31f4a3bc",
+        "rss_method": "absolute process RSS sampled every 10 ms; includes retained inputs and allocator memory, excludes child processes; one fresh worker per size",
+        "background_activity": "public example and test work overlapped briefly; financial equality asserted for every published run"
+      }
+    }
+  },
+  "remaining_required_artifacts": [
+    "date-valid continuous-to-instrument identities tied to the exact five futures exports",
+    "independent advance roll availability evidence, known/executable/deadline instructions and source hashes"
+  ],
+  "additional_limits": [
+    "NQ second-bar source reconstruction unverified",
+    "product-specific holiday calendars unverified",
+    "no prospective holdout, actual fill/spread/impact measurement or outside adoption",
+    "evaluator loads one whole market"
+  ],
+  "commits": [
+    "a5c53c1 reject a stale seal after changing the signal",
+    "2770e86 check the larger runs",
+    "2a59fed keep raw-time split counts working too",
+    "4dadbf8 close the remaining input checks",
+    "02f0800 show what held up",
+    "00e2a56 merge the public spot study",
+    "ba0aa2e run the study that the data supports",
+    "3756b00 check the offline spot path too",
+    "2cb7f00 compare snapshot timestamps in the same unit",
+    "ce5f9fc add a separately locked spot study",
+    "a36e569 split costs from order delays",
+    "5c55039 open up the research grid",
+    "2508b76 record what each run used",
+    "a995e89 use one session clock",
+    "3fdda11 let valid markets run",
+    "dd0329a make roll exits causal",
+    "a3ea4c3 fix the contract resolver",
+    "3dde4e9 write down what's still blocked"
+  ]
+}

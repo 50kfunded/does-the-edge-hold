@@ -1,6 +1,20 @@
 {
+  "version": 3,
   "scope": "synthetic only",
   "configuration_count": 9,
+  "prior_exposure": "generated bars and earlier synthetic software outputs were inspected; not empirical research",
+  "statistics": {
+    "clock": {
+      "name": "utc_calendar",
+      "periods_per_year": 365
+    },
+    "block_lengths": [
+      3,
+      5,
+      10
+    ],
+    "replicates": 2000
+  },
   "signal_families": {
     "momentum": {
       "lookback_hours": [
@@ -45,7 +59,7 @@
         "name": "gross_reference",
         "commission_usd_per_side": 0,
         "slippage_ticks_per_side": 0,
-        "delay_minutes": 0
+        "delay_minutes": 1
       },
       {
         "name": "base",
@@ -57,12 +71,18 @@
         "name": "higher_cost",
         "commission_usd_per_side": 5,
         "slippage_ticks_per_side": 2,
-        "delay_minutes": 5
+        "delay_minutes": 1
       },
       {
         "name": "one_bar_late",
         "commission_usd_per_side": 2.5,
         "slippage_ticks_per_side": 1,
+        "delay_minutes": 60
+      },
+      {
+        "name": "combined_stress",
+        "commission_usd_per_side": 5,
+        "slippage_ticks_per_side": 2,
         "delay_minutes": 60
       }
     ]

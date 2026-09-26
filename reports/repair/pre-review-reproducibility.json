@@ -1,0 +1,25 @@
+{
+  "checked_code_revision": "baa4fb460eedd686a91d065494c198832edd1d3e",
+  "python": "3.12.10",
+  "packages": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "pyarrow": "25.0.1",
+    "matplotlib": "3.11.2",
+    "psutil": "7.2.2",
+    "pytest": "9.1.1",
+    "scipy": "1.18.1"
+  },
+  "databento_installed": false,
+  "test_count": 30,
+  "synthetic_run_count": 44,
+  "synthetic_failed_runs": 0,
+  "synthetic_minutes": 43200,
+  "synthetic_metrics_match_development_run": true,
+  "synthetic_runtime_seconds": 9.972312699999975,
+  "local_audit_runtime_seconds": 34.83,
+  "local_source_hashes_match_frozen_lock": true,
+  "local_study_status": "blocked",
+  "empirical_pnl_calculated": false,
+  "setup": "public GitHub clone, then fetched the final timestamp and roll-gate fixes locally before Push 5; isolated venv, wheel install, no editable install or copied market data"
+}
