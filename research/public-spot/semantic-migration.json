@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "purpose": "post-research identity migration; original records unchanged",
+  "old_lock_artifact_sha256": "afc3ed6066374646cf8beb9b94aa62a99c0728a97337f585dc1bb24164a6f663",
+  "old_protocol_sha256": "8789728207a05be9c0419ec2792b04337fc8dbc3fac2ae705c767581ad3092f6",
+  "new_protocol_sha256": "e4e6544bb1922511a13aa08aa288ec72bd0dc3d42f80316b04305fbb58d99ca5",
+  "sources": [
+    {
+      "market": "BTC-USD",
+      "resolution": "1d",
+      "sha256": "4bab0fac667351f73517e42e5d1d40e923467e544345636d7ebdb8ca72e272ff",
+      "semantic": {
+        "schema": "ohlcv-utc-ns-f64-v1",
+        "rows": 3530,
+        "sha256": "7d03e6ab4b5b17f85b639c5179dc16e51decef1136b1bb4a2501f63de2022f8a"
+      },
+      "rows": 3530,
+      "first_utc": "2017-01-01T00:00:00+00:00",
+      "last_utc": "2026-08-31T00:00:00+00:00",
+      "missing_calendar_days": 0,
+      "outside_window_days": 0,
+      "maximum_open_usd": 124723.57,
+      "quality_status": "ready",
+      "exact_response_replay": true,
+      "request_count": 15
+    },
+    {
+      "market": "ETH-USD",
+      "resolution": "1d",
+      "sha256": "d268c8ec8a1e08a3e3ea6c9378d2cf6b174852af1671e302b5a0ac2de72ade36",
+      "semantic": {
+        "schema": "ohlcv-utc-ns-f64-v1",
+        "rows": 3530,
+        "sha256": "7f352e3418ea17e42420b4450b2703edde57d28c641dad126326d64a3016ac63"
+      },
+      "rows": 3530,
+      "first_utc": "2017-01-01T00:00:00+00:00",
+      "last_utc": "2026-08-31T00:00:00+00:00",
+      "missing_calendar_days": 0,
+      "outside_window_days": 0,
+      "maximum_open_usd": 4830.18,
+      "quality_status": "ready",
+      "exact_response_replay": true,
+      "request_count": 15
+    }
+  ],
+  "exact_raw_response_replay": true,
+  "note": "public raw responses remain local; no redistribution permission is assumed"
+}

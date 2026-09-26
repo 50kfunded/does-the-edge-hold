@@ -39,6 +39,18 @@ def test_wholly_synthetic_public_snapshot_through_sealed_study(tmp_path, monkeyp
     assert (output / "BTC-USD/report.md").is_file()
     with pytest.raises(FileExistsError):
         run_public(snapshot, paths[0], paths[2], output)
+    # Versioned migration accepts a different writer only after exact raw replay.
+    semantic_plan = copy.deepcopy(plan)
+    semantic_plan.update(version=2, data_identity="ohlcv-utc-ns-f64-v1")
+    semantic_paths = [tmp_path / n for n in ("semantic-plan.json", "semantic-audit.json", "semantic-lock.json")]
+    semantic_paths[0].write_text(json.dumps(semantic_plan))
+    semantic_paths[1].write_text(json.dumps(audit_snapshot(snapshot)))
+    freeze(*semantic_paths)
+    original = pd.read_parquet(snapshot / "BTC-USD.parquet")
+    original.to_parquet(snapshot / "BTC-USD.parquet", compression="gzip", row_group_size=7, index=False)
+    audit_snapshot(snapshot, semantic=True)
+    semantic_result = run_public(snapshot, semantic_paths[0], semantic_paths[2], tmp_path / "semantic-study")
+    assert all(r["failed_runs"] == 0 for r in semantic_result["markets"].values())
     file = snapshot / "BTC-USD.parquet"
     bars = pd.read_parquet(file)
     bars.loc[0, "open"] += 1
