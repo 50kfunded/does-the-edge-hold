@@ -1,73 +1,148 @@
-"""Small tables and figures for an audit run."""
-
-from __future__ import annotations
-
+"""Tables, normalized figures and descriptive research answers."""
 from pathlib import Path
-
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+PERIODS = ("development", "validation", "historical_final")
+BASELINES = ("flat", "always_long")
 
-def market_report(report: dict, output: Path, daily: dict[str, pd.Series] | None = None) -> None:
+def diagnostics(report):
+    rows = report["runs"]
+    configs = sorted({r["config_id"] for r in rows} - set(BASELINES))
+    lookup = {(r["config_id"], r["scenario"], r["period"]): r for r in rows}
+    winner = report.get("selected_config_from_primary", report.get("selected_config_from_NQ", report["rank_changes"]["development_winner"]))
+    out = {"selected_config": winner, "periods": {}, "rank_stability": {}, "matched_effects": []}
+    for period in PERIODS:
+        valid = [lookup.get((c, "base", period), {}) for c in configs]
+        valid = [r for r in valid if r.get("status") == "ok"]
+        gross_positive = [r for r in valid if r["gross_pnl_usd"] > 0]
+        rank = report["rank_changes"]["ranks"][period]
+        pick = lookup.get((winner, "base", period), {})
+        out["periods"][period] = {
+            "successful_candidates": len(valid), "eligible_candidates": len(rank),
+            "positive_gross_candidates": len(gross_positive),
+            "positive_gross_surviving_base_costs": sum(r["net_pnl_usd"] > 0 for r in gross_positive),
+            "positive_net_candidates": sum(r["net_pnl_usd"] > 0 for r in valid),
+            "median_annual_mean_return": float(np.median([r["annual_mean_return"] for r in valid])) if valid else None,
+            "selected_annual_mean_return": pick.get("annual_mean_return"),
+            "selected_rank": rank.index(winner) + 1 if winner in rank else None,
+            "selected_entries": pick.get("entry_trades"), "observed_sessions": pick.get("days"),
+            "selected_sharpe": pick.get("sharpe")}
+        for scenario in dict.fromkeys(r["scenario"] for r in rows):
+            stress = lookup.get((winner, scenario, period), {})
+            if pick.get("status") != "ok" or stress.get("status") != "ok":
+                continue
+            out["matched_effects"].append({"period": period, "scenario": scenario,
+                "net_change_usd_from_base": stress["net_pnl_usd"] - pick["net_pnl_usd"],
+                "annual_mean_return_change": stress["annual_mean_return"] - pick["annual_mean_return"],
+                "gross_change_usd": stress["gross_pnl_usd"] - pick["gross_pnl_usd"],
+                "fill_change": stress["fills"] - pick["fills"],
+                "delay_minutes": stress["delay_minutes"],
+                "comparison": "reference" if scenario == "base" else
+                    "cost only" if stress["delay_minutes"] == pick["delay_minutes"] else
+                    "delay only" if all(stress[k] == pick[k] for k in ("fee_bps", "slippage_bps", "commission_per_side", "slippage_ticks_per_side")) else "combined cost and delay"})
+    for period in PERIODS[1:]:
+        left = report["rank_changes"]["ranks"]["development"]
+        right = report["rank_changes"]["ranks"][period]
+        common = set(left) & set(right)
+        a = pd.Series({k: left.index(k) for k in common}, dtype=float)
+        b = pd.Series({k: right.index(k) for k in common}, dtype=float)
+        corr = float(a.corr(b, method="spearman")) if len(common) > 1 else None
+        out["rank_stability"][period] = {"common_eligible_candidates": len(common), "spearman": corr}
+    return out
+
+def pct(v):
+    return "n/a" if v is None else f"{v:.3%}"
+
+def market_report(report, output, daily=None):
+    import json
+    output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     rows = report["runs"]
     pd.DataFrame(rows).to_csv(output / "all-results.csv", index=False)
-    ranking = report["rank_changes"]
-    winner = report.get("selected_config_from_NQ", ranking["development_winner"])
-    scope = "synthetic data" if report["status"] == "synthetic" else "historical futures data"
-    lines = [f"# {report['market']} audit", "", f"i ran nine settings and two baselines across four cost and delay cases on {scope}. all 44 runs are in [the CSV](all-results.csv), including any failures.", ""]
-    if report["status"] == "synthetic":
-        lines += ["these prices are made up. this checks the software, not whether a market has an edge.", ""]
-    else:
-        lines += ["i'd already explored these years in an older project, so this is a historical evaluation. the setting below was picked on NQ development data and kept for the other markets.", ""]
-    lines += [f"the development pick is `{winner}`." if winner else "no setting met the development selection rule.", "",
-              "| setting | development net $ | validation net $ | final net $ |", "| --- | ---: | ---: | ---: |"]
-    configs = list(dict.fromkeys(row["config_id"] for row in rows))
-    lookup = {(row["config_id"], row["scenario"], row["period"]): row for row in rows}
-    for config in configs:
-        values = []
-        for period in ("development", "validation", "historical_final"):
-            row = lookup.get((config, "base", period), {})
-            values.append(f"{row['net_pnl_usd']:,.2f}" if row.get("status") == "ok" else "n/a")
+    diag = diagnostics(report)
+    (output / "diagnostics.json").write_text(json.dumps(diag, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    winner = diag["selected_config"]
+    lookup = {(r["config_id"], r["scenario"], r["period"]): r for r in rows}
+    configs = sorted({r["config_id"] for r in rows} - set(BASELINES))
+    cases = list(dict.fromkeys(r["scenario"] for r in rows))
+    runs = len({r["run_id"] for r in rows})
+    failed = len({r["run_id"] for r in rows if r["status"] == "failed"})
+    synthetic = report["status"] == "synthetic"
+    scope = "made-up prices" if synthetic else "public spot bars" if report["status"] == "historical_public_spot" else "futures bars"
+    lines = [f"# {report['market']}", "",
+        f"i ran {len(configs)} settings and two baselines across {len(cases)} scenarios on {scope}. {failed} of {runs} runs failed. [every result](all-results.csv) stays in the report.",
+        "", "these are software checks, not market findings." if synthetic else
+        f"i kept the development pick from {report.get('primary', 'NQ')}: `{winner}`. the later periods are historical checks, not untouched data.", "",
+        "## the three parts", "",
+        "| part | observed days / sessions | eligible settings | positive gross → positive net | pick: annual mean | median setting: annual mean | pick: Sharpe | pick rank | entries |",
+        "| --- | ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: |"]
+    for period, info in diag["periods"].items():
+        score = info["selected_sharpe"]
+        lines.append(f"| {period} | {info['observed_sessions']} | {info['eligible_candidates']} | {info['positive_gross_candidates']} → {info['positive_gross_surviving_base_costs']} | {pct(info['selected_annual_mean_return'])} | {pct(info['median_annual_mean_return'])} | {score:.3f} | {info['selected_rank']} | {info['selected_entries']} |" if score is not None else f"| {period} | no eligible pick | | | | | | | |")
+    lines += ["", "annual mean is mean daily P&L / stated capital, scaled by the declared observations per year. it isn't CAGR. the median is across all successful candidates, including those below the selection trade threshold; it isn't a traded portfolio.", ""]
+    audit = report.get("audit")
+    if audit:
+        lines += [f"coverage: {audit['first_utc']} through {audit['last_utc']}, {audit['rows']:,} source bars; {audit['missing_calendar_days']} missing days. period counts are above.", ""]
+    lines += ["## all settings at base assumptions", "",
+        "| setting | development annual mean | validation annual mean | final annual mean |",
+        "| --- | ---: | ---: | ---: |"]
+    for config in configs + list(BASELINES):
+        values = [pct(lookup.get((config, "base", p), {}).get("annual_mean_return")) for p in PERIODS]
         lines.append(f"| {config} | {' | '.join(values)} |")
-    if winner:
-        lines += ["", "## costs and delay", "", "| case | gross $ | net $ | fills |", "| --- | ---: | ---: | ---: |"]
-        for scenario in ("gross_reference", "base", "higher_cost", "one_bar_late"):
-            row = lookup.get((winner, scenario, "whole"), {})
-            if row.get("status") == "ok":
-                lines.append(f"| {scenario} | {row['gross_pnl_usd']:,.2f} | {row['net_pnl_usd']:,.2f} | {row['fills']} |")
-        lines += ["", "## later results against the baselines", "",
-                  "| part | baseline | annual return difference | 95% bootstrap interval |",
-                  "| --- | --- | ---: | --- |"]
-        for comparison in report.get("winner_uncertainty", []):
-            if comparison["status"] == "ok":
-                low, high = comparison["ci95_annual_return_difference"]
-                lines.append(f"| {comparison['period']} | {comparison['baseline']} | {comparison['observed_annual_return_difference']:.2%} | {low:.2%} to {high:.2%} |")
-    lines += ["", "i used paired five-day blocks, 2,000 bootstrap draws and seed 1729. the intervals depend on these days being a useful sample; they don't remove selection bias or predict future returns.", "",
-              "the JSON and CSV keep gross/net P&L, return on stated capital, daily volatility and Sharpe, daily drawdown, hourly exposure, fills, costs, years and splits. prices are marked at the end; an open position isn't forced closed just to improve a result.", ""]
+    lines += ["", "## what changed under stress", "",
+        "| part | scenario | comparison | annual mean change from base | gross $ change | fill change |",
+        "| --- | --- | --- | ---: | ---: | ---: |"]
+    for effect in diag["matched_effects"]:
+        if effect["scenario"] == "base":continue
+        lines.append(f"| {effect['period']} | {effect['scenario']} | {effect['comparison']} | {pct(effect['annual_mean_return_change'])} | {effect['gross_change_usd']:,.2f} | {effect['fill_change']} |")
+    lines += ["", "cost-only cases keep the delay fixed; delay-only cases keep cost rates fixed. delay can help by chance. these are assumed fills from OHLCV, not measured spreads or actual orders.", "",
+        "## how uncertain it is", "",
+        "| part | comparison | block length | annual mean difference | 95% interval |",
+        "| --- | --- | ---: | ---: | --- |"]
+    for comp in report.get("winner_uncertainty", []):
+        if comp["status"] == "ok":
+            low, high = comp["ci95_annual_return_difference"]
+            lines.append(f"| {comp['period']} | pick − {comp['baseline']} | {comp['block_days']} | {pct(comp['observed_annual_return_difference'])} | {pct(low)} to {pct(high)} |")
+        else:
+            lines.append(f"| {comp['period']} | {comp['baseline']} | {comp.get('block_days')} | {comp['status']} | |")
+    lines += ["", "paired circular blocks keep the two strategies on the same days. i use the declared 3/5/10 lengths, 2,000 draws and seed 1729. these are descriptive intervals. serial dependence beyond those blocks, regime changes, prior knowledge and selection remain limits.", "",
+        "## rank changes and yearly selections", ""]
+    for period, info in diag["rank_stability"].items():
+        lines.append(f"- development vs {period}: Spearman {info['spearman']}, on {info['common_eligible_candidates']} settings eligible in both parts.")
+    lines += ["", "walk-forward below selects on the prior three calendar years. it inspects an already continuously simulated candidate in the next year. it doesn't execute a switching portfolio, charge switching costs or reset inventory at the year boundary.", "",
+        "| next year | selected setting | train Sharpe | next-year Sharpe | next-year days |",
+        "| --- | --- | ---: | ---: | ---: |"]
+    for window in report.get("walk_forward", []):
+        if window["status"] == "ok":
+            value = window["test_sharpe"]
+            lines.append(f"| {window['test_year']} | {window['winner']} | {window['train_sharpe']:.3f} | {'n/a' if value is None else f'{value:.3f}'} | {window['test_days']} |")
+    lines += ["", "## assumptions i kept", ""]
+    if report["status"] == "historical_public_spot":
+        lines += ["i used one BTC or one ETH, cash-funded, with $1m stated capital each and zero interest on spare cash. base costs are assumed 10 bps fee plus 5 bps slippage per side; higher cost doubles both. base orders wait one extra day after the completed daily bar. the two coins have different dollar risk; this isn't an equal-risk replication. final inventory is marked, not sold at an invented last price.", ""]
+    else:
+        lines += ["one futures contract or flat, price-difference P&L times the multiplier. roll instructions need independent advance evidence. daily marks miss intraday drawdown. exposure counts observed sampled marks, not elapsed trading time.", ""]
+    lines += [f"protocol: `{report['plan_sha256']}`. source: `{report['source_sha256']}`.", ""]
+    if report.get("execution_sha256"):
+        lines += [f"execution: `{report['execution_sha256']}`. the saved manifest records code, actual callables, inputs and dependencies.", ""]
     if daily is not None:
         plot_market(rows, daily, winner, output, scope)
-        lines += ["![results across the grid](grid.png)", "", "![net P&L through the run](equity.png)", ""]
+        lines += ["![annual means across all settings](grid.png)", "", "![base daily P&L path](equity.png)", "", "![candidate ranks by split](ranks.png)", ""]
     (output / "report.md").write_text("\n".join(lines), encoding="utf-8")
 
-
-def plot_market(rows: list[dict], daily: dict[str, pd.Series], winner: str | None,
-                output: Path, scope: str) -> None:
-    configs = [key for key in daily if key not in ("flat", "always_long")]
+def plot_market(rows, daily, winner, output, scope):
+    configs = [k for k in daily if k not in BASELINES]
     x = np.arange(len(configs))
     fig, ax = plt.subplots(figsize=(12, 5), layout="constrained")
-    for offset, period in enumerate(("development", "validation", "historical_final")):
-        values = {row["config_id"]: row["net_pnl_usd"] for row in rows
-                  if row.get("scenario") == "base" and row.get("period") == period
-                  and row.get("status") == "ok"}
-        ax.bar(x + (offset - 1) * .26, [values.get(key, np.nan) for key in configs],
-               width=.26, label=period.replace("historical_final", "final"))
+    for offset, period in enumerate(PERIODS):
+        values = {r["config_id"]: r["annual_mean_return"] * 100 for r in rows if r.get("scenario") == "base" and r.get("period") == period and r.get("status") == "ok"}
+        ax.bar(x + (offset - 1) * .26, [values.get(k, np.nan) for k in configs], width=.26, label=period.replace("historical_final", "final"))
     ax.axhline(0, color="#777", linewidth=.7)
-    ax.set_xticks(x, configs, rotation=25, ha="right")
-    ax.set(ylabel="net P&L ($)", title=f"all nine settings — {scope}")
+    ax.set_xticks(x, configs, rotation=30, ha="right")
+    ax.set(ylabel="annual mean return on stated capital (%)", title=f"every setting; unequal periods normalized — {scope}")
     ax.legend()
     fig.savefig(output / "grid.png", dpi=140)
     plt.close(fig)
@@ -75,7 +150,21 @@ def plot_market(rows: list[dict], daily: dict[str, pd.Series], winner: str | Non
     for config in dict.fromkeys([winner, "always_long", "flat"]):
         if config in daily:
             ax.plot(daily[config].index, daily[config].cumsum(), label=config)
-    ax.set(ylabel="cumulative net P&L ($)", title=f"base costs and delay — {scope}")
+    ax.set(ylabel="cumulative net P&L ($)", title=f"fixed development pick; base costs and delay — {scope}")
     ax.legend()
     fig.savefig(output / "equity.png", dpi=140)
     plt.close(fig)
+    matrix = []
+    for period in PERIODS:
+        scores = {r["config_id"]: r["sharpe"] for r in rows if r.get("scenario") == "base" and r.get("period") == period and r.get("status") == "ok" and r.get("sharpe") is not None}
+        rank = pd.Series(scores).rank(ascending=False)
+        matrix.append([rank.get(k, np.nan) for k in configs])
+    fig, ax = plt.subplots(figsize=(12, 3), layout="constrained")
+    im = ax.imshow(matrix, aspect="auto", cmap="viridis_r", vmin=1, vmax=max(2, len(configs)))
+    ax.set_xticks(x, configs, rotation=30, ha="right")
+    ax.set_yticks(range(3), ["development", "validation", "final"])
+    ax.set_title("daily Sharpe ranks across all successful candidates; selection eligibility is in the table")
+    fig.colorbar(im, ax=ax, label="rank (1 is highest)")
+    fig.savefig(output / "ranks.png", dpi=140)
+    plt.close(fig)
+

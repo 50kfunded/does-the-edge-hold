@@ -1,49 +1,69 @@
 {
   "status": "unresolved",
-  "roll_policy": "exit at open of final old-contract minute; re-enter at open of first new-contract minute",
+  "roll_policy": "advance instruction; first old-contract open after executable time plus delay, before deadline; new-contract open after boundary plus delay",
   "markets": {
     "NQ": {
       "ready": false,
       "problems": [
-        "no verified mapping supplied"
-      ]
+        "date-valid instrument identity and advance roll evidence are absent"
+      ],
+      "role": "required"
     },
     "ES": {
       "ready": false,
       "problems": [
-        "no verified mapping supplied"
-      ]
-    },
-    "YM": {
-      "ready": false,
-      "problems": [
-        "no verified mapping supplied"
-      ]
+        "date-valid instrument identity and advance roll evidence are absent"
+      ],
+      "role": "optional"
     },
     "GC": {
       "ready": false,
       "problems": [
-        "volume-ranked mapping alone cannot justify an exit at the final old-contract minute open; the current runner needs a reviewed policy extension with additional contract prices or advance schedule evidence",
-        "no verified mapping supplied"
-      ]
+        "date-valid instrument identity and advance roll evidence are absent"
+      ],
+      "role": "optional"
     },
     "CL": {
       "ready": false,
       "problems": [
-        "volume-ranked mapping alone cannot justify an exit at the final old-contract minute open; the current runner needs a reviewed policy extension with additional contract prices or advance schedule evidence",
-        "no verified mapping supplied"
-      ]
+        "date-valid instrument identity and advance roll evidence are absent"
+      ],
+      "role": "optional"
+    },
+    "YM": {
+      "ready": false,
+      "problems": [
+        "date-valid instrument identity and advance roll evidence are absent"
+      ],
+      "role": "optional"
     }
   },
+  "included": [],
+  "excluded": {
+    "NQ": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ],
+    "ES": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ],
+    "GC": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ],
+    "CL": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ],
+    "YM": [
+      "date-valid instrument identity and advance roll evidence are absent"
+    ]
+  },
+  "primary": "NQ",
+  "primary_blocked": true,
   "reasons": [
-    "date-to-contract mapping and its evidence are absent",
-    "NQ: no verified mapping supplied",
-    "ES: no verified mapping supplied",
-    "YM: no verified mapping supplied",
-    "GC: volume-ranked mapping alone cannot justify an exit at the final old-contract minute open; the current runner needs a reviewed policy extension with additional contract prices or advance schedule evidence",
-    "GC: no verified mapping supplied",
-    "CL: volume-ranked mapping alone cannot justify an exit at the final old-contract minute open; the current runner needs a reviewed policy extension with additional contract prices or advance schedule evidence",
-    "CL: no verified mapping supplied"
+    "NQ: date-valid instrument identity and advance roll evidence are absent",
+    "ES: date-valid instrument identity and advance roll evidence are absent",
+    "GC: date-valid instrument identity and advance roll evidence are absent",
+    "CL: date-valid instrument identity and advance roll evidence are absent",
+    "YM: date-valid instrument identity and advance roll evidence are absent"
   ],
-  "scope": "five minute-bar exports; NQ second bars require a separate source match"
+  "scope": "declared minute-bar universe; second-bar provenance is separate"
 }

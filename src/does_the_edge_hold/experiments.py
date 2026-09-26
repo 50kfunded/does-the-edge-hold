@@ -10,9 +10,13 @@ import pandas as pd
 
 from .data import load_minutes, sha256_file, source_path
 from .ledger import Costs
+from .daily_clock import DailyClock
+from .execution import seal, write_manifest
+from .adapters import MarketAdapter
+from .signals import REGISTRY
 from .metrics import daily_pnl, summarize
 from .plan import verify
-from .roll_gate import assess, require_ready
+from .roll_gate import assess, require_ready, read_instructions
 from .rolls import attach_contracts, read_schedule
 from .signals import SignalSpec, decisions, grid_from_plan
 from .specs import SPECS
@@ -21,8 +25,8 @@ from .uncertainty import paired_block_bootstrap
 from .walk_forward import evaluate as walk_forward
 
 
-def _run_id(source_hash: str, config_id: str, scenario: dict, plan_hash: str) -> str:
-    payload = json.dumps([source_hash, config_id, scenario, plan_hash], sort_keys=True)
+def _run_id(source_hash: str, config_id: str, scenario: dict, plan_hash: str, execution_hash="legacy") -> str:
+    payload = json.dumps([source_hash, config_id, scenario, plan_hash, execution_hash], sort_keys=True)
     return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
 
@@ -32,12 +36,34 @@ def _periods(plan: dict) -> dict[str, tuple[str | None, str | None]]:
     return result
 
 
+def market_manifest(market, plan_hash, source_hash, adapter, roll_instructions=None, extra_evidence=None):
+    return seal(plan_hash, {market: source_hash},
+        evidence={"roll_instructions": [] if roll_instructions is None else roll_instructions.astype(str).to_dict("records"),
+                  "adapter": {"spec": adapter.spec.__dict__, "kind": adapter.kind, "bar_minutes": adapter.bar_minutes},
+                  "additional": extra_evidence or {}},
+        callables={"decisions": decisions, "simulate": simulate, "aggregate": hourly_from_minutes,
+                   "summarize": summarize, "daily_pnl": daily_pnl, "grid": grid_from_plan,
+                   "adapter": type(adapter).signal_bars, "ledger_buy": adapter.ledger_factory.buy,
+                   "ledger_sell": adapter.ledger_factory.sell, "ledger_mark": adapter.ledger_factory.mark,
+                   "adapter_validate": type(adapter).validate, **REGISTRY})
+
+
 def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
-               source_hash: str) -> tuple[list[dict], dict[str, pd.Series]]:
+               source_hash: str, *, roll_instructions=None, execution_manifest=None,
+               adapter=None) -> tuple[list[dict], dict[str, pd.Series]]:
     """Run one market at a time; keep base-scenario daily P&L for diagnostics."""
-    hourly = hourly_from_minutes(minutes)
+    adapter = adapter or MarketAdapter(SPECS[market])
+    hourly = adapter.signal_bars(minutes)
+    from .plan import _digest
+    actual = market_manifest(market, plan_hash, source_hash, adapter, roll_instructions,
+                            (execution_manifest or {}).get("identity", {}).get("evidence", {}).get("additional"))
+    if execution_manifest is not None:
+        if _digest(execution_manifest["identity"]) != execution_manifest["execution_sha256"] or actual["execution_sha256"] != execution_manifest["execution_sha256"]:
+            raise ValueError("sealed execution differs from the actual runtime")
+    execution_manifest = actual
     grid = grid_from_plan(plan)
     capital = float(plan["execution"]["starting_capital_usd_per_market"])
+    clock = DailyClock.from_plan(plan)
     scenarios = plan["execution"]["scenarios"]
     results = []
     base_daily: dict[str, pd.Series] = {}
@@ -54,30 +80,33 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
         except Exception as exc:
             signal_error = exc
         for scenario in scenarios:
-            run_id = _run_id(source_hash, config_id, scenario, plan_hash)
+            run_id = _run_id(source_hash, config_id, scenario, plan_hash, execution_manifest["execution_sha256"])
             common = {"market": market, "config_id": config_id,
                       "config_hash": config_hash, "run_id": run_id,
-                      "scenario": scenario["name"],
+                      "scenario": scenario["name"], "execution_sha256": execution_manifest["execution_sha256"],
                       "commission_per_side": scenario["commission_usd_per_side"],
                       "slippage_ticks_per_side": scenario["slippage_ticks_per_side"],
+                      "fee_bps": scenario.get("fee_bps", 0), "slippage_bps": scenario.get("slippage_bps", 0),
                       "delay_minutes": scenario["delay_minutes"]}
             try:
                 if signal_error is not None:
                     raise signal_error
-                run = simulate(minutes, targets, SPECS[market],
+                run = simulate(minutes, targets, adapter.spec,
                                Costs(scenario["commission_usd_per_side"],
-                                     scenario["slippage_ticks_per_side"]),
+                                     scenario["slippage_ticks_per_side"], scenario.get("fee_bps", 0),
+                                     scenario.get("slippage_bps", 0)),
                                delay_minutes=int(scenario["delay_minutes"]),
-                               starting_capital=capital)
+                               starting_capital=capital, roll_instructions=roll_instructions,
+                               bar_minutes=adapter.bar_minutes, ledger_factory=adapter.ledger_factory)
                 for period, (start, end) in _periods(plan).items():
                     results.append({**common, "period": period,
-                                    **summarize(run, start, end)})
+                                    **summarize(run, start, end, clock=clock)})
                 for year in sorted(run.curve["ts"].dt.year.unique()):
                     results.append({**common, "period": str(year),
                                     **summarize(run, f"{year}-01-01T00:00:00Z",
-                                                f"{year+1}-01-01T00:00:00Z")})
+                                                f"{year+1}-01-01T00:00:00Z", clock=clock)})
                 if scenario["name"] == "base":
-                    base_daily[config_id] = daily_pnl(run)
+                    base_daily[config_id] = daily_pnl(run, clock)
             except Exception as exc:
                 results.append({**common, "period": "whole", "status": "failed",
                                 "error": f"{type(exc).__name__}: {exc}"})
@@ -109,9 +138,12 @@ def winner_uncertainty(winner: str | None, daily: dict[str, pd.Series],
                 comparisons.append({"period": period, "baseline": baseline,
                                     "status": "missing_run"})
                 continue
-            comparisons.append({"period": period, "baseline": baseline,
-                                **paired_block_bootstrap(daily[winner], daily[baseline],
-                                                         start, end, capital)})
+            stats = plan.get("statistics", {})
+            for block in stats.get("block_lengths", [3, 5, 10]):
+                comparisons.append({"period": period, "baseline": baseline,
+                                    **paired_block_bootstrap(daily[winner], daily[baseline], start, end, capital,
+                                        block_days=block, replicates=stats.get("replicates", 2000),
+                                        periods_per_year=DailyClock.from_plan(plan).periods_per_year)})
     return comparisons
 
 
@@ -124,23 +156,32 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
     audit, origin, plan, lock = map(read_json,
                                     (audit_path, provenance_path, plan_path, lock_path))
     verify(plan, audit, lock)
-    decision = assess(audit, origin, mapping_root)
+    decision = assess(audit, origin, mapping_root, plan=plan)
     require_ready(decision)
     hashes = {row["market"]: row["sha256"] for row in audit["files"]
               if row["resolution"] == "1m"}
-    for market in ("NQ", "ES", "YM", "GC", "CL"):
+    for market in decision["included"]:
         if sha256_file(source_path(data_root, market)) != hashes[market]:
             raise ValueError(f"{market} source file changed since the frozen audit")
     output = Path(output)
-    output.mkdir(parents=True, exist_ok=True)
+    output.mkdir(parents=True, exist_ok=False)
+    (output / "universe.json").write_text(json.dumps(decision, indent=2) + "\n", encoding="utf-8")
     reports = {}
     primary_winner = None
-    for market in ("NQ", "ES", "GC", "CL", "YM"):
+    primary = decision["primary"]
+    for market in [primary] + [m for m in decision["included"] if m != primary]:
         minutes = attach_contracts(load_minutes(data_root, market),
                                    read_schedule(Path(mapping_root) / f"{market}_rolls.csv"))
-        rows, daily = run_market(minutes, market, plan, lock["plan_sha256"], hashes[market])
+        evidence_hashes = {p.name: sha256_file(p) for p in sorted(Path(mapping_root).iterdir()) if p.is_file()}
+        instructions = read_instructions(Path(mapping_root) / f"{market}_instructions.csv")
+        manifest = market_manifest(market, lock["plan_sha256"], hashes[market], MarketAdapter(SPECS[market]),
+                                   instructions, evidence_hashes)
+        write_manifest(manifest, output / f"{market}_execution.json")
+        rows, daily = run_market(minutes, market, plan, lock["plan_sha256"], hashes[market],
+                                 roll_instructions=instructions,
+                                 execution_manifest=manifest)
         ranking = rank_changes(rows, plan["selection"]["minimum_entry_trades"])
-        if market == "NQ":
+        if market == primary:
             primary_winner = ranking["development_winner"]
         report = {"market": market, "status": "historical_evaluation",
                   "plan_sha256": lock["plan_sha256"], "source_sha256": hashes[market],
@@ -150,7 +191,8 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
                                                             daily, plan),
                   "walk_forward": walk_forward(daily, rows,
                       plan["execution"]["starting_capital_usd_per_market"],
-                      plan["selection"]["minimum_entry_trades"]), "runs": rows}
+                      plan["selection"]["minimum_entry_trades"],
+                      periods_per_year=DailyClock.from_plan(plan).periods_per_year), "runs": rows}
         (output / f"{market}_results.json").write_text(json.dumps(report, indent=2) + "\n",
                                                        encoding="utf-8")
         from .reporting import market_report

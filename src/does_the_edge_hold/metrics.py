@@ -1,61 +1,63 @@
-"""Account-capital metrics, with zero and negative futures prices allowed."""
-
+"""P&L attributed from execution events and interval-close marks."""
 from __future__ import annotations
-
 import math
-
 import numpy as np
 import pandas as pd
-
+from .daily_clock import DailyClock
 from .timing import BacktestResult
 
-
-def curve_with_changes(curve: pd.DataFrame) -> pd.DataFrame:
+def curve_with_changes(curve):
     out = curve.copy()
-    out["step_net"] = out["net_pnl"].diff().fillna(out["net_pnl"])
-    out["step_gross"] = out["gross_pnl"].diff().fillna(out["gross_pnl"])
+    out["step_net"] = out.net_pnl.diff().fillna(out.net_pnl)
+    out["step_gross"] = out.gross_pnl.diff().fillna(out.gross_pnl)
     return out
 
+def _events(result):
+    if result.events is None:
+        raise ValueError("event-level attribution is required; rerun legacy results")
+    return result.events.copy()
 
-def summarize(result: BacktestResult, start: str | None = None,
-              end: str | None = None) -> dict:
-    curve = curve_with_changes(result.curve)
-    valuation_at = curve["ts"] - pd.Timedelta(nanoseconds=1)
-    if start is not None:
-        curve = curve.loc[valuation_at >= pd.to_datetime(start, utc=True)]
-    if end is not None:
-        curve = curve.loc[valuation_at.loc[curve.index] < pd.to_datetime(end, utc=True)]
+def _mask(labels, start, end):
+    return ((labels >= pd.to_datetime(start, utc=True)) if start is not None else np.ones(len(labels), bool)) & (
+           (labels < pd.to_datetime(end, utc=True)) if end is not None else np.ones(len(labels), bool))
+
+def daily_pnl(result, clock=None, start=None, end=None):
+    clock = clock or DailyClock()
+    events = _events(result)
+    labels = clock.labels(events.attribution_at)
+    mask = _mask(labels, start, end)
+    return events.loc[mask].groupby(labels[mask])["step_net"].sum()
+
+def summarize(result: BacktestResult, start=None, end=None, *, clock=None):
+    clock = clock or DailyClock()
+    events = _events(result)
+    labels = clock.labels(events.attribution_at)
+    events = events.loc[_mask(labels, start, end)]
+    daily = daily_pnl(result, clock, start, end)
     capital = result.ledger.starting_capital
-    if curve.empty:
-        return {"status": "no_bars", "gross_pnl_usd": 0.0, "net_pnl_usd": 0.0,
-                "account_return": 0.0, "volatility": None, "sharpe": None,
-                "max_drawdown": None, "exposure": None, "fills": 0,
-                "turnover_contracts": 0, "commission_usd": 0.0,
-                "slippage_usd": 0.0, "entry_trades": 0, "days": 0, "hours": 0}
-    daily = curve.groupby((curve["ts"] - pd.Timedelta(nanoseconds=1)).dt.floor("D"))["step_net"].sum() / capital
-    volatility = float(daily.std(ddof=1) * math.sqrt(252)) if len(daily) > 1 else None
-    sharpe = (float(daily.mean() / daily.std(ddof=1) * math.sqrt(252))
-              if len(daily) > 1 and daily.std(ddof=1) > 0 else None)
-    path = capital + np.r_[0.0, np.cumsum(daily.to_numpy() * capital)]
+    curve = result.curve
+    curve = curve.loc[_mask(clock.labels(curve.ts - pd.Timedelta(nanoseconds=1)), start, end)]
+    fill_labels = clock.labels([f.ts for f in result.ledger.fills])
+    fills = [f for f, keep in zip(result.ledger.fills, _mask(fill_labels, start, end)) if keep]
+    gross, net = float(events.step_gross.sum()), float(events.step_net.sum())
+    returns = daily / capital
+    std = float(returns.std(ddof=1)) if len(daily) > 1 else 0
+    path = capital + np.r_[0, daily.cumsum().to_numpy()]
     peaks = np.maximum.accumulate(path)
-    drawdown = (path - peaks) / peaks
-    start_ts = pd.to_datetime(start, utc=True) if start is not None else pd.Timestamp("1900-01-01", tz="UTC")
-    end_ts = pd.to_datetime(end, utc=True) if end is not None else curve["ts"].iloc[-1]
-    fills = [fill for fill in result.ledger.fills if start_ts <= pd.Timestamp(fill.ts) < end_ts]
-    gross = float(curve["step_gross"].sum())
-    net = float(curve["step_net"].sum())
-    return {"status": "ok", "gross_pnl_usd": gross, "net_pnl_usd": net,
-            "account_return": net / capital,
-            "volatility": volatility, "sharpe": sharpe,
-            "max_drawdown": float(drawdown.min()),
-            "exposure": float(curve["position"].mean()),
-            "fills": len(fills), "turnover_contracts": len(fills),
-            "commission_usd": sum(fill.commission for fill in fills),
-            "slippage_usd": sum(fill.slippage for fill in fills),
-            "entry_trades": sum(fill.side == "buy" for fill in fills),
-            "days": len(daily), "hours": len(curve)}
+    return {"status": "ok" if len(daily) else "no_bars", "gross_pnl_usd": gross,
+        "net_pnl_usd": net, "account_return": net / capital,
+        "annual_mean_return": float(returns.mean() * clock.periods_per_year) if len(daily) else None,
+        "mean_session_pnl_usd": float(daily.mean()) if len(daily) else None,
+        "volatility": std * math.sqrt(clock.periods_per_year) if len(daily) > 1 else None,
+        "sharpe": float(returns.mean() / std * math.sqrt(clock.periods_per_year)) if std > 0 else None,
+        "max_drawdown": float(((path - peaks) / peaks).min()),
+        "exposure": float(curve.position.mean()) if len(curve) else None,
+        "exposure_note": "fraction of observed sampled marks; not wall-clock exposure",
+        "fills": len(fills), "turnover_contracts": len(fills),
+        "commission_usd": sum(f.commission for f in fills),
+        "slippage_usd": sum(f.slippage for f in fills),
+        "entry_trades": sum(f.side == "buy" for f in fills),
+        "days": len(daily), "hours": len(curve), "clock": clock.name,
+        "periods_per_year": clock.periods_per_year,
+        "reconciliation_error_usd": net - (gross - sum(f.commission + f.slippage for f in fills))}
 
-
-def daily_pnl(result: BacktestResult) -> pd.Series:
-    curve = curve_with_changes(result.curve)
-    return curve.groupby((curve["ts"] - pd.Timedelta(nanoseconds=1)).dt.floor("D"))["step_net"].sum()

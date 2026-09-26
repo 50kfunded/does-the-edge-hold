@@ -9,6 +9,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="edge-hold")
     parser.add_argument("--version", action="version", version="%(prog)s 0.1.0")
     commands = parser.add_subparsers(dest="command")
+    public_fetch = commands.add_parser("public-fetch", help="snapshot public daily spot candles without an account")
+    public_fetch.add_argument("--output", type=Path, required=True)
+    public_run = commands.add_parser("public-study", help="run the separately locked spot protocol")
+    public_run.add_argument("--snapshot", type=Path, required=True)
+    public_run.add_argument("--plan", type=Path, default=Path("research/public-spot/plan.json"))
+    public_run.add_argument("--lock", type=Path, default=Path("research/public-spot/plan.lock.json"))
+    public_run.add_argument("--output", type=Path, required=True)
     example = commands.add_parser("example", help="run the complete synthetic audit and report")
     example.add_argument("--output", type=Path, default=Path("runs/example"))
     audit = commands.add_parser("audit", help="inspect local Parquet bars without changing them")
@@ -50,11 +57,19 @@ def main() -> None:
     local.add_argument("--lock", type=Path, default=Path("research-plan.lock.json"))
     local.add_argument("--output", type=Path, default=Path("runs/local"))
     args = parser.parse_args()
-    if args.command == "example":
+    if args.command == "public-fetch":
+        import json
+        from .public_data import fetch
+        print(json.dumps(fetch(args.output), indent=2))
+    elif args.command == "public-study":
+        import json
+        from .public_study import run_public
+        print(json.dumps(run_public(args.snapshot, args.plan, args.lock, args.output), indent=2))
+    elif args.command == "example":
         from .example import run_example
 
         report = run_example(args.output)
-        print(f"ran 44 synthetic cases on {report['minute_rows']:,} minute bars; report: {args.output / 'report.md'}")
+        print(f"ran {len({r['run_id'] for r in report['runs']})} synthetic cases on {report['minute_rows']:,} minute bars; report: {args.output / 'report.md'}")
     elif args.command == "audit":
         from .audit import audit_sources, public_summary, write_audit
 

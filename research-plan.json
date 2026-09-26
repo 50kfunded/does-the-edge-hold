@@ -1,9 +1,13 @@
 {
-  "version": 2,
-  "revision_note": "clarified during synthetic software checks that lookbacks count observed completed hourly bars and reset at every mapping transition, including when a contract returns. no bars are filled. no empirical strategy P&L has run; the roll gate remains unresolved. the grid, splits, selection metric, costs and delays are unchanged. version 1 and its lock are archived in research/.",
+  "version": 3,
+  "revision_note": "i fixed timing and attribution after the review. no empirical futures grid has run. v2 and its lock are in research/. this revision allows declared optional exclusions and matched scenarios; the primary cannot be replaced.",
   "question": "how much of a futures signal survives later periods, other markets, costs and slower orders?",
   "primary_market": "NQ",
-  "checks": ["ES", "GC", "CL"],
+  "checks": [
+    "ES",
+    "GC",
+    "CL"
+  ],
   "separate_check": "YM",
   "source_resolution": "1m",
   "signal_timeframe": "1h UTC, start-stamped; signal known at scheduled hour end",
@@ -11,20 +15,40 @@
   "signal_families": {
     "momentum": {
       "rule": "long when completed close is above the close lookback_hours observed completed hourly bars earlier within the current uninterrupted contract segment; otherwise flat",
-      "lookback_hours": [12, 24, 72]
+      "lookback_hours": [
+        12,
+        24,
+        72
+      ]
     },
     "mean_reversion": {
       "rule": "long when completed close is at least entry_z standard deviations below the mean of the prior lookback_hours observed completed hourly bars; exit when close reaches or exceeds that prior mean; reset at every contract transition",
-      "lookback_hours": [24, 72],
-      "entry_z": [0.5, 1.0, 1.5],
+      "lookback_hours": [
+        24,
+        72
+      ],
+      "entry_z": [
+        0.5,
+        1.0,
+        1.5
+      ],
       "exit_z": 0.0
     }
   },
   "configuration_count": 9,
   "splits_utc": {
-    "development": ["2016-08-12T00:00:00Z", "2022-01-01T00:00:00Z"],
-    "validation": ["2022-01-01T00:00:00Z", "2024-01-01T00:00:00Z"],
-    "historical_final": ["2024-01-01T00:00:00Z", "2026-08-10T00:00:00Z"]
+    "development": [
+      "2016-08-12T00:00:00Z",
+      "2022-01-01T00:00:00Z"
+    ],
+    "validation": [
+      "2022-01-01T00:00:00Z",
+      "2024-01-01T00:00:00Z"
+    ],
+    "historical_final": [
+      "2024-01-01T00:00:00Z",
+      "2026-08-10T00:00:00Z"
+    ]
   },
   "selection": {
     "period": "development only",
@@ -37,22 +61,92 @@
     "starting_capital_usd_per_market": 100000,
     "position": "one full-size contract or flat",
     "fill": "first observed 1-minute open at or after completed signal bar end plus delay",
-    "roll": "exit at open of final old-contract minute; re-enter at open of first new-contract minute",
+    "roll": "advance instruction; first observed old-contract open after executable time plus delay and before deadline; reentry after boundary plus delay; fail if old exit unavailable",
     "scenarios": [
-      {"name": "gross_reference", "commission_usd_per_side": 0.0, "slippage_ticks_per_side": 0.0, "delay_minutes": 0},
-      {"name": "base", "commission_usd_per_side": 2.5, "slippage_ticks_per_side": 1.0, "delay_minutes": 1},
-      {"name": "higher_cost", "commission_usd_per_side": 5.0, "slippage_ticks_per_side": 2.0, "delay_minutes": 5},
-      {"name": "one_bar_late", "commission_usd_per_side": 2.5, "slippage_ticks_per_side": 1.0, "delay_minutes": 60}
+      {
+        "name": "gross_reference",
+        "commission_usd_per_side": 0.0,
+        "slippage_ticks_per_side": 0.0,
+        "delay_minutes": 1
+      },
+      {
+        "name": "base",
+        "commission_usd_per_side": 2.5,
+        "slippage_ticks_per_side": 1.0,
+        "delay_minutes": 1
+      },
+      {
+        "name": "higher_cost",
+        "commission_usd_per_side": 5.0,
+        "slippage_ticks_per_side": 2.0,
+        "delay_minutes": 1
+      },
+      {
+        "name": "one_bar_late",
+        "commission_usd_per_side": 2.5,
+        "slippage_ticks_per_side": 1.0,
+        "delay_minutes": 60
+      },
+      {
+        "name": "combined_stress",
+        "commission_usd_per_side": 5,
+        "slippage_ticks_per_side": 2,
+        "delay_minutes": 60
+      }
     ]
   },
-  "baselines": ["flat", "always long with the same scheduled roll policy and costs"],
+  "baselines": [
+    "flat",
+    "always long with the same scheduled roll policy and costs"
+  ],
   "statistics": {
-    "daily_return": "daily net P&L divided by stated starting capital; no futures price percentage return",
+    "daily_return": "event P&L on the New York session date (18:00 starts the next date), divided by stated capital",
     "annualization": "252 trading days; sample standard deviation; zero volatility Sharpe is undefined",
-    "uncertainty": "paired moving-block bootstrap of five consecutive trading days, 2000 replicates, seed 1729",
-    "walk_forward": "secondary diagnostic: three calendar years of selection, then the next calendar year of evaluation"
+    "uncertainty": "paired circular block bootstrap at 3, 5 and 10 observed sessions; descriptive intervals, no correction for prior selection",
+    "walk_forward": "candidate-selection diagnostic on continuously simulated strategies, using the prior three calendar years; not a switching portfolio",
+    "clock": {
+      "name": "new_york_futures_session",
+      "periods_per_year": 252
+    },
+    "block_lengths": [
+      3,
+      5,
+      10
+    ],
+    "replicates": 2000,
+    "split_clock": "split bounds are session-date labels stored at UTC midnight, not UTC event timestamps"
   },
   "prior_exposure": "the local nq-powell project already reports NQ and cross-market results by year through 2026. no 2024-2026 period can honestly be called untouched; historical_final is a historical evaluation. version 1 was frozen before this project's grid ran. synthetic software results were inspected before version 2; no empirical results from the new nine-configuration grid have been viewed.",
-  "roll_gate": "empirical futures P&L is blocked until all five minute exports have verified date-to-contract schedules and a documented roll policy",
-  "data_change_rule": "a coverage correction can revise the plan only with a written reason and a new lock before viewing strategy performance"
+  "roll_gate": "per-market identity, advance-policy and quality gates; required NQ must pass; only listed optional markets may be excluded",
+  "data_change_rule": "a coverage correction can revise the plan only with a written reason and a new lock before viewing strategy performance",
+  "universe": {
+    "primary": "NQ",
+    "required": [
+      "NQ"
+    ],
+    "optional": [
+      "ES",
+      "GC",
+      "CL",
+      "YM"
+    ],
+    "allowed_exclusions": [
+      "ES",
+      "GC",
+      "CL",
+      "YM"
+    ],
+    "blocked_primary": "stop; never choose a replacement"
+  },
+  "quality": {
+    "invalid_bars": "block on missing values, invalid OHLC/volume, duplicates or order errors",
+    "gaps": "retain observed bars only; no fills or imputation. all calendar labels are candidates unless product closure evidence is supplied; report uncertain gaps"
+  },
+  "research_questions": [
+    "how many positive-gross candidates remain positive after costs at the same delay?",
+    "does the development winner beat a typical candidate and the two baselines later?",
+    "how stable are ranks across periods and allowed markets?",
+    "what changes under matched cost-only and delay-only stress?",
+    "how wide are paired intervals under the declared block lengths?"
+  ]
 }

@@ -1,0 +1,30 @@
+# repair log
+
+i reproduced the review's five focused examples at `f2fd1a1`. the old roll exit moved backwards when i removed a future bar. the documented instrument-ID response and a revised ten-setting grid were rejected. a changed signal reused the same run ID. NQ had 312 UTC dates in 2025, including Sundays, against 252 scaling. [the baseline](../reports/repair/baseline.json) keeps that evidence.
+
+the independent review passed the old 30 tests and inspected the old synthetic plots. it didn't repeat the full data audit or clean install. the checks below are my separate repair evidence.
+
+| brief | diagnosis | change / artifact | verification | status / limit |
+| --- | --- | --- | --- | --- |
+| 1 | empirical futures study unfinished; global gate prevented subsets | protocol universe and per-market gates; [real public spot case](../reports/public-spot/report.md) | synthetic valid-subset and blocked-primary integration; 192 actual spot runs | software fixed; spot case complete; futures externally blocked |
+| 2 | final observed old bar made exits retrospective | advance instruction, first eligible old open, deadline failure | `test_rolls.py`: deleting future 00:04 cannot change an executed exit; delay and costs reconcile | fixed; real advance-policy evidence still missing |
+| 3 | unsupported continuous-to-raw route | instrument IDs with validity ends; optional raw-symbol intersections; original request/response hashes | six official-shaped offline resolver checks | fixed parser; no account unlocked or live retry |
+| 4 | UTC dates with 252 scaling; midnight fees backdated | shared NY-session/252 or UTC-calendar/365 clock; event attribution | midnight fees, Sunday profit, DST, holiday and ledger sum checks | fixed; product closure labels remain candidates |
+| 5 | a protocol hash didn't identify actual execution | separate sealed source/callable/input/environment identity; no overwrite | runtime signal mutation changes IDs; supplied stale seal rejected; manifests published | fixed for declared Python interfaces; no measured-fill claim |
+| 6 | counts, markets and extension paths hardcoded | finite grid validation, universe roles, canonical adapter and signal registry | revised ten-setting lock; independent breakout and instrument without evaluator edits | fixed within the small long/flat scope |
+| 7 | no real-market research answer | [spot protocol](../research/public-spot/plan.json) frozen before returns; every candidate retained | 3,530 source days per coin; zero missing days; 192 cases, zero failures | real historical spot study complete; not pristine or futures validation |
+| 8 | cost and delay changed together | cost-only, delay-only and combined scenarios declared separately | matched gross path/fill checks; published effects | fixed; costs and bar fills are assumptions |
+| 9 | raw P&L across unequal periods hid comparison limits | normalized annual means, selected/median, survival, ranks, intervals and three inspected figures | [BTC](../reports/public-spot/BTC-USD/report.md), [ETH](../reports/public-spot/ETH-USD/report.md) | complete for spot; all later declared intervals include zero |
+| 10 | walk-forward looked like a traded switching portfolio | label continuously simulated candidate-selection diagnostic; past-only selection and fill tie break | past-year selection test; yearly windows in saved results | fixed interpretation; no switching-cost or execution claim |
+| 11 | audit scale didn't establish evaluator scale | [phased measurements](benchmarks.md) on 10k/100k/1m plus all real spot cases | 55 synthetic cases per size; full real profile matches saved financial metrics | measured; whole-market execution, single PC samples, no streaming claim |
+| 12 | bootstrap wording and selection caveats were unclear | paired circular blocks with frozen 3/5/10 sensitivity | every interval retained; deterministic paired-difference tests | fixed; intervals are descriptive, not a selection correction |
+| 13 | successful empirical-command path wasn't tested | complete source/cache/identity/policy/lock/evaluate/report fixture; public snapshot replay fixture | both entirely synthetic integrations; clean install check linked below | fixed software path; credentials and G: are absent from CI |
+| 14 | tentative holiday labels could be mistaken for verified closures | explicit candidate labels; hard invalid/order/duplicate/missing-value gates; public missing-day block | quality regressions and regenerated local audit | clarified; full product calendar and seconds provenance remain unverified |
+| 15 | independent use wasn't demonstrated | [public source and breakout walkthrough](independent-input.md) | independent source, funded ledger and signal tests; replay hashes | demonstrated by this project; no outside adoption or impact claim |
+| 16 | completion/CV claims exceeded the available evidence | prototype status, this matrix, [CV limits](cv-notes.md) and handover | clean check, source hashes, report IDs and staged history recorded | software and spot case delivered; original futures objective unfinished |
+
+the review's requirement table is covered too: adapters/provenance and scale → 11/14/15; accounting/timing → 2/4/8/13; frozen choices → 5/6; empirical and cross-market evidence → 1/7/9; selection/uncertainty → 7/12; public reproducibility → 13/15; CV claims → 16.
+
+i used the approved twelve-stage sequence, with a separate spot branch and real follow-up fixes for timestamp units and the split helper. [the clean check](clean-run.md) records the tested revision and install. [the handover](../reports/repair/handover.json) lists protocols, execution identities and the remaining blocker.
+
+**what remains:** genuine date-valid futures identities and independent advance roll availability for the actual exports. [the required files](roll-gate.md) are specified. NQ can't be replaced silently. second-bar reconstruction and a full product holiday calendar aren't established. no paid request, new account or outside contact was used.

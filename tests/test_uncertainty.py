@@ -9,8 +9,8 @@ def test_paired_bootstrap_is_repeatable_and_uses_daily_differences() -> None:
     days = pd.date_range("2024-01-01", periods=30, freq="D", tz="UTC")
     baseline = pd.Series(np.arange(30, dtype=float), index=days)
     strategy = baseline + 10
-    a = paired_block_bootstrap(strategy, baseline, "2024-01-01", "2024-02-01", 100_000)
-    b = paired_block_bootstrap(strategy, baseline, "2024-01-01", "2024-02-01", 100_000)
+    a = paired_block_bootstrap(strategy, baseline, "2024-01-01", "2024-02-01", 100_000, periods_per_year=252)
+    b = paired_block_bootstrap(strategy, baseline, "2024-01-01", "2024-02-01", 100_000, periods_per_year=252)
     assert a == b
     assert a["observed_annual_return_difference"] == pytest.approx(0.0252)
     assert a["ci95_annual_return_difference"] == pytest.approx([0.0252, 0.0252])

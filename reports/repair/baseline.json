@@ -1,0 +1,30 @@
+{
+  "roll_exit_future_dependence": {
+    "roll_effective_at_both_runs": "2024-01-01T00:05:00+00:00",
+    "full_history_exit": [
+      {
+        "ts": "2024-01-01T00:04:00+00:00",
+        "price": 140.0
+      }
+    ],
+    "delete_future_00_04_bar_exit": [
+      {
+        "ts": "2024-01-01T00:03:00+00:00",
+        "price": 130.0
+      }
+    ]
+  },
+  "documented_resolver_response": "ValueError: resolution must map continuous to raw contract symbols",
+  "expanded_grid_new_version": "ValueError: configuration count changed; revise the plan explicitly",
+  "code_not_locked": {
+    "verify_passed_with_changed_signal_implementation": true,
+    "same_run_id": true,
+    "original_net_pnl": 380.2968901683198,
+    "changed_net_pnl": 0.0
+  },
+  "UTC_date_bins_2025": {
+    "observed_UTC_dates": 312,
+    "Sunday_dates": 52,
+    "annualization_days_hardcoded": 252
+  }
+}

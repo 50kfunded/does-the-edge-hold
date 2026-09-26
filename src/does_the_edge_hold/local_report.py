@@ -13,15 +13,17 @@ from .experiments import run_empirical
 from .plan import verify
 from .provenance import verify_minute_origin
 from .roll_gate import assess
+from .daily_clock import DailyClock
 
 
-def count_splits(path: Path, splits: dict) -> dict[str, int]:
+def count_splits(path: Path, splits: dict, clock=None) -> dict[str, int]:
     counts = {name: 0 for name in splits}
     boundaries = {name: (pd.to_datetime(start, utc=True), pd.to_datetime(end, utc=True))
                   for name, (start, end) in splits.items()}
     for batch in iter_parquet(path):
+        labels = clock.labels(batch["ts"]) if clock is not None else batch["ts"]
         for name, (start, end) in boundaries.items():
-            counts[name] += int(((batch["ts"] >= start) & (batch["ts"] < end)).sum())
+            counts[name] += int(((labels >= start) & (labels < end)).sum())
     return counts
 
 
@@ -39,17 +41,17 @@ def run_local_report(data_root: Path, cache_root: Path, output: Path,
     plan = json.loads(plan_path.read_text(encoding="utf-8"))
     lock = json.loads(lock_path.read_text(encoding="utf-8"))
     verify(plan, audit, lock)
-    gate = assess(audit, origin, mapping_root)
+    gate = assess(audit, origin, mapping_root, plan=plan)
     (output / "roll-gate.json").write_text(json.dumps(gate, indent=2) + "\n", encoding="utf-8")
     status = {"status": "blocked" if gate["status"] != "ready" else "historical_evaluation",
               "plan_sha256": lock["plan_sha256"], "roll_gate": gate,
               "empirical_pnl_calculated": gate["status"] == "ready"}
-    status["split_counts"] = {market: count_splits(source_path(data_root, market), plan["splits_utc"])
+    status["split_counts"] = {market: count_splits(source_path(data_root, market), plan["splits_utc"], DailyClock.from_plan(plan))
                               for market in ("NQ", "ES", "YM", "GC", "CL")}
     lines = ["# local study", "", "i checked the six local Parquet files and compared the five minute exports with their source cache.", ""]
     if gate["status"] != "ready":
         lines += ["**the roll gate is unresolved, so i haven't run the empirical P&L grid.** it needs verified contract mapping and causal execution timing. the public example uses synthetic contracts and stays separate.", ""]
-        lines += ["GC and CL also need a causal volume-roll policy: a historical switch date alone doesn't justify exiting at the last old-contract minute's open. the current runner blocks that case.", ""]
+        lines += ["each included market also needs independently supported advance roll instructions. a historical switch date alone isn't enough, including for calendar rolls.", ""]
     else:
         status["results"] = run_empirical(data_root, mapping_root, audit_path, origin_path,
                                           plan_path, lock_path, output / "empirical")

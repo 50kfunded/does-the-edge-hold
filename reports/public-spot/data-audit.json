@@ -1,0 +1,36 @@
+{
+  "scope": "public spot OHLCV; separate from blocked futures",
+  "source": "Coinbase Exchange public candles",
+  "retrieved_at": "2026-09-26T11:35:31.640895+00:00",
+  "files": [
+    {
+      "market": "BTC-USD",
+      "resolution": "1d",
+      "sha256": "4bab0fac667351f73517e42e5d1d40e923467e544345636d7ebdb8ca72e272ff",
+      "rows": 3530,
+      "first_utc": "2017-01-01T00:00:00+00:00",
+      "last_utc": "2026-08-31T00:00:00+00:00",
+      "missing_calendar_days": 0,
+      "outside_window_days": 0,
+      "maximum_open_usd": 124723.57,
+      "quality_status": "ready",
+      "exact_response_replay": true,
+      "request_count": 15
+    },
+    {
+      "market": "ETH-USD",
+      "resolution": "1d",
+      "sha256": "d268c8ec8a1e08a3e3ea6c9378d2cf6b174852af1671e302b5a0ac2de72ade36",
+      "rows": 3530,
+      "first_utc": "2017-01-01T00:00:00+00:00",
+      "last_utc": "2026-08-31T00:00:00+00:00",
+      "missing_calendar_days": 0,
+      "outside_window_days": 0,
+      "maximum_open_usd": 4830.18,
+      "quality_status": "ready",
+      "exact_response_replay": true,
+      "request_count": 15
+    }
+  ],
+  "quality_policy": "fail on invalid bars, duplicates, order, missing calendar days or outside-window bars; no imputation"
+}

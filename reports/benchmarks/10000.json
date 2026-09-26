@@ -1,0 +1,57 @@
+{
+  "scope": "synthetic full grid",
+  "rows": 10000,
+  "run_count": 55,
+  "failed_runs": 0,
+  "audit_rows": 10000,
+  "exact_cache_match": true,
+  "phases": {
+    "generation": {
+      "seconds": 0.03436900000087917,
+      "peak_rss_bytes": 137142272,
+      "initial_rss_bytes": 129093632
+    },
+    "ingestion": {
+      "seconds": 0.02067920000263257,
+      "peak_rss_bytes": 140828672,
+      "initial_rss_bytes": 137121792
+    },
+    "audit": {
+      "seconds": 0.01794299999892246,
+      "peak_rss_bytes": 142524416,
+      "initial_rss_bytes": 140820480
+    },
+    "provenance": {
+      "seconds": 0.027145499996549916,
+      "peak_rss_bytes": 148119552,
+      "initial_rss_bytes": 142520320
+    },
+    "evaluation": {
+      "seconds": 6.289973400002054,
+      "peak_rss_bytes": 152387584,
+      "initial_rss_bytes": 148254720
+    },
+    "report": {
+      "seconds": 0.5620465999963926,
+      "peak_rss_bytes": 166457344,
+      "initial_rss_bytes": 152367104
+    }
+  },
+  "environment": {
+    "python": "3.12.10",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "logical_cpus": 12,
+    "physical_cpus": 6,
+    "ram_bytes": 25674412032,
+    "packages": {
+      "numpy": "2.5.3",
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "psutil": "7.2.2"
+    },
+    "git_revision": "02f08002f2db9f89db1e3265c837f0a7c29e92b8",
+    "rss_method": "absolute process RSS sampled every 10 ms; includes retained inputs and allocator memory, excludes child processes; one fresh worker per size",
+    "background_activity": "development snapshot; interactive Windows host"
+  },
+  "limits": "one whole market is loaded for evaluation/provenance; audit uses bounded batches; no streaming execution claim"
+}

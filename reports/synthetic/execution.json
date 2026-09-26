@@ -1,0 +1,176 @@
+{
+  "execution_sha256": "3f9a57f2eb2e8dc6ce08fad2a807fc3c5b2f8b1f46a354514b75175092fe9184",
+  "git_dirty": true,
+  "git_revision": "2a59fed34f520fc14f5a579c7c1b45be31f4a3bc",
+  "identity": {
+    "callables": {
+      "adapter": {
+        "closure": [],
+        "code_sha256": "550577ce1c1620ab8c26963e023b286da5620197af556b6380582c52975cff57",
+        "defaults": [],
+        "module": "does_the_edge_hold.adapters",
+        "name": "MarketAdapter.signal_bars",
+        "source_sha256": "d846d0a2b48b672dee4ad72598e28249593c79049ca38a62a8ed54fa0e5ae26a"
+      },
+      "adapter_validate": {
+        "closure": [],
+        "code_sha256": "9230b4dbaacd027a199432084a98fc942f2a7a8597d91c989eb2cba2b478a810",
+        "defaults": [],
+        "module": "does_the_edge_hold.adapters",
+        "name": "MarketAdapter.validate",
+        "source_sha256": "d846d0a2b48b672dee4ad72598e28249593c79049ca38a62a8ed54fa0e5ae26a"
+      },
+      "aggregate": {
+        "closure": [],
+        "code_sha256": "4166ebe78134ddb3ba38844818b155fc9c7820379b74093229f33655abadfaf0",
+        "defaults": [],
+        "module": "does_the_edge_hold.timing",
+        "name": "hourly_from_minutes",
+        "source_sha256": "5ce257d5e922e01d7ac3bbdc3a245dfa3c4d6c2c8dd5814c0d06b0bd47783603"
+      },
+      "daily_pnl": {
+        "closure": [],
+        "code_sha256": "bd35453bbe4d528c5019733dde0436b1969a861ffede19fe442fdd4ce6e17380",
+        "defaults": [
+          null,
+          null,
+          null
+        ],
+        "module": "does_the_edge_hold.metrics",
+        "name": "daily_pnl",
+        "source_sha256": "13ca8d80f27f9e8e4cdc15cd6abf48f18ab3dfbddd5d11afe917aefbbd21877b"
+      },
+      "decisions": {
+        "closure": [],
+        "code_sha256": "2e696c045fd0ff586f4fa9b289537a968e2d668c38137a24586688a7b5b06970",
+        "defaults": [],
+        "module": "does_the_edge_hold.signals",
+        "name": "decisions",
+        "source_sha256": "2aa72b2c807f9ea8ca9322d70ef5776b474245d147c8d25b8820c966390887c0"
+      },
+      "grid": {
+        "closure": [],
+        "code_sha256": "d79f97c9efc9a211ba35e031d0fe753984f7429776443e06b7c91b850de03388",
+        "defaults": [],
+        "module": "does_the_edge_hold.signals",
+        "name": "grid_from_plan",
+        "source_sha256": "2aa72b2c807f9ea8ca9322d70ef5776b474245d147c8d25b8820c966390887c0"
+      },
+      "ledger_buy": {
+        "closure": [],
+        "code_sha256": "5f9428fdb418a9f6ff85280b0f9b74bbed8990d391a4f245ab4419051d939454",
+        "defaults": [
+          "signal"
+        ],
+        "module": "does_the_edge_hold.ledger",
+        "name": "Ledger.buy",
+        "source_sha256": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329"
+      },
+      "ledger_mark": {
+        "closure": [],
+        "code_sha256": "b8b1145a41a67d0484307b806460b054826817873aa07f08cee7225c4596488f",
+        "defaults": [],
+        "module": "does_the_edge_hold.ledger",
+        "name": "Ledger.mark",
+        "source_sha256": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329"
+      },
+      "ledger_sell": {
+        "closure": [],
+        "code_sha256": "3b6b6c27211939d04dacde25bf65f2faafe2c1876483c9de2e0f437df7c6d11e",
+        "defaults": [
+          "signal"
+        ],
+        "module": "does_the_edge_hold.ledger",
+        "name": "Ledger.sell",
+        "source_sha256": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329"
+      },
+      "simulate": {
+        "closure": [],
+        "code_sha256": "907ea6bff20a2823e2df7ea61a445a2267b3ae7e7aa69b5373190a698f4104bd",
+        "defaults": [],
+        "module": "does_the_edge_hold.timing",
+        "name": "simulate",
+        "source_sha256": "5ce257d5e922e01d7ac3bbdc3a245dfa3c4d6c2c8dd5814c0d06b0bd47783603"
+      },
+      "summarize": {
+        "closure": [],
+        "code_sha256": "2c8e9b4c973f2c853fb60d4a9c7f39a0df03690519427ab50bdce65c384acfdb",
+        "defaults": [
+          null,
+          null
+        ],
+        "module": "does_the_edge_hold.metrics",
+        "name": "summarize",
+        "source_sha256": "13ca8d80f27f9e8e4cdc15cd6abf48f18ab3dfbddd5d11afe917aefbbd21877b"
+      }
+    },
+    "environment": {
+      "packages": {
+        "matplotlib": "3.11.2",
+        "numpy": "2.5.3",
+        "pandas": "3.0.5",
+        "psutil": "7.2.2",
+        "pyarrow": "25.0.1",
+        "scipy": "1.18.1"
+      },
+      "python": "3.12.10"
+    },
+    "evidence": {
+      "adapter": {
+        "bar_minutes": 1,
+        "kind": "futures",
+        "spec": {
+          "multiplier": 20.0,
+          "symbol": "SYN",
+          "tick_size": 0.25
+        }
+      },
+      "additional": {},
+      "roll_instructions": [
+        {
+          "deadline": "2024-01-23 00:00:00+00:00",
+          "effective_at": "2024-01-23 00:00:00+00:00",
+          "executable_at": "2024-01-22 22:00:00+00:00",
+          "known_at": "2024-01-22 22:00:00+00:00",
+          "new_contract": "SYN-B",
+          "old_contract": "SYN-A"
+        }
+      ]
+    },
+    "protocol_sha256": "d7dea6e6279ade08ef4fdac30deeba7c8daa77b43aeabc78ddd06477e89ee083",
+    "schema": 1,
+    "source_code": {
+      "__init__.py": "844ac694e3ad0f2c6d6db30ff23c5a229578a26a031807d148a2ad8019cf29bc",
+      "adapters.py": "d846d0a2b48b672dee4ad72598e28249593c79049ca38a62a8ed54fa0e5ae26a",
+      "audit.py": "f2b4a03f4a81e69cf6c5f7fcbf77437855dcaf88cd31a3a30a9a69b08f9dcc4c",
+      "cli.py": "53ef5b144be16a9a9a94dbccbcece0e1a5c48fe9c9d9a69fef7e40661db71b36",
+      "daily_clock.py": "e3c0e0f87af24f0b59b4882c2da1e9107969b78a8019f63eb00543c60b58d246",
+      "data.py": "61e26c165696eb866a2e5c4f6f4e55a113ba6ef47f37eb090f38197f530448ce",
+      "example.py": "3a2c4c1d71cc561c0b4a638c559229e90df37edc1bca58f539b885a023e137b5",
+      "execution.py": "897c1e8f5d041f7c6daf6bed8b8a5776628f1a53074593aef92b9ecfd2780a6d",
+      "experiments.py": "8c9bb0ffda966662b2fdfe3fe2d21a8de65dd9919336e05520883359ef55b158",
+      "ledger.py": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329",
+      "local_report.py": "a558bb2b4a997d8809ab1c8c777a18b35eb54f92db96da4c4df930c10e351cbe",
+      "metrics.py": "13ca8d80f27f9e8e4cdc15cd6abf48f18ab3dfbddd5d11afe917aefbbd21877b",
+      "plan.py": "fb0a365923db35111bdadfe8330f35b1a7d0e4278a9def9efd0d23d6d3f916b9",
+      "provenance.py": "1172bc2f0e947a213812d023ea0e06f84ac56415449ff51c40e78b7d8241fd9c",
+      "public_data.py": "b573e9a69f9ab62fd46bb3144cab3c3447d9b02d11cc7e32d8af2c0196467752",
+      "public_study.py": "180b151d0e7d22bdcd2354f2efef86d895b10b403fbd4dfa2ee6df990494d7cf",
+      "reporting.py": "758876b6c20e530ff5516fb9f7f4946465ab0b872f98a1120e4ab302a62057d4",
+      "resolve.py": "7b812fad3ad17b6ef1a47edb03b6d6b5333735b018f9a5ab1c83542d2fb69f74",
+      "roll_gate.py": "94f85b8a205d6215bf60573210e62cddf191ff3eab0ceff5eeb3b9778cce734c",
+      "rolls.py": "d47a9189b800e32885bb1c1f977bf7cd20c58da9559cc4b150c427952e98cb98",
+      "signals.py": "2aa72b2c807f9ea8ca9322d70ef5776b474245d147c8d25b8820c966390887c0",
+      "specs.py": "a11d9eb9709a088a89e257e91143fded6a7ba852356befeb2c15530d277ce68e",
+      "spot.py": "8d1c8eb668736f38c12ecfd0732627339239199210dcde02733570608b7598c5",
+      "synthetic.py": "71badced0678ea224967eec8bcdb2df5810cf3bb3efa56a0544533713c9aae4d",
+      "timing.py": "5ce257d5e922e01d7ac3bbdc3a245dfa3c4d6c2c8dd5814c0d06b0bd47783603",
+      "uncertainty.py": "5bbb86f071df89f927903f50ca134ec2f6c74901bc6f47f566255d24bb71a384",
+      "walk_forward.py": "6f38018c3600a4cf2af5edc94e10af4b709e01d76b851ffe3e207a102d32f66b"
+    },
+    "sources": {
+      "SYN": "0a38e629623fca6bb2afc58a0ec353d632a4af01983976701ece1d87cbef454d"
+    }
+  },
+  "note": "revision/dirty state are recorded; identity uses code bytes and actual callable code, not report paths or creation times"
+}

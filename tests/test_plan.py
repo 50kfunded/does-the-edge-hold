@@ -4,10 +4,14 @@ import json
 import pytest
 
 from does_the_edge_hold.plan import freeze, verify
+from does_the_edge_hold.example import example_plan
 
 
 def test_final_run_rejects_a_changed_plan_or_source(tmp_path) -> None:
-    plan = {"version": 1, "configuration_count": 9, "signal": "past close only"}
+    plan = example_plan()
+    plan.update(version=3, prior_exposure="synthetic fixture inspected")
+    plan["signal_families"]["momentum"]["lookback_hours"].append(96)
+    plan["configuration_count"] = 10
     audit = {"files": [{"market": "NQ", "resolution": "1m", "sha256": "abc"}]}
     plan_path, audit_path, lock_path = (tmp_path / name for name in
                                         ("plan.json", "audit.json", "lock.json"))

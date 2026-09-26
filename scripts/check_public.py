@@ -15,7 +15,7 @@ def forbidden(path: str) -> bool:
     return (lower.endswith((".parquet", ".dbn", ".dbn.zst", ".zst", ".zip")) or
             lower.endswith("/.env") or lower == ".env" or
             lower.startswith(("runs/", "cache/", "data/")) or
-            lower.endswith(("_rolls.csv", "/symbology.json", "/evidence.json")))
+            lower.endswith(("_rolls.csv", "_instructions.csv", "_policy-source.json", "/symbology.json", "/evidence.json")))
 
 
 def main() -> None:

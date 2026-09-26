@@ -1,11 +1,13 @@
-# adding something
+# adding an input or rule
 
-i've kept the parts small so another signal or data source doesn't need a new backtester.
+i've kept the scope to research audits, with no broker or live-trading code.
 
-for a signal, add its rule in `signals.py`. it returns `known_at,target`, where target is 0 or 1 and `known_at` is when the input bar is complete. add it to a declared grid and record every setting tried. test that changing future prices doesn't change earlier decisions, and that a contract transition resets its history.
+a signal extension registers its callback through `register_signal`. [the breakout example](examples/breakout.py) uses only completed bars and prior highs. declare every setting in a revised plan, then test that future-price changes can't alter earlier decisions.
 
-for a data source, return `ts,open,high,low,close,volume` in time order, with UTC start timestamps. `iter_parquet` is the local adapter and `make_bars` is the synthetic source. add contract metadata to `specs.py` when using another market. the local file registry is in `data.py`; the existing audit intentionally checks these six exports.
+a source supplies ordered UTC start-stamped `ts,open,high,low,close,volume,contract`, its provenance and a `MarketAdapter`. the adapter declares the bar duration, instrument, asset kind and ledger. don't reuse futures principal accounting for spot inventory.
 
-don't manufacture contract IDs from price jumps. supply a reviewed schedule through `rolls.py` and the evidence manifest described in [the roll check](docs/roll-gate.md). new costs belong in the ledger, with a small hand-calculated path proving that cash, equity and both sides' costs reconcile.
+real futures need reviewed date-valid identities and advance roll instructions. price jumps and retrospective switch dates aren't substitutes. new cost models need a small cash/equity reconciliation and matched scenarios.
 
-run `python -m pytest -q` and `edge-hold example`. keep licensed files under an ignored local folder. before a new empirical grid, document the change, archive the old plan, and freeze a new one. include failed runs in the report too.
+run the tests and public example. keep old plans and results, freeze changes before strategy returns, and retain failed configurations. source files stay read-only; vendor bars and mapping evidence stay in ignored folders.
+
+[the independent-input walkthrough](docs/independent-input.md) shows the working public case and how to handle a revised snapshot.

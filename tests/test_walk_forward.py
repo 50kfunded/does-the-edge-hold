@@ -12,7 +12,7 @@ def test_walk_forward_selects_only_previous_years() -> None:
     a.loc[a.index.year == 2020] -= 3
     b.loc[b.index.year == 2020] += 3
     rows = [{"config_id": config, "scenario": "base", "period": str(year),
-             "status": "ok", "entry_trades": 30}
+             "status": "ok", "entry_trades": 30, "fills": 60}
             for config in ("a", "b") for year in range(2017, 2021)]
     windows = evaluate({"a": a, "b": b}, rows, 100_000, 20)
     assert windows[0]["test_year"] == 2020

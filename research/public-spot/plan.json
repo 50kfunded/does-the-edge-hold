@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "scope": "separate public spot study; no inference about validated futures execution",
+  "question": "does choosing a good-looking long/flat rule survive later dates, costs, slower orders and another coin?",
+  "primary_market": "BTC-USD",
+  "checks": [
+    "ETH-USD"
+  ],
+  "separate_check": null,
+  "universe": {
+    "primary": "BTC-USD",
+    "required": [
+      "BTC-USD",
+      "ETH-USD"
+    ],
+    "optional": [],
+    "allowed_exclusions": []
+  },
+  "source_resolution": "1d",
+  "signal_timeframe": "one completed UTC daily candle",
+  "signal_families": {
+    "momentum": {
+      "lookback_bars": [
+        7,
+        14,
+        30,
+        60,
+        120
+      ],
+      "rule": "long when close exceeds the completed close n observed bars earlier; otherwise flat"
+    },
+    "mean_reversion": {
+      "lookback_bars": [
+        14,
+        30,
+        60
+      ],
+      "entry_z": [
+        0.5,
+        1,
+        1.5
+      ],
+      "rule": "long below prior n-close mean by entry_z sample standard deviations; exit at prior mean; warmup flat"
+    }
+  },
+  "configuration_count": 14,
+  "splits_utc": {
+    "development": [
+      "2017-01-01T00:00:00Z",
+      "2022-01-01T00:00:00Z"
+    ],
+    "validation": [
+      "2022-01-01T00:00:00Z",
+      "2024-01-01T00:00:00Z"
+    ],
+    "historical_final": [
+      "2024-01-01T00:00:00Z",
+      "2026-09-01T00:00:00Z"
+    ]
+  },
+  "selection": {
+    "minimum_entry_trades": 10,
+    "metric": "development net daily account-capital Sharpe in base",
+    "tie_break": "lower development fill count, then configuration id",
+    "later_use": "keep BTC development choice fixed in both later periods and ETH; report every candidate too"
+  },
+  "execution": {
+    "starting_capital_usd_per_market": 1000000,
+    "position": "one coin unit or flat; cash-funded, no borrowing",
+    "fill": "observed daily bucket's first trade open at or after completed bar end plus declared delay; assumed execution, no bid/ask or exact first-trade timestamp",
+    "mark": "observed daily close; unliquidated final inventory retained and marked, with no invented final sale",
+    "interest": "idle cash earns zero; no staking, lending, funding or tax",
+    "scenarios": [
+      {
+        "name": "gross_reference",
+        "commission_usd_per_side": 0,
+        "slippage_ticks_per_side": 0,
+        "fee_bps": 0,
+        "slippage_bps": 0,
+        "delay_minutes": 1440
+      },
+      {
+        "name": "base",
+        "commission_usd_per_side": 0,
+        "slippage_ticks_per_side": 0,
+        "fee_bps": 10,
+        "slippage_bps": 5,
+        "delay_minutes": 1440
+      },
+      {
+        "name": "higher_cost",
+        "commission_usd_per_side": 0,
+        "slippage_ticks_per_side": 0,
+        "fee_bps": 20,
+        "slippage_bps": 10,
+        "delay_minutes": 1440
+      },
+      {
+        "name": "two_days_late",
+        "commission_usd_per_side": 0,
+        "slippage_ticks_per_side": 0,
+        "fee_bps": 10,
+        "slippage_bps": 5,
+        "delay_minutes": 2880
+      },
+      {
+        "name": "three_days_late",
+        "commission_usd_per_side": 0,
+        "slippage_ticks_per_side": 0,
+        "fee_bps": 10,
+        "slippage_bps": 5,
+        "delay_minutes": 4320
+      },
+      {
+        "name": "combined_stress",
+        "commission_usd_per_side": 0,
+        "slippage_ticks_per_side": 0,
+        "fee_bps": 20,
+        "slippage_bps": 10,
+        "delay_minutes": 4320
+      }
+    ]
+  },
+  "statistics": {
+    "clock": {
+      "name": "utc_calendar",
+      "periods_per_year": 365
+    },
+    "block_lengths": [
+      3,
+      5,
+      10
+    ],
+    "replicates": 2000,
+    "uncertainty": "paired circular block bootstrap on calendar daily P&L; descriptive, no correction for candidate selection",
+    "walk_forward": "prior three calendar years select a continuously simulated candidate; inspect next year; not a switching portfolio"
+  },
+  "quality": {
+    "missing_calendar_days": "block",
+    "invalid_bars": "block",
+    "duplicates": "block",
+    "order_errors": "block",
+    "fills": "no interpolation or invented bars"
+  },
+  "prior_exposure": "broad crypto price history was known before this study. the 2017-2026 source coverage and maximum opens were inspected to check funded sizing. no output from this declared 14-candidate spot grid was viewed before this lock. these are historical comparisons, not a prospective untouched holdout.",
+  "research_questions": [
+    "count positive-gross candidates that stay positive after base costs at the same delay in each split",
+    "compare the BTC development winner with median candidate and flat/always-long in later periods",
+    "show candidate ranks and whether the BTC choice transfers to ETH without reselection",
+    "measure cost-only effects at one-day delay, delay-only effects at base costs, and combined stress separately",
+    "report paired annual mean-return differences with 3/5/10-day intervals and the continuous-state walk-forward diagnostic"
+  ],
+  "limitations": [
+    "one BTC and one ETH have different dollar risk even with the same capital; account returns are not an equal-risk comparison",
+    "fixed positive long/flat inventory, no shorting; OHLC bars cannot validate spread or intraday fill availability",
+    "asset, window and grid choices already reflect research judgment; confidence intervals do not undo prior knowledge"
+  ],
+  "revision_rule": "write a new version and lock before reading strategy returns if source coverage forces a change"
+}
