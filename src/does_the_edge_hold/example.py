@@ -10,7 +10,9 @@ import time
 import numpy as np
 
 from .data import sha256_file
-from .experiments import rank_changes, run_market, winner_uncertainty
+from .experiments import rank_changes, run_market, winner_uncertainty, market_manifest
+from .adapters import MarketAdapter
+from .execution import write_manifest
 from .ledger import Costs, Ledger
 from .plan import _digest
 from .reporting import market_report
@@ -19,7 +21,10 @@ from .synthetic import make_bars
 
 
 def example_plan() -> dict:
-    return {"scope": "synthetic only", "configuration_count": 9,
+    return {"version": 3, "scope": "synthetic only", "configuration_count": 9,
+            "prior_exposure": "generated bars and earlier synthetic software outputs were inspected; not empirical research",
+            "statistics": {"clock": {"name": "utc_calendar", "periods_per_year": 365},
+                           "block_lengths": [3, 5, 10], "replicates": 2000},
             "signal_families": {"momentum": {"lookback_hours": [12, 24, 72]},
                                 "mean_reversion": {"lookback_hours": [24, 72], "entry_z": [.5, 1, 1.5]}},
             "splits_utc": {"development": ["2024-01-08T00:00:00Z", "2024-01-18T00:00:00Z"],
@@ -61,7 +66,7 @@ def controlled_demos() -> dict:
 def run_example(output: str | Path) -> dict:
     started = time.perf_counter()
     output = Path(output)
-    output.mkdir(parents=True, exist_ok=True)
+    output.mkdir(parents=True, exist_ok=False)
     plan = example_plan()
     (output / "example-plan.json").write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
     bars = make_bars(minutes=43_200)
@@ -71,10 +76,14 @@ def run_example(output: str | Path) -> dict:
     path = output / "synthetic_bars.parquet"
     bars.to_parquet(path, index=False)
     source_hash, plan_hash = sha256_file(path), _digest(plan)
-    rows, daily = run_market(bars, "SYN", plan, plan_hash, source_hash, roll_instructions=instructions)
+    manifest = market_manifest("SYN", plan_hash, source_hash, MarketAdapter(SPECS["SYN"]), instructions)
+    write_manifest(manifest, output / "execution.json")
+    rows, daily = run_market(bars, "SYN", plan, plan_hash, source_hash, roll_instructions=instructions,
+                             execution_manifest=manifest)
     ranking = rank_changes(rows, plan["selection"]["minimum_entry_trades"])
     report = {"market": "SYN", "status": "synthetic", "plan_sha256": plan_hash,
-              "source_sha256": source_hash, "seed": 7, "minute_rows": len(bars),
+              "source_sha256": source_hash, "execution_sha256": manifest["execution_sha256"],
+              "seed": 7, "minute_rows": len(bars), "protocol": plan,
               "rank_changes": ranking, "runs": rows,
               "winner_uncertainty": winner_uncertainty(ranking["development_winner"], daily, plan),
               "controlled_demos": controlled_demos()}

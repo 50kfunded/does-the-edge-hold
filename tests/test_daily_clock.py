@@ -21,3 +21,14 @@ def test_fees_at_midnight_are_not_backdated():
     for start, end in [("2023-01-01", "2024-01-01"), ("2024-01-01", "2025-01-01")]:
         assert summarize(run, start, end)["reconciliation_error_usd"] == pytest.approx(0)
     assert all(f.known_at <= f.ts for f in run.ledger.fills)
+
+def test_sunday_profit_is_preserved_on_a_holiday_session_and_no_missing_days_are_invented():
+    clock = DailyClock("new_york_futures_session", 252)
+    ts = pd.to_datetime(["2024-05-26T22:00Z", "2024-05-27T15:00Z", "2024-05-27T22:00Z"], utc=True)
+    bars = pd.DataFrame({"ts": ts, "open": [100, 102, 103], "close": [101, 103, 104], "contract": "A"})
+    targets = pd.DataFrame({"known_at": [ts[0]], "target": [1]})
+    run = simulate(bars, targets, ContractSpec("SYN", 1, 1), Costs(0, 0))
+    daily = daily_pnl(run, clock)
+    assert list(daily.index.strftime("%Y-%m-%d")) == ["2024-05-27", "2024-05-28"]
+    assert daily.iloc[0] == 3 and daily.iloc[1] == 1
+    assert daily.sum() == run.ledger.net_pnl

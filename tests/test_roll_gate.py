@@ -9,7 +9,9 @@ from does_the_edge_hold.timing import scheduled_instructions
 
 def fixture_evidence(tmp_path, markets=("NQ", "ES")):
     audit = {"files": [{"market": m, "resolution": "1m", "sha256": m,
-        "first_utc": "2024-01-01T00:00Z", "last_utc": "2024-02-15T00:00Z"} for m in markets]}
+        "first_utc": "2024-01-01T00:00Z", "last_utc": "2024-02-15T00:00Z",
+        "duplicate_timestamps": 0, "out_of_order_timestamps": 0, "invalid_ohlc": 0,
+        "nonpositive_volume": 0, "missing_values": {}} for m in markets]}
     origins = {"markets": [{"market": m, "verified_match": True, "selected_root": m + "c0"} for m in markets]}
     response = {"status": 0, "partial": [], "not_found": [], "stype_in": "continuous", "stype_out": "instrument_id",
         "result": {m + ".c.0": [{"d0": "2024-01-01", "d1": "2024-02-01", "s": "123"},

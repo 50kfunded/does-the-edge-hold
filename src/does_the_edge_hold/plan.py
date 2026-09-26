@@ -55,6 +55,14 @@ def validate(plan: dict) -> None:
     if not isinstance(plan["selection"]["minimum_entry_trades"], int) or plan["selection"]["minimum_entry_trades"] < 1:
         raise ValueError("selection trade threshold must be positive")
     DailyClock.from_plan(plan)
+    metric = plan["selection"].get("metric")
+    if metric is not None and metric not in (
+        "net Sharpe on daily account-capital returns in the base scenario",
+        "development net daily account-capital Sharpe in base"):
+        raise ValueError("unsupported selection metric; this evaluator selects net daily Sharpe")
+    lengths = plan.get("statistics", {}).get("block_lengths", [3, 5, 10])
+    if not lengths or any(isinstance(n, bool) or not isinstance(n, int) or n < 1 for n in lengths):
+        raise ValueError("block lengths must be positive integers")
 
 
 def _digest(value: object) -> str:

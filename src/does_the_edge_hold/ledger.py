@@ -13,7 +13,8 @@ class ContractSpec:
     tick_size: float
 
     def __post_init__(self) -> None:
-        if self.multiplier <= 0 or self.tick_size <= 0:
+        import math
+        if any(not math.isfinite(v) or v <= 0 for v in (self.multiplier, self.tick_size)):
             raise ValueError("multiplier and tick size must be positive")
 
 
@@ -28,6 +29,8 @@ class Costs:
         import math
         if any(not math.isfinite(v) or v < 0 for v in self.__dict__.values()):
             raise ValueError("costs cannot be negative")
+        if self.slippage_bps >= 10_000:
+            raise ValueError("bps slippage must be below 100 percent")
 
 
 @dataclass(frozen=True)

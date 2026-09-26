@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_all_grid_runs_are_kept() -> None:
     plan = json.loads((ROOT / "research-plan.json").read_text(encoding="utf-8"))
     rows, daily = run_synthetic(plan)
-    assert len({row["run_id"] for row in rows}) == 55  # nine rules + two baselines, four scenarios
+    assert len({row["run_id"] for row in rows}) == 55  # nine rules + two baselines, five scenarios
     assert len(daily) == 11
     assert not any(row["status"] == "failed" for row in rows)
     assert {row["scenario"] for row in rows} == {

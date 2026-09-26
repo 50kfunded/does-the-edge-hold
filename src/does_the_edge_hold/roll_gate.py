@@ -61,13 +61,19 @@ def assess(audit: dict, provenance: dict, mapping_root: str | Path | None = None
         if a is None or origin is None or not origin.get("verified_match"):
             problems.append("export could not be matched to its continuous cache")
         if a is not None:
+            expected = {"duplicate_timestamps", "out_of_order_timestamps", "invalid_ohlc", "nonpositive_volume", "missing_values"}
+            if expected - a.keys():
+                problems.append("quality audit is incomplete")
             for field in ("duplicate_timestamps", "out_of_order_timestamps", "invalid_ohlc", "nonpositive_volume"):
                 if a.get(field, 0):
                     problems.append(f"quality gate: {field}")
             if sum(a.get("missing_values", {}).values()):
                 problems.append("quality gate: missing values")
-            if quality.get("maximum_gap_seconds") is not None and a.get("maximum_gap_seconds", 0) > quality["maximum_gap_seconds"]:
-                problems.append("gap exceeds the protocol limit")
+            if quality.get("maximum_gap_seconds") is not None:
+                if "maximum_gap_seconds" not in a:
+                    problems.append("gap limit cannot be verified from this audit")
+                elif a["maximum_gap_seconds"] > quality["maximum_gap_seconds"]:
+                    problems.append("gap exceeds the protocol limit")
         if manifest is not None and a is not None and origin is not None:
             meta = manifest.get("markets", {}).get(market, {})
             try:

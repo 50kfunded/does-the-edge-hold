@@ -12,6 +12,10 @@ class MarketAdapter:
     bar_minutes: int = 1
     ledger_factory: object = Ledger
 
+    def __post_init__(self):
+        if self.kind not in ("futures", "spot") or isinstance(self.bar_minutes, bool) or not isinstance(self.bar_minutes, int) or self.bar_minutes < 1:
+            raise ValueError("adapter needs a declared asset kind and positive integer bar duration")
+
     def signal_bars(self, bars):
         self.validate(bars)
         if self.bar_minutes == 1:
