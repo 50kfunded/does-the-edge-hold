@@ -20,7 +20,7 @@ i select on NQ development data, then keep that setting for later periods and ot
 
 ## what this can't establish yet
 
-the real contract mapping is unresolved, so there are no empirical strategy returns here. the second bars have only been audited; i haven't used them to validate fills. bar data can't tell me the historical spread, queue position or market impact. the cost and delay cases are assumptions, and even a longer delay can help by chance.
+the real contract mapping is unresolved, so there are no empirical strategy returns here. a historical volume-roll mapping also can't justify an exit before that switch was knowable; the current gate blocks it. the second bars have only been audited; i haven't used them to validate fills. bar data can't tell me the historical spread, queue position or market impact. the cost and delay cases are assumptions, and even a longer delay can help by chance.
 
 the session check uses a regular weekly template and tentative holiday labels, not a complete product calendar. NQ, ES and YM share equity-index exposure, and the second bars overlap the minute data. nine settings are counted in this study; the number of choices tried in my older research is unknown.
 

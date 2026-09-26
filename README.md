@@ -31,7 +31,7 @@ the report appears at `runs/example/report.md`. on macOS or Linux, use `.venv/bi
 .\.venv\Scripts\edge-hold.exe local-report --data-root G:\localview\data\bars --cache-root G:\nq-powell\data\cache
 ```
 
-this reads the files without changing them and writes `runs/local/report.md`. it checks the frozen plan and roll evidence before allowing P&L. a verified mapping can be supplied with `--mapping-root runs/roll-mapping`; until then, the report says the study is blocked.
+this reads the files without changing them and writes `runs/local/report.md`. a mapping can be supplied with `--mapping-root runs/roll-mapping`, but dates alone won't clear the gate: the roll execution must also be causal. the current runner blocks volume-ranked rolls under this exit policy.
 
 the repo contains code, synthetic results and aggregate data checks. vendor bars and detailed investigation samples stay local.
 

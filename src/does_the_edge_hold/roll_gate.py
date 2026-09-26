@@ -39,6 +39,8 @@ def assess(audit: dict, provenance: dict, mapping_root: str | Path | None = None
         problems = []
         if a is None or origin is None or not origin.get("verified_match"):
             problems.append("export could not be matched to its continuous cache")
+        if origin is not None and origin.get("selected_root", "")[-2:-1] == "v":
+            problems.append("volume-ranked mapping alone cannot justify an exit at the final old-contract minute open; the current runner needs a reviewed policy extension with additional contract prices or advance schedule evidence")
         if manifest is None:
             problems.append("no verified mapping supplied")
         elif a is not None and origin is not None:

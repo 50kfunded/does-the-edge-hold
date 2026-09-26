@@ -6,9 +6,11 @@ i matched the five minute exports back to the local cache, including their times
 
 the accounting test closes at the last old-contract minute's open and reopens at the first new-contract minute's open, charging costs on both sides. that test works with known synthetic contracts. it doesn't tell me the real roll dates.
 
+there's also a timing problem for GC and CL. a volume-ranked switch may only be known after the old minute's open, so its historical mapping alone can't justify that exit. the current runner keeps volume-roll P&L blocked. i'd need a reviewed policy extension using advance schedule evidence or extra prices for both contracts before clearing it.
+
 **current decision: blocked.** the local cache doesn't include the date-to-contract schedule. the free Databento lookup returned an account-locked error, and i no longer have that account. i checked local downloads and the older market-project ZIPs, but didn't find the mapping. i won't guess roll dates from price jumps. [the gate result](../reports/roll-gate.json) records this status.
 
-if i find saved mapping files, i'll check their source, date coverage and contract IDs against the exports before running `edge-hold research`. the mapping and evidence stay under `runs/`, which Git ignores. the command checks the plan lock and roll gate before it calculates P&L.
+if i find saved mapping files, i'll check their source, date coverage and contract IDs against the exports, then check whether the execution policy was possible at the time. the mapping and evidence stay under `runs/`, which Git ignores. `edge-hold research` checks the plan lock and roll gate before it calculates P&L.
 
 ## supplying a mapping
 
