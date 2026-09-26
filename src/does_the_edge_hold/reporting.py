@@ -16,13 +16,16 @@ def market_report(report: dict, output: Path, daily: dict[str, pd.Series] | None
     rows = report["runs"]
     pd.DataFrame(rows).to_csv(output / "all-results.csv", index=False)
     ranking = report["rank_changes"]
-    winner = report.get("selected_config_from_NQ", ranking["development_winner"])
-    scope = "synthetic data" if report["status"] == "synthetic" else "historical futures data"
-    lines = [f"# {report['market']} audit", "", f"i ran nine settings and two baselines across four cost and delay cases on {scope}. all 44 runs are in [the CSV](all-results.csv), including any failures.", ""]
+    winner = report.get("selected_config_from_primary", report.get("selected_config_from_NQ", ranking["development_winner"]))
+    scope = {"synthetic": "synthetic data", "historical_public_spot": "historical public spot data"}.get(report["status"], "historical futures data")
+    settings = len({r["config_id"] for r in rows}) - 2
+    cases = len({r["scenario"] for r in rows})
+    runs = len({r["run_id"] for r in rows})
+    lines = [f"# {report['market']} audit", "", f"i ran {settings} settings and two baselines across {cases} cost and delay cases on {scope}. all {runs} runs are in [the CSV](all-results.csv), including any failures.", ""]
     if report["status"] == "synthetic":
         lines += ["these prices are made up. this checks the software, not whether a market has an edge.", ""]
     else:
-        lines += ["i'd already explored these years in an older project, so this is a historical evaluation. the setting below was picked on NQ development data and kept for the other markets.", ""]
+        lines += ["this is a historical evaluation. the primary development pick stays fixed in later periods and other markets. it isn't an untouched holdout.", ""]
     lines += [f"the development pick is `{winner}`." if winner else "no setting met the development selection rule.", "",
               "| setting | development net $ | validation net $ | final net $ |", "| --- | ---: | ---: | ---: |"]
     configs = list(dict.fromkeys(row["config_id"] for row in rows))
@@ -35,7 +38,7 @@ def market_report(report: dict, output: Path, daily: dict[str, pd.Series] | None
         lines.append(f"| {config} | {' | '.join(values)} |")
     if winner:
         lines += ["", "## costs and delay", "", "| case | gross $ | net $ | fills |", "| --- | ---: | ---: | ---: |"]
-        for scenario in ("gross_reference", "base", "higher_cost", "one_bar_late"):
+        for scenario in dict.fromkeys(r["scenario"] for r in rows):
             row = lookup.get((winner, scenario, "whole"), {})
             if row.get("status") == "ok":
                 lines.append(f"| {scenario} | {row['gross_pnl_usd']:,.2f} | {row['net_pnl_usd']:,.2f} | {row['fills']} |")
@@ -46,7 +49,7 @@ def market_report(report: dict, output: Path, daily: dict[str, pd.Series] | None
             if comparison["status"] == "ok":
                 low, high = comparison["ci95_annual_return_difference"]
                 lines.append(f"| {comparison['period']} | {comparison['baseline']} | {comparison['observed_annual_return_difference']:.2%} | {low:.2%} to {high:.2%} |")
-    lines += ["", "i used paired five-day blocks, 2,000 bootstrap draws and seed 1729. the intervals depend on these days being a useful sample; they don't remove selection bias or predict future returns.", "",
+    lines += ["", "i used paired circular blocks at the declared lengths, 2,000 bootstrap draws and seed 1729. the intervals depend on these days being a useful sample; they don't remove selection bias or predict future returns.", "",
               "the JSON and CSV keep gross/net P&L, return on stated capital, daily volatility and Sharpe, daily drawdown, hourly exposure, fills, costs, years and splits. prices are marked at the end; an open position isn't forced closed just to improve a result.", ""]
     if daily is not None:
         plot_market(rows, daily, winner, output, scope)
@@ -67,7 +70,7 @@ def plot_market(rows: list[dict], daily: dict[str, pd.Series], winner: str | Non
                width=.26, label=period.replace("historical_final", "final"))
     ax.axhline(0, color="#777", linewidth=.7)
     ax.set_xticks(x, configs, rotation=25, ha="right")
-    ax.set(ylabel="net P&L ($)", title=f"all nine settings — {scope}")
+    ax.set(ylabel="net P&L ($)", title=f"all {len(configs)} settings — {scope}")
     ax.legend()
     fig.savefig(output / "grid.png", dpi=140)
     plt.close(fig)

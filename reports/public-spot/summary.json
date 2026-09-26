@@ -1,0 +1,26 @@
+{
+  "status": "historical_public_spot",
+  "primary": "BTC-USD",
+  "included": [
+    "BTC-USD",
+    "ETH-USD"
+  ],
+  "excluded": {},
+  "futures_status": "blocked; no mapping or advance-policy evidence",
+  "markets": {
+    "BTC-USD": {
+      "run_count": 96,
+      "failed_runs": 0,
+      "development_winner": "mom-30",
+      "primary_pick": "mom-30",
+      "execution_sha256": "a9632ef0f52627e53fa442bf970953cac5101f08349c33bf6bfccf7c08622976"
+    },
+    "ETH-USD": {
+      "run_count": 96,
+      "failed_runs": 0,
+      "development_winner": "mom-14",
+      "primary_pick": "mom-30",
+      "execution_sha256": "97953f8084a72bd69f0e35ea367aab432aa5e75b81f0d5a3d34dfceb0f8e0383"
+    }
+  }
+}
