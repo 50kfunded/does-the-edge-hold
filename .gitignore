@@ -10,4 +10,11 @@ cache/
 runs/
 *.parquet
 .env
-
+*.dbn
+*.dbn.zst
+*.zst
+*.zip
+*_rolls.csv
+symbology.json
+evidence.json
+data/

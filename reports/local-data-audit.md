@@ -1,6 +1,6 @@
 # local data audit
 
-i read the six files in `G:\localview\data\bars` on 25 september 2026. i didn't edit or fill any bars. [the full audit](local-data-audit.json) has the schemas, yearly counts, hashes and flagged gaps.
+i read the six files in `G:\localview\data\bars` on 25 september 2026 and checked them again from a clean install. i didn't edit or fill any bars. [the public audit](local-data-audit.json) has the schemas, yearly counts, hashes and gap counts. the detailed samples stay in the local run folder.
 
 | file | rows | first UTC bar | last UTC bar |
 | --- | ---: | --- | --- |

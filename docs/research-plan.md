@@ -1,12 +1,12 @@
 # research plan
 
-i froze the choices in [research-plan.json](../research-plan.json) before running the strategy grid. [the lock](../research-plan.lock.json) records the plan and data hashes, so a later run can catch changes.
+i froze the first plan before running the strategy grid. the current choices are in [research-plan.json](../research-plan.json), and [the lock](../research-plan.lock.json) records the plan and data hashes.
 
 i kept [the first plan](../research/v1-plan.json) and [its lock](../research/v1-plan.lock.json). version 2 makes one detail clearer: the lookback counts observed hourly bars, so it can cross a market closure. i noticed the wording while checking the synthetic run. the settings and splits stayed the same, and the real-data grid hasn't run.
 
 i'm using 1-hour bars made from the minute files. a signal is known when its hour ends, and the earliest fill is the next available minute open plus the delay. signals restart after each contract roll.
 
-the grid has nine settings: momentum with 12, 24 or 72 hours of history, and mean reversion with 24 or 72 hours of history at entry z-scores of 0.5, 1 or 1.5. i test NQ first, then ES, GC and CL. YM is a separate check because it's another equity index.
+the grid has nine settings: momentum with 12, 24 or 72 observed hourly bars, and mean reversion with 24 or 72 bars at entry z-scores of 0.5, 1 or 1.5. i test NQ first and keep its development pick for ES, GC and CL. YM is a separate check because it's another equity index.
 
 | part | UTC dates |
 | --- | --- |
