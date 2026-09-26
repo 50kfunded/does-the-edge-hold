@@ -1,0 +1,169 @@
+{
+  "execution_sha256": "97953f8084a72bd69f0e35ea367aab432aa5e75b81f0d5a3d34dfceb0f8e0383",
+  "git_dirty": true,
+  "git_revision": "2cb7f0038cf6b23288970b980844e6b7b5c495f5",
+  "identity": {
+    "callables": {
+      "adapter": {
+        "closure": [],
+        "code_sha256": "550577ce1c1620ab8c26963e023b286da5620197af556b6380582c52975cff57",
+        "defaults": [],
+        "module": "does_the_edge_hold.adapters",
+        "name": "MarketAdapter.signal_bars",
+        "source_sha256": "39f5fc6cb6dd4153440016d01b180756a0ee691491140ba52cc5aee5e58100b7"
+      },
+      "adapter_validate": {
+        "closure": [],
+        "code_sha256": "9230b4dbaacd027a199432084a98fc942f2a7a8597d91c989eb2cba2b478a810",
+        "defaults": [],
+        "module": "does_the_edge_hold.adapters",
+        "name": "MarketAdapter.validate",
+        "source_sha256": "39f5fc6cb6dd4153440016d01b180756a0ee691491140ba52cc5aee5e58100b7"
+      },
+      "aggregate": {
+        "closure": [],
+        "code_sha256": "4166ebe78134ddb3ba38844818b155fc9c7820379b74093229f33655abadfaf0",
+        "defaults": [],
+        "module": "does_the_edge_hold.timing",
+        "name": "hourly_from_minutes",
+        "source_sha256": "5ce257d5e922e01d7ac3bbdc3a245dfa3c4d6c2c8dd5814c0d06b0bd47783603"
+      },
+      "daily_pnl": {
+        "closure": [],
+        "code_sha256": "bd35453bbe4d528c5019733dde0436b1969a861ffede19fe442fdd4ce6e17380",
+        "defaults": [
+          null,
+          null,
+          null
+        ],
+        "module": "does_the_edge_hold.metrics",
+        "name": "daily_pnl",
+        "source_sha256": "13ca8d80f27f9e8e4cdc15cd6abf48f18ab3dfbddd5d11afe917aefbbd21877b"
+      },
+      "decisions": {
+        "closure": [],
+        "code_sha256": "2e696c045fd0ff586f4fa9b289537a968e2d668c38137a24586688a7b5b06970",
+        "defaults": [],
+        "module": "does_the_edge_hold.signals",
+        "name": "decisions",
+        "source_sha256": "761aaaa65daba8e1837abb5860c4ff7679a8180a4ee626155962a97a221287e1"
+      },
+      "grid": {
+        "closure": [],
+        "code_sha256": "321994b492e94c5ba64dd939fdd86c687cb121b476fe028667c3e005b7037f86",
+        "defaults": [],
+        "module": "does_the_edge_hold.signals",
+        "name": "grid_from_plan",
+        "source_sha256": "761aaaa65daba8e1837abb5860c4ff7679a8180a4ee626155962a97a221287e1"
+      },
+      "ledger_buy": {
+        "closure": [],
+        "code_sha256": "6dbfcc9e6443e1f95d2564966853d6d135336200280c36a450bd25dc852b8726",
+        "defaults": [
+          "signal"
+        ],
+        "module": "does_the_edge_hold.spot",
+        "name": "SpotLedger.buy",
+        "source_sha256": "8d1c8eb668736f38c12ecfd0732627339239199210dcde02733570608b7598c5"
+      },
+      "ledger_mark": {
+        "closure": [],
+        "code_sha256": "13d3e84a96e43748784c49dd0fdbff27fbba26fd37da4bf2183619c7fdf641b0",
+        "defaults": [],
+        "module": "does_the_edge_hold.spot",
+        "name": "SpotLedger.mark",
+        "source_sha256": "8d1c8eb668736f38c12ecfd0732627339239199210dcde02733570608b7598c5"
+      },
+      "ledger_sell": {
+        "closure": [],
+        "code_sha256": "b70349e7c92517ed22712f3481b319c9b08eff046164480a197e92cc28c37d2e",
+        "defaults": [
+          "signal"
+        ],
+        "module": "does_the_edge_hold.spot",
+        "name": "SpotLedger.sell",
+        "source_sha256": "8d1c8eb668736f38c12ecfd0732627339239199210dcde02733570608b7598c5"
+      },
+      "simulate": {
+        "closure": [],
+        "code_sha256": "907ea6bff20a2823e2df7ea61a445a2267b3ae7e7aa69b5373190a698f4104bd",
+        "defaults": [],
+        "module": "does_the_edge_hold.timing",
+        "name": "simulate",
+        "source_sha256": "5ce257d5e922e01d7ac3bbdc3a245dfa3c4d6c2c8dd5814c0d06b0bd47783603"
+      },
+      "summarize": {
+        "closure": [],
+        "code_sha256": "2c8e9b4c973f2c853fb60d4a9c7f39a0df03690519427ab50bdce65c384acfdb",
+        "defaults": [
+          null,
+          null
+        ],
+        "module": "does_the_edge_hold.metrics",
+        "name": "summarize",
+        "source_sha256": "13ca8d80f27f9e8e4cdc15cd6abf48f18ab3dfbddd5d11afe917aefbbd21877b"
+      }
+    },
+    "environment": {
+      "packages": {
+        "matplotlib": "3.11.2",
+        "numpy": "2.5.3",
+        "pandas": "3.0.5",
+        "psutil": "7.2.2",
+        "pyarrow": "25.0.1",
+        "scipy": "1.18.1"
+      },
+      "python": "3.12.10"
+    },
+    "evidence": {
+      "adapter": {
+        "bar_minutes": 1440,
+        "kind": "spot",
+        "spec": {
+          "multiplier": 1,
+          "symbol": "ETH-USD",
+          "tick_size": 0.01
+        }
+      },
+      "additional": {
+        "snapshot_manifest_sha256": "4e785b93d6ac36bdef23ebce69db11b007ee1c5178b31e23015e46cdc77649ee"
+      },
+      "roll_instructions": []
+    },
+    "protocol_sha256": "8789728207a05be9c0419ec2792b04337fc8dbc3fac2ae705c767581ad3092f6",
+    "schema": 1,
+    "source_code": {
+      "__init__.py": "844ac694e3ad0f2c6d6db30ff23c5a229578a26a031807d148a2ad8019cf29bc",
+      "adapters.py": "39f5fc6cb6dd4153440016d01b180756a0ee691491140ba52cc5aee5e58100b7",
+      "audit.py": "f2b4a03f4a81e69cf6c5f7fcbf77437855dcaf88cd31a3a30a9a69b08f9dcc4c",
+      "cli.py": "53ef5b144be16a9a9a94dbccbcece0e1a5c48fe9c9d9a69fef7e40661db71b36",
+      "daily_clock.py": "e3c0e0f87af24f0b59b4882c2da1e9107969b78a8019f63eb00543c60b58d246",
+      "data.py": "61e26c165696eb866a2e5c4f6f4e55a113ba6ef47f37eb090f38197f530448ce",
+      "example.py": "7763d3f38f76b58bba6b341a0c0b36de34dbc16d1e2034be83406c608492c884",
+      "execution.py": "897c1e8f5d041f7c6daf6bed8b8a5776628f1a53074593aef92b9ecfd2780a6d",
+      "experiments.py": "8c9bb0ffda966662b2fdfe3fe2d21a8de65dd9919336e05520883359ef55b158",
+      "ledger.py": "c2d9574e5192cafba31843abeeaf3cff1599d6cb7053e33e3d236ae315a3d8c8",
+      "local_report.py": "4b2062cc76b5678e91c8ebe80463a065e8536baec85b5d67adbc44275ff36811",
+      "metrics.py": "13ca8d80f27f9e8e4cdc15cd6abf48f18ab3dfbddd5d11afe917aefbbd21877b",
+      "plan.py": "95cb1e645f9a24be4eb500b7a3aa9488d438719dd6aff89d0e3a9dfd96334ffb",
+      "provenance.py": "1172bc2f0e947a213812d023ea0e06f84ac56415449ff51c40e78b7d8241fd9c",
+      "public_data.py": "b573e9a69f9ab62fd46bb3144cab3c3447d9b02d11cc7e32d8af2c0196467752",
+      "public_study.py": "180b151d0e7d22bdcd2354f2efef86d895b10b403fbd4dfa2ee6df990494d7cf",
+      "reporting.py": "2b5a2b2167fd32aaacd75d6d91e3c86c0ac68eaa7348fecc44c8f176eba05162",
+      "resolve.py": "7b812fad3ad17b6ef1a47edb03b6d6b5333735b018f9a5ab1c83542d2fb69f74",
+      "roll_gate.py": "d32f9cee1ffe01a9f987e02e70a7a9187e76573b8a7273235cc2ef132440e634",
+      "rolls.py": "d47a9189b800e32885bb1c1f977bf7cd20c58da9559cc4b150c427952e98cb98",
+      "signals.py": "761aaaa65daba8e1837abb5860c4ff7679a8180a4ee626155962a97a221287e1",
+      "specs.py": "a11d9eb9709a088a89e257e91143fded6a7ba852356befeb2c15530d277ce68e",
+      "spot.py": "8d1c8eb668736f38c12ecfd0732627339239199210dcde02733570608b7598c5",
+      "synthetic.py": "71badced0678ea224967eec8bcdb2df5810cf3bb3efa56a0544533713c9aae4d",
+      "timing.py": "5ce257d5e922e01d7ac3bbdc3a245dfa3c4d6c2c8dd5814c0d06b0bd47783603",
+      "uncertainty.py": "5bbb86f071df89f927903f50ca134ec2f6c74901bc6f47f566255d24bb71a384",
+      "walk_forward.py": "6f38018c3600a4cf2af5edc94e10af4b709e01d76b851ffe3e207a102d32f66b"
+    },
+    "sources": {
+      "ETH-USD": "d268c8ec8a1e08a3e3ea6c9378d2cf6b174852af1671e302b5a0ac2de72ade36"
+    }
+  },
+  "note": "revision/dirty state are recorded; identity uses code bytes and actual callable code, not report paths or creation times"
+}

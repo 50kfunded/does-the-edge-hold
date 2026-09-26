@@ -14,6 +14,7 @@
       "outside_window_days": 0,
       "maximum_open_usd": 124723.57,
       "quality_status": "ready",
+      "exact_response_replay": true,
       "request_count": 15
     },
     {
@@ -27,6 +28,7 @@
       "outside_window_days": 0,
       "maximum_open_usd": 4830.18,
       "quality_status": "ready",
+      "exact_response_replay": true,
       "request_count": 15
     }
   ],
