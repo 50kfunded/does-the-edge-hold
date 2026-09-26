@@ -2,6 +2,8 @@
 
 i made a small Python tool to check how much of a futures backtest holds up on later data, other markets, slower orders and higher trading costs.
 
+this is a working prototype. an independent review found issues in roll timing, daily sampling, resolver handling and run identity. i'm repairing those before calling any empirical study finished. [the repair log](docs/repair-log.md) records each finding and its status.
+
 ## where i got to
 
 i audited 17.3 million minute bars across NQ, ES, YM, GC and CL, plus 60.8 million NQ second bars. the five minute exports match their local source cache. **the date-to-contract mapping is still missing, so the empirical P&L study is blocked.** [the local report](reports/local-study.md) explains what i could verify.
