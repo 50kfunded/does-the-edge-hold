@@ -36,20 +36,31 @@ def _periods(plan: dict) -> dict[str, tuple[str | None, str | None]]:
     return result
 
 
+def market_manifest(market, plan_hash, source_hash, adapter, roll_instructions=None, extra_evidence=None):
+    return seal(plan_hash, {market: source_hash},
+        evidence={"roll_instructions": [] if roll_instructions is None else roll_instructions.astype(str).to_dict("records"),
+                  "adapter": {"spec": adapter.spec.__dict__, "kind": adapter.kind, "bar_minutes": adapter.bar_minutes},
+                  "additional": extra_evidence or {}},
+        callables={"decisions": decisions, "simulate": simulate, "aggregate": hourly_from_minutes,
+                   "summarize": summarize, "daily_pnl": daily_pnl, "grid": grid_from_plan,
+                   "adapter": type(adapter).signal_bars, "ledger_buy": adapter.ledger_factory.buy,
+                   "ledger_sell": adapter.ledger_factory.sell, "ledger_mark": adapter.ledger_factory.mark,
+                   "adapter_validate": type(adapter).validate, **REGISTRY})
+
+
 def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
                source_hash: str, *, roll_instructions=None, execution_manifest=None,
                adapter=None) -> tuple[list[dict], dict[str, pd.Series]]:
     """Run one market at a time; keep base-scenario daily P&L for diagnostics."""
     adapter = adapter or MarketAdapter(SPECS[market])
     hourly = adapter.signal_bars(minutes)
-    execution_manifest = execution_manifest or seal(plan_hash, {market: source_hash},
-        evidence={"roll_instructions": [] if roll_instructions is None else roll_instructions.astype(str).to_dict("records"),
-                  "adapter": {"spec": adapter.spec.__dict__, "kind": adapter.kind, "bar_minutes": adapter.bar_minutes}},
-        callables={"decisions": decisions, "simulate": simulate, "aggregate": hourly_from_minutes,
-                   "summarize": summarize, "daily_pnl": daily_pnl, "grid": grid_from_plan,
-                   "adapter": type(adapter).signal_bars, "ledger_buy": adapter.ledger_factory.buy,
-                   "ledger_sell": adapter.ledger_factory.sell, "ledger_mark": adapter.ledger_factory.mark,
-                   "adapter_validate": type(adapter).validate, **REGISTRY})
+    from .plan import _digest
+    actual = market_manifest(market, plan_hash, source_hash, adapter, roll_instructions,
+                            (execution_manifest or {}).get("identity", {}).get("evidence", {}).get("additional"))
+    if execution_manifest is not None:
+        if _digest(execution_manifest["identity"]) != execution_manifest["execution_sha256"] or actual["execution_sha256"] != execution_manifest["execution_sha256"]:
+            raise ValueError("sealed execution differs from the actual runtime")
+    execution_manifest = actual
     grid = grid_from_plan(plan)
     capital = float(plan["execution"]["starting_capital_usd_per_market"])
     clock = DailyClock.from_plan(plan)
@@ -162,12 +173,12 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
         minutes = attach_contracts(load_minutes(data_root, market),
                                    read_schedule(Path(mapping_root) / f"{market}_rolls.csv"))
         evidence_hashes = {p.name: sha256_file(p) for p in sorted(Path(mapping_root).iterdir()) if p.is_file()}
-        manifest = seal(lock["plan_sha256"], {market: hashes[market]}, evidence=evidence_hashes,
-                        callables={"decisions": decisions, "simulate": simulate, "aggregate": hourly_from_minutes,
-                                   "summarize": summarize, "daily_pnl": daily_pnl, "grid": grid_from_plan})
+        instructions = read_instructions(Path(mapping_root) / f"{market}_instructions.csv")
+        manifest = market_manifest(market, lock["plan_sha256"], hashes[market], MarketAdapter(SPECS[market]),
+                                   instructions, evidence_hashes)
         write_manifest(manifest, output / f"{market}_execution.json")
         rows, daily = run_market(minutes, market, plan, lock["plan_sha256"], hashes[market],
-                                 roll_instructions=read_instructions(Path(mapping_root) / f"{market}_instructions.csv"),
+                                 roll_instructions=instructions,
                                  execution_manifest=manifest)
         ranking = rank_changes(rows, plan["selection"]["minimum_entry_trades"])
         if market == primary:
