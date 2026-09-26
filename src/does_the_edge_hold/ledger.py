@@ -37,6 +37,7 @@ class Fill:
     commission: float
     slippage: float
     reason: str
+    known_at: datetime | None = None
 
 
 @dataclass

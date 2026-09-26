@@ -33,7 +33,7 @@ def _periods(plan: dict) -> dict[str, tuple[str | None, str | None]]:
 
 
 def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
-               source_hash: str) -> tuple[list[dict], dict[str, pd.Series]]:
+               source_hash: str, *, roll_instructions=None) -> tuple[list[dict], dict[str, pd.Series]]:
     """Run one market at a time; keep base-scenario daily P&L for diagnostics."""
     hourly = hourly_from_minutes(minutes)
     grid = grid_from_plan(plan)
@@ -68,7 +68,7 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
                                Costs(scenario["commission_usd_per_side"],
                                      scenario["slippage_ticks_per_side"]),
                                delay_minutes=int(scenario["delay_minutes"]),
-                               starting_capital=capital)
+                               starting_capital=capital, roll_instructions=roll_instructions)
                 for period, (start, end) in _periods(plan).items():
                     results.append({**common, "period": period,
                                     **summarize(run, start, end)})

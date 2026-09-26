@@ -64,10 +64,13 @@ def run_example(output: str | Path) -> dict:
     plan = example_plan()
     (output / "example-plan.json").write_text(json.dumps(plan, indent=2) + "\n", encoding="utf-8")
     bars = make_bars(minutes=43_200)
+    from .timing import scheduled_instructions
+    schedule = bars.loc[bars.contract.ne(bars.contract.shift()), ["ts", "contract"]].rename(columns={"ts": "effective_at"})
+    instructions = scheduled_instructions(schedule)
     path = output / "synthetic_bars.parquet"
     bars.to_parquet(path, index=False)
     source_hash, plan_hash = sha256_file(path), _digest(plan)
-    rows, daily = run_market(bars, "SYN", plan, plan_hash, source_hash)
+    rows, daily = run_market(bars, "SYN", plan, plan_hash, source_hash, roll_instructions=instructions)
     ranking = rank_changes(rows, plan["selection"]["minimum_entry_trades"])
     report = {"market": "SYN", "status": "synthetic", "plan_sha256": plan_hash,
               "source_sha256": source_hash, "seed": 7, "minute_rows": len(bars),
