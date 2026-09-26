@@ -84,6 +84,8 @@ def audit_snapshot(root):
             replay.append(part[["ts", "open", "high", "low", "close", "volume"]])
         replayed = pd.concat(replay, ignore_index=True).sort_values("ts").reset_index(drop=True)
         replayed["contract"] = product
+        bars["ts"] = bars.ts.dt.as_unit("ns")
+        replayed["ts"] = replayed.ts.dt.as_unit("ns")
         pd.testing.assert_frame_equal(bars, replayed, check_exact=True)
         MarketAdapter(ContractSpec(product, 1, .01), "spot", 1440).validate(bars)
         observed = pd.DatetimeIndex(bars.ts)
