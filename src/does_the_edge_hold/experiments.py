@@ -12,7 +12,7 @@ from .data import load_minutes, sha256_file, source_path
 from .ledger import Costs
 from .metrics import daily_pnl, summarize
 from .plan import verify
-from .roll_gate import assess, require_ready
+from .roll_gate import assess, require_ready, read_instructions
 from .rolls import attach_contracts, read_schedule
 from .signals import SignalSpec, decisions, grid_from_plan
 from .specs import SPECS
@@ -124,23 +124,26 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
     audit, origin, plan, lock = map(read_json,
                                     (audit_path, provenance_path, plan_path, lock_path))
     verify(plan, audit, lock)
-    decision = assess(audit, origin, mapping_root)
+    decision = assess(audit, origin, mapping_root, plan=plan)
     require_ready(decision)
     hashes = {row["market"]: row["sha256"] for row in audit["files"]
               if row["resolution"] == "1m"}
-    for market in ("NQ", "ES", "YM", "GC", "CL"):
+    for market in decision["included"]:
         if sha256_file(source_path(data_root, market)) != hashes[market]:
             raise ValueError(f"{market} source file changed since the frozen audit")
     output = Path(output)
-    output.mkdir(parents=True, exist_ok=True)
+    output.mkdir(parents=True, exist_ok=False)
+    (output / "universe.json").write_text(json.dumps(decision, indent=2) + "\n", encoding="utf-8")
     reports = {}
     primary_winner = None
-    for market in ("NQ", "ES", "GC", "CL", "YM"):
+    primary = decision["primary"]
+    for market in [primary] + [m for m in decision["included"] if m != primary]:
         minutes = attach_contracts(load_minutes(data_root, market),
                                    read_schedule(Path(mapping_root) / f"{market}_rolls.csv"))
-        rows, daily = run_market(minutes, market, plan, lock["plan_sha256"], hashes[market])
+        rows, daily = run_market(minutes, market, plan, lock["plan_sha256"], hashes[market],
+                                 roll_instructions=read_instructions(Path(mapping_root) / f"{market}_instructions.csv"))
         ranking = rank_changes(rows, plan["selection"]["minimum_entry_trades"])
-        if market == "NQ":
+        if market == primary:
             primary_winner = ranking["development_winner"]
         report = {"market": market, "status": "historical_evaluation",
                   "plan_sha256": lock["plan_sha256"], "source_sha256": hashes[market],
