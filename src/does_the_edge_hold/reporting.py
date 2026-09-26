@@ -156,7 +156,7 @@ def market_report(report, output, daily=None):
         lines += ["![annual means across all settings](grid.png)", "", "![base daily P&L path](equity.png)", "", "![candidate ranks by split](ranks.png)", ""]
     (output / "report.md").write_text("\n".join(lines), encoding="utf-8")
 
-def plot_market(rows, daily, winner, output, scope, *, baselines=BASELINES):
+def plot_market(rows, daily, winner, output, scope, *, baselines=BASELINES, conditional=False):
     configs = [k for k in daily if k not in baselines]
     x = np.arange(len(configs))
     fig, ax = plt.subplots(figsize=(12, 5), layout="constrained")
@@ -172,8 +172,10 @@ def plot_market(rows, daily, winner, output, scope, *, baselines=BASELINES):
     fig, ax = plt.subplots(figsize=(10, 4), layout="constrained")
     for config in dict.fromkeys([winner, *baselines]):
         if config in daily:
-            ax.plot(daily[config].index, daily[config].cumsum(), label=config)
-    ax.set(ylabel="cumulative net P&L ($)", title=f"fixed development pick; base costs and delay — {scope}")
+            ax.plot(np.arange(1, len(daily[config]) + 1) if conditional else daily[config].index, daily[config].cumsum(), label=config)
+    ax.set(ylabel="conditional net P&L sum ($)" if conditional else "cumulative net P&L ($)",
+           title=f"fixed development pick; base costs and delay — {scope}")
+    if conditional: ax.set_xlabel("eligible window number; skipped dates excluded; not live equity")
     ax.legend()
     fig.savefig(output / "equity.png", dpi=140)
     plt.close(fig)

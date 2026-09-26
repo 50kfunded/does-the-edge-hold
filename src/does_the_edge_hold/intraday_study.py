@@ -107,6 +107,11 @@ def _run(data_root, cache_root, plan_path, lock_path, audit_root, output, synthe
     audit = verify_inputs(data_root, cache_root, plan, lock, audit_root)
     verification_seconds = time.perf_counter() - verification_start
     output = Path(output); output.mkdir(parents=True, exist_ok=False)
+    from .intraday_descriptive import describe_sources
+    descriptive_start = time.perf_counter()
+    descriptive = describe_sources(data_root, plan)
+    descriptive_seconds = time.perf_counter() - descriptive_start
+    (output / "descriptive-price-variation.json").write_text(json.dumps(descriptive, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     tables = {m: pd.read_csv(Path(audit_root) / f"{m}-coverage.csv") for m in lock["readiness"]["included"]}
     shared = set.intersection(*[set(t.loc[t.eligible, "date"]) for t in tables.values()])
     summary = {"schema_version": 1, "status": "synthetic_source_day" if synthetic else "conditional_historical_source_day",
@@ -204,6 +209,7 @@ def _run(data_root, cache_root, plan_path, lock_path, audit_root, output, synthe
                                 minimum_days=plan["statistics"]["minimum_paired_observations"])})
     summary["common_date_uncertainty"] = paired
     summary["runtime"] = {"total_seconds": time.perf_counter() - started, "verification_seconds": verification_seconds, "markets": phases,
+                          "descriptive_seconds": descriptive_seconds,
                           "sampled_peak_rss_mib": peak[0] / 1024**2, "sampling_seconds": .05,
                           "audited_source_rows": sum(r["rows"] for r in audit["sources"]),
                           "evaluated_source_rows": sum(r["rows"] for r in audit["sources"] if r["market"] in tables),
@@ -211,5 +217,10 @@ def _run(data_root, cache_root, plan_path, lock_path, audit_root, output, synthe
                           "feature_policy": "each setting computed once per source-day; reused by all five scenarios", "scale_limit": "single-machine measured workload, not streaming execution"}
     (output / "summary.json").write_text(json.dumps(summary, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     from .intraday_reporting import render
+    report_start = time.perf_counter()
     render(output)
+    summary["runtime"].update(report_seconds=time.perf_counter() - report_start,
+                              total_seconds=time.perf_counter() - started, sampled_peak_rss_mib=peak[0] / 1024**2)
+    (output / "summary.json").write_text(json.dumps(summary, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    render(output, plots=False)
     return summary
