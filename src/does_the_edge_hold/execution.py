@@ -18,9 +18,21 @@ def _portable_code(code):
 def callable_identity(fn):
     if not inspect.isfunction(fn):
         raise ValueError("execution requires a registered Python function")
+    filename = inspect.getsourcefile(fn)
+    source = Path(filename).read_text(encoding="utf-8-sig").replace("\r\n", "\n") if filename and Path(filename).is_file() else None
+    def captured(value):
+        if inspect.isfunction(value):
+            return {"code": hashlib.sha256(marshal.dumps(_portable_code(value.__code__))).hexdigest()}
+        try:
+            json.dumps(value, allow_nan=False)
+            return value
+        except (TypeError, ValueError):
+            raise ValueError("unregistered non-serializable closure/default in execution callable")
     return {"module": fn.__module__, "name": fn.__qualname__,
             "code_sha256": hashlib.sha256(marshal.dumps(_portable_code(fn.__code__))).hexdigest(),
-            "defaults": repr(fn.__defaults__)}
+            "defaults": [captured(v) for v in fn.__defaults__ or ()],
+            "closure": [captured(c.cell_contents) for c in fn.__closure__ or ()],
+            "source_sha256": hashlib.sha256(source.encode()).hexdigest() if source else None}
 
 def seal(plan_hash, sources, *, evidence=None, callables=None):
     root = Path(__file__).parent

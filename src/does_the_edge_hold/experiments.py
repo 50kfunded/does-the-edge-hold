@@ -12,6 +12,8 @@ from .data import load_minutes, sha256_file, source_path
 from .ledger import Costs
 from .daily_clock import DailyClock
 from .execution import seal, write_manifest
+from .adapters import MarketAdapter
+from .signals import REGISTRY
 from .metrics import daily_pnl, summarize
 from .plan import verify
 from .roll_gate import assess, require_ready, read_instructions
@@ -35,13 +37,19 @@ def _periods(plan: dict) -> dict[str, tuple[str | None, str | None]]:
 
 
 def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
-               source_hash: str, *, roll_instructions=None, execution_manifest=None) -> tuple[list[dict], dict[str, pd.Series]]:
+               source_hash: str, *, roll_instructions=None, execution_manifest=None,
+               adapter=None) -> tuple[list[dict], dict[str, pd.Series]]:
     """Run one market at a time; keep base-scenario daily P&L for diagnostics."""
-    hourly = hourly_from_minutes(minutes)
+    adapter = adapter or MarketAdapter(SPECS[market])
+    hourly = adapter.signal_bars(minutes)
     execution_manifest = execution_manifest or seal(plan_hash, {market: source_hash},
-        evidence={"roll_instructions": [] if roll_instructions is None else roll_instructions.astype(str).to_dict("records")},
+        evidence={"roll_instructions": [] if roll_instructions is None else roll_instructions.astype(str).to_dict("records"),
+                  "adapter": {"spec": adapter.spec.__dict__, "kind": adapter.kind, "bar_minutes": adapter.bar_minutes}},
         callables={"decisions": decisions, "simulate": simulate, "aggregate": hourly_from_minutes,
-                   "summarize": summarize, "daily_pnl": daily_pnl, "grid": grid_from_plan})
+                   "summarize": summarize, "daily_pnl": daily_pnl, "grid": grid_from_plan,
+                   "adapter": type(adapter).signal_bars, "ledger_buy": adapter.ledger_factory.buy,
+                   "ledger_sell": adapter.ledger_factory.sell, "ledger_mark": adapter.ledger_factory.mark,
+                   "adapter_validate": type(adapter).validate, **REGISTRY})
     grid = grid_from_plan(plan)
     capital = float(plan["execution"]["starting_capital_usd_per_market"])
     clock = DailyClock.from_plan(plan)
@@ -71,11 +79,12 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
             try:
                 if signal_error is not None:
                     raise signal_error
-                run = simulate(minutes, targets, SPECS[market],
+                run = simulate(minutes, targets, adapter.spec,
                                Costs(scenario["commission_usd_per_side"],
                                      scenario["slippage_ticks_per_side"]),
                                delay_minutes=int(scenario["delay_minutes"]),
-                               starting_capital=capital, roll_instructions=roll_instructions)
+                               starting_capital=capital, roll_instructions=roll_instructions,
+                               bar_minutes=adapter.bar_minutes, ledger_factory=adapter.ledger_factory)
                 for period, (start, end) in _periods(plan).items():
                     results.append({**common, "period": period,
                                     **summarize(run, start, end, clock=clock)})

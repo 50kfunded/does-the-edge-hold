@@ -5,6 +5,12 @@ import pytest
 
 from does_the_edge_hold.experiments import run_empirical, run_market
 from does_the_edge_hold.synthetic import make_bars
+from does_the_edge_hold.timing import scheduled_instructions
+
+def run_synthetic(plan):
+    bars = make_bars(minutes=600)
+    schedule = bars.loc[bars.contract.ne(bars.contract.shift()), ["ts", "contract"]].rename(columns={"ts": "effective_at"})
+    return run_market(bars, "SYN", plan, "plan", "source", roll_instructions=scheduled_instructions(schedule))
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -12,13 +18,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_all_grid_runs_are_kept() -> None:
     plan = json.loads((ROOT / "research-plan.json").read_text(encoding="utf-8"))
-    rows, daily = run_market(make_bars(minutes=600), "SYN", plan, "plan", "source")
+    rows, daily = run_synthetic(plan)
     assert len({row["run_id"] for row in rows}) == 44  # nine rules + two baselines, four scenarios
     assert len(daily) == 11
     assert not any(row["status"] == "failed" for row in rows)
     assert {row["scenario"] for row in rows} == {
         "gross_reference", "base", "higher_cost", "one_bar_late"}
-    repeated, repeated_daily = run_market(make_bars(minutes=600), "SYN", plan, "plan", "source")
+    repeated, repeated_daily = run_synthetic(plan)
     assert rows == repeated
     for config, values in daily.items():
         assert values.equals(repeated_daily[config])
@@ -44,7 +50,7 @@ def test_signal_failures_are_saved_without_dropping_other_runs(monkeypatch) -> N
         return original(hourly, spec)
     monkeypatch.setattr(experiments, "decisions", failing_signal)
     plan = json.loads((ROOT / "research-plan.json").read_text(encoding="utf-8"))
-    rows, _ = run_market(make_bars(minutes=600), "SYN", plan, "plan", "source")
+    rows, _ = run_synthetic(plan)
     failures = [row for row in rows if row["status"] == "failed"]
     assert len(failures) == 4
     assert {row["config_id"] for row in failures} == {"mom-24"}
