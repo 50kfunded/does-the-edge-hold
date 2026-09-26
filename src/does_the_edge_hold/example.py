@@ -28,10 +28,11 @@ def example_plan() -> dict:
             "selection": {"minimum_entry_trades": 3},
             "execution": {"starting_capital_usd_per_market": 100_000,
                           "scenarios": [
-                              {"name": "gross_reference", "commission_usd_per_side": 0, "slippage_ticks_per_side": 0, "delay_minutes": 0},
+                              {"name": "gross_reference", "commission_usd_per_side": 0, "slippage_ticks_per_side": 0, "delay_minutes": 1},
                               {"name": "base", "commission_usd_per_side": 2.5, "slippage_ticks_per_side": 1, "delay_minutes": 1},
-                              {"name": "higher_cost", "commission_usd_per_side": 5, "slippage_ticks_per_side": 2, "delay_minutes": 5},
-                              {"name": "one_bar_late", "commission_usd_per_side": 2.5, "slippage_ticks_per_side": 1, "delay_minutes": 60}]} }
+                              {"name": "higher_cost", "commission_usd_per_side": 5, "slippage_ticks_per_side": 2, "delay_minutes": 1},
+                              {"name": "one_bar_late", "commission_usd_per_side": 2.5, "slippage_ticks_per_side": 1, "delay_minutes": 60},
+                              {"name": "combined_stress", "commission_usd_per_side": 5, "slippage_ticks_per_side": 2, "delay_minutes": 60}]} }
 
 
 def controlled_demos() -> dict:

@@ -19,11 +19,11 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_all_grid_runs_are_kept() -> None:
     plan = json.loads((ROOT / "research-plan.json").read_text(encoding="utf-8"))
     rows, daily = run_synthetic(plan)
-    assert len({row["run_id"] for row in rows}) == 44  # nine rules + two baselines, four scenarios
+    assert len({row["run_id"] for row in rows}) == 55  # nine rules + two baselines, four scenarios
     assert len(daily) == 11
     assert not any(row["status"] == "failed" for row in rows)
     assert {row["scenario"] for row in rows} == {
-        "gross_reference", "base", "higher_cost", "one_bar_late"}
+        "gross_reference", "base", "higher_cost", "one_bar_late", "combined_stress"}
     repeated, repeated_daily = run_synthetic(plan)
     assert rows == repeated
     for config, values in daily.items():
@@ -52,6 +52,6 @@ def test_signal_failures_are_saved_without_dropping_other_runs(monkeypatch) -> N
     plan = json.loads((ROOT / "research-plan.json").read_text(encoding="utf-8"))
     rows, _ = run_synthetic(plan)
     failures = [row for row in rows if row["status"] == "failed"]
-    assert len(failures) == 4
+    assert len(failures) == 5
     assert {row["config_id"] for row in failures} == {"mom-24"}
-    assert len({row["run_id"] for row in rows}) == 44
+    assert len({row["run_id"] for row in rows}) == 55

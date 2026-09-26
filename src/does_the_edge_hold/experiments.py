@@ -75,13 +75,15 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
                       "scenario": scenario["name"], "execution_sha256": execution_manifest["execution_sha256"],
                       "commission_per_side": scenario["commission_usd_per_side"],
                       "slippage_ticks_per_side": scenario["slippage_ticks_per_side"],
+                      "fee_bps": scenario.get("fee_bps", 0), "slippage_bps": scenario.get("slippage_bps", 0),
                       "delay_minutes": scenario["delay_minutes"]}
             try:
                 if signal_error is not None:
                     raise signal_error
                 run = simulate(minutes, targets, adapter.spec,
                                Costs(scenario["commission_usd_per_side"],
-                                     scenario["slippage_ticks_per_side"]),
+                                     scenario["slippage_ticks_per_side"], scenario.get("fee_bps", 0),
+                                     scenario.get("slippage_bps", 0)),
                                delay_minutes=int(scenario["delay_minutes"]),
                                starting_capital=capital, roll_instructions=roll_instructions,
                                bar_minutes=adapter.bar_minutes, ledger_factory=adapter.ledger_factory)

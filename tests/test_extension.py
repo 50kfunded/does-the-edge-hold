@@ -15,5 +15,5 @@ def test_independent_signal_and_instrument_without_evaluator_edits(monkeypatch):
     plan["configuration_count"] = 2
     rows, _ = run_market(bars, "external", plan, "plan", "data",
                          adapter=MarketAdapter(ContractSpec("external", 5, .1)))
-    assert len({r["run_id"] for r in rows}) == 16
+    assert len({r["run_id"] for r in rows}) == 20
     assert not any(r["status"] == "failed" for r in rows)

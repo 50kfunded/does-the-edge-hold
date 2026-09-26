@@ -21,9 +21,12 @@ class ContractSpec:
 class Costs:
     commission_per_side: float = 2.50
     slippage_ticks_per_side: float = 1.0
+    fee_bps: float = 0.0
+    slippage_bps: float = 0.0
 
     def __post_init__(self) -> None:
-        if self.commission_per_side < 0 or self.slippage_ticks_per_side < 0:
+        import math
+        if any(not math.isfinite(v) or v < 0 for v in self.__dict__.values()):
             raise ValueError("costs cannot be negative")
 
 

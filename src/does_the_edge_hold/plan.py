@@ -45,7 +45,9 @@ def validate(plan: dict) -> None:
     if "base" not in names or len(set(names)) != len(names):
         raise ValueError("scenario names must be unique and include base")
     for s in scenarios:
-        for field in ("commission_usd_per_side", "slippage_ticks_per_side", "delay_minutes"):
+        for field in ("commission_usd_per_side", "slippage_ticks_per_side", "delay_minutes", "fee_bps", "slippage_bps"):
+            if field not in s:
+                continue
             if not math.isfinite(s[field]) or s[field] < 0:
                 raise ValueError("costs and delays must be finite and nonnegative")
         if int(s["delay_minutes"]) != s["delay_minutes"]:
