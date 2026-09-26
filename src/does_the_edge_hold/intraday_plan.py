@@ -71,6 +71,8 @@ def freeze(plan_path, audit_path, output):
             "source_hashes": {r["market"]: r["semantic"]["sha256"] for r in audit["sources"]},
             "artifact_hashes": {r["market"]: r["artifact_sha256"] for r in audit["sources"]},
             "audit_sha256": _digest(audit), "masks": audit["mask_hashes"], "readiness": audit["readiness"]}
+    from .specs import SPECS
+    lock["instrument_specs"] = {m: SPECS[m].__dict__ for m in audit["readiness"]["included"]}
     path = Path(output)
     if path.exists(): raise FileExistsError("source-day lock already exists")
     path.parent.mkdir(parents=True, exist_ok=True)

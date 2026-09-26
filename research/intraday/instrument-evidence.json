@@ -1,0 +1,7 @@
+{
+  "reviewed_date": "2026-09-27",
+  "NQ": {"multiplier": 20, "tick_size": 0.25, "source": "https://www.cmegroup.com/markets/equities/nasdaq/e-mini-nasdaq-100.contractSpecs.html"},
+  "ES": {"multiplier": 50, "tick_size": 0.25, "source": "https://www.cmegroup.com/rulebook/CME/IV/350/358/358.pdf"},
+  "YM": {"multiplier": 5, "tick_size": 1, "source": "https://www.cmegroup.com/rulebook/CBOT/III/27.pdf"},
+  "limit": "product-level outright specifications; actual historical instrument identity remains unknown, and margin eligibility is not simulated"
+}
