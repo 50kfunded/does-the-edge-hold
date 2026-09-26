@@ -17,6 +17,7 @@ from .rolls import attach_contracts, read_schedule
 from .signals import SignalSpec, decisions, grid_from_plan
 from .specs import SPECS
 from .timing import hourly_from_minutes, simulate
+from .uncertainty import paired_block_bootstrap
 from .walk_forward import evaluate as walk_forward
 
 
@@ -88,6 +89,25 @@ def rank_changes(results: list[dict], minimum_trades: int) -> dict:
     return {"ranks": rank, "development_winner": next(iter(rank["development"]), None)}
 
 
+def winner_uncertainty(winner: str | None, daily: dict[str, pd.Series],
+                       plan: dict) -> list[dict]:
+    if winner is None:
+        return []
+    comparisons = []
+    capital = float(plan["execution"]["starting_capital_usd_per_market"])
+    for period in ("validation", "historical_final"):
+        start, end = plan["splits_utc"][period]
+        for baseline in ("flat", "always_long"):
+            if winner not in daily or baseline not in daily:
+                comparisons.append({"period": period, "baseline": baseline,
+                                    "status": "missing_run"})
+                continue
+            comparisons.append({"period": period, "baseline": baseline,
+                                **paired_block_bootstrap(daily[winner], daily[baseline],
+                                                         start, end, capital)})
+    return comparisons
+
+
 def run_empirical(data_root: str | Path, mapping_root: str | Path,
                   audit_path: str | Path, provenance_path: str | Path,
                   plan_path: str | Path, lock_path: str | Path,
@@ -107,14 +127,20 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     reports = {}
+    primary_winner = None
     for market in ("NQ", "ES", "GC", "CL", "YM"):
         minutes = attach_contracts(load_minutes(data_root, market),
                                    read_schedule(Path(mapping_root) / f"{market}_rolls.csv"))
         rows, daily = run_market(minutes, market, plan, lock["plan_sha256"], hashes[market])
+        ranking = rank_changes(rows, plan["selection"]["minimum_entry_trades"])
+        if market == "NQ":
+            primary_winner = ranking["development_winner"]
         report = {"market": market, "status": "historical_evaluation",
                   "plan_sha256": lock["plan_sha256"], "source_sha256": hashes[market],
-                  "roll_gate": decision, "rank_changes": rank_changes(rows,
-                      plan["selection"]["minimum_entry_trades"]),
+                  "roll_gate": decision, "rank_changes": ranking,
+                  "selected_config_from_NQ": primary_winner,
+                  "winner_uncertainty": winner_uncertainty(primary_winner,
+                                                            daily, plan),
                   "walk_forward": walk_forward(daily, rows,
                       plan["execution"]["starting_capital_usd_per_market"],
                       plan["selection"]["minimum_entry_trades"]), "runs": rows}
