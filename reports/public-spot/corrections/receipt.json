@@ -1,0 +1,12 @@
+{
+  "BTC-USD": {
+    "candidates": 14,
+    "maximum_rank": 14.0,
+    "example": 4.0
+  },
+  "ETH-USD": {
+    "candidates": 14,
+    "maximum_rank": 14.0,
+    "example": 5.0
+  }
+}

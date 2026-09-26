@@ -9,9 +9,24 @@ import pandas as pd
 PERIODS = ("development", "validation", "historical_final")
 BASELINES = ("flat", "always_long")
 
+def baseline_ids(report):
+    """Legacy saved reports remain readable; new reports declare their baselines."""
+    return tuple(report.get("baseline_ids", report.get("protocol", {}).get("baseline_ids", BASELINES)))
+
+def rank_table(rows, configs):
+    """Ordinal ranks in exactly the displayed universe; equal scores share ranks."""
+    matrix = {}
+    for period in PERIODS:
+        scores = {r["config_id"]: r["sharpe"] for r in rows if r.get("scenario") == "base"
+                  and r.get("period") == period and r.get("status") == "ok"
+                  and r.get("sharpe") is not None and r["config_id"] in configs}
+        ranks = pd.Series(scores, dtype=float).rank(ascending=False, method="average")
+        matrix[period] = [ranks.get(k, np.nan) for k in configs]
+    return pd.DataFrame(matrix, index=pd.Index(configs, name="config_id"))
+
 def diagnostics(report):
     rows = report["runs"]
-    configs = sorted({r["config_id"] for r in rows} - set(BASELINES))
+    configs = sorted({r["config_id"] for r in rows} - set(baseline_ids(report)))
     lookup = {(r["config_id"], r["scenario"], r["period"]): r for r in rows}
     winner = report.get("selected_config_from_primary", report.get("selected_config_from_NQ", report["rank_changes"]["development_winner"]))
     out = {"selected_config": winner, "periods": {}, "rank_stability": {}, "matched_effects": []}
@@ -62,21 +77,23 @@ def market_report(report, output, daily=None):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     rows = report["runs"]
+    baselines = baseline_ids(report)
+    protocol = report.get("protocol", {})
     pd.DataFrame(rows).to_csv(output / "all-results.csv", index=False)
     diag = diagnostics(report)
     (output / "diagnostics.json").write_text(json.dumps(diag, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     winner = diag["selected_config"]
     lookup = {(r["config_id"], r["scenario"], r["period"]): r for r in rows}
-    configs = sorted({r["config_id"] for r in rows} - set(BASELINES))
+    configs = sorted({r["config_id"] for r in rows} - set(baselines))
     cases = list(dict.fromkeys(r["scenario"] for r in rows))
     runs = len({r["run_id"] for r in rows})
     failed = len({r["run_id"] for r in rows if r["status"] == "failed"})
     synthetic = report["status"] == "synthetic"
     scope = "made-up prices" if synthetic else "public spot bars" if report["status"] == "historical_public_spot" else "futures bars"
     lines = [f"# {report['market']}", "",
-        f"i ran {len(configs)} settings and two baselines across {len(cases)} scenarios on {scope}. {failed} of {runs} runs failed. [every result](all-results.csv) stays in the report.",
+        f"i ran {len(configs)} settings and {len(baselines)} baselines across {len(cases)} scenarios on {scope}. {failed} of {runs} runs failed. [every result](all-results.csv) stays in the report.",
         "", "these are software checks, not market findings." if synthetic else
-        f"i kept the development pick from {report.get('primary', 'NQ')}: `{winner}`. the later periods are historical checks, not untouched data.", "",
+        f"i kept the development pick from {report.get('primary', protocol.get('universe', {}).get('primary', 'unspecified'))}: `{winner}`. the later periods are historical checks, not untouched data.", "",
         "## the three parts", "",
         "| part | observed days / sessions | eligible settings | positive gross → positive net | pick: annual mean | median setting: annual mean | pick: Sharpe | pick rank | entries |",
         "| --- | ---: | ---: | --- | ---: | ---: | ---: | ---: | ---: |"]
@@ -90,7 +107,7 @@ def market_report(report, output, daily=None):
     lines += ["## all settings at base assumptions", "",
         "| setting | development annual mean | validation annual mean | final annual mean |",
         "| --- | ---: | ---: | ---: |"]
-    for config in configs + list(BASELINES):
+    for config in configs + list(baselines):
         values = [pct(lookup.get((config, "base", p), {}).get("annual_mean_return")) for p in PERIODS]
         lines.append(f"| {config} | {' | '.join(values)} |")
     lines += ["", "## what changed under stress", "",
@@ -109,7 +126,8 @@ def market_report(report, output, daily=None):
             lines.append(f"| {comp['period']} | pick − {comp['baseline']} | {comp['block_days']} | {pct(comp['observed_annual_return_difference'])} | {pct(low)} to {pct(high)} |")
         else:
             lines.append(f"| {comp['period']} | {comp['baseline']} | {comp.get('block_days')} | {comp['status']} | |")
-    lines += ["", "paired circular blocks keep the two strategies on the same days. i use the declared 3/5/10 lengths, 2,000 draws and seed 1729. these are descriptive intervals. serial dependence beyond those blocks, regime changes, prior knowledge and selection remain limits.", "",
+    stats = protocol.get("statistics", {})
+    lines += ["", f"paired circular blocks keep the two strategies on the same observations. block lengths: {stats.get('block_lengths', [3, 5, 10])}; draws: {stats.get('replicates', 2000):,}; seed: {stats.get('seed', 1729)}. these are descriptive intervals. longer dependence, regime changes, prior knowledge and selection remain limits.", "",
         "## rank changes and yearly selections", ""]
     for period, info in diag["rank_stability"].items():
         lines.append(f"- development vs {period}: Spearman {info['spearman']}, on {info['common_eligible_candidates']} settings eligible in both parts.")
@@ -122,19 +140,24 @@ def market_report(report, output, daily=None):
             lines.append(f"| {window['test_year']} | {window['winner']} | {window['train_sharpe']:.3f} | {'n/a' if value is None else f'{value:.3f}'} | {window['test_days']} |")
     lines += ["", "## assumptions i kept", ""]
     if report["status"] == "historical_public_spot":
-        lines += ["i used one BTC or one ETH, cash-funded, with $1m stated capital each and zero interest on spare cash. base costs are assumed 10 bps fee plus 5 bps slippage per side; higher cost doubles both. base orders wait one extra day after the completed daily bar. the two coins have different dollar risk; this isn't an equal-risk replication. final inventory is marked, not sold at an invented last price.", ""]
+        execution = protocol.get("execution", {})
+        lines += [f"i used one cash-funded unit per market, with ${execution.get('starting_capital_usd_per_market', 0):,.0f} stated capital and zero interest on spare cash. the markets have different dollar risk; this isn't equal-risk replication. final inventory is marked, not sold at an invented price.", ""]
     else:
         lines += ["one futures contract or flat, price-difference P&L times the multiplier. roll instructions need independent advance evidence. daily marks miss intraday drawdown. exposure counts observed sampled marks, not elapsed trading time.", ""]
+    lines += ["| scenario | commission / side | slippage ticks / side | fee bps | slippage bps | extra delay minutes |", "| --- | ---: | ---: | ---: | ---: | ---: |"]
+    for case in protocol.get("execution", {}).get("scenarios", []):
+        lines.append(f"| {case['name']} | {case['commission_usd_per_side']} | {case['slippage_ticks_per_side']} | {case.get('fee_bps', 0)} | {case.get('slippage_bps', 0)} | {case['delay_minutes']} |")
+    lines += [""]
     lines += [f"protocol: `{report['plan_sha256']}`. source: `{report['source_sha256']}`.", ""]
     if report.get("execution_sha256"):
         lines += [f"execution: `{report['execution_sha256']}`. the saved manifest records code, actual callables, inputs and dependencies.", ""]
     if daily is not None:
-        plot_market(rows, daily, winner, output, scope)
+        plot_market(rows, daily, winner, output, scope, baselines=baselines)
         lines += ["![annual means across all settings](grid.png)", "", "![base daily P&L path](equity.png)", "", "![candidate ranks by split](ranks.png)", ""]
     (output / "report.md").write_text("\n".join(lines), encoding="utf-8")
 
-def plot_market(rows, daily, winner, output, scope):
-    configs = [k for k in daily if k not in BASELINES]
+def plot_market(rows, daily, winner, output, scope, *, baselines=BASELINES):
+    configs = [k for k in daily if k not in baselines]
     x = np.arange(len(configs))
     fig, ax = plt.subplots(figsize=(12, 5), layout="constrained")
     for offset, period in enumerate(PERIODS):
@@ -147,23 +170,21 @@ def plot_market(rows, daily, winner, output, scope):
     fig.savefig(output / "grid.png", dpi=140)
     plt.close(fig)
     fig, ax = plt.subplots(figsize=(10, 4), layout="constrained")
-    for config in dict.fromkeys([winner, "always_long", "flat"]):
+    for config in dict.fromkeys([winner, *baselines]):
         if config in daily:
             ax.plot(daily[config].index, daily[config].cumsum(), label=config)
     ax.set(ylabel="cumulative net P&L ($)", title=f"fixed development pick; base costs and delay — {scope}")
     ax.legend()
     fig.savefig(output / "equity.png", dpi=140)
     plt.close(fig)
-    matrix = []
-    for period in PERIODS:
-        scores = {r["config_id"]: r["sharpe"] for r in rows if r.get("scenario") == "base" and r.get("period") == period and r.get("status") == "ok" and r.get("sharpe") is not None}
-        rank = pd.Series(scores).rank(ascending=False)
-        matrix.append([rank.get(k, np.nan) for k in configs])
+    table = rank_table(rows, configs)
+    table.to_csv(output / "rank-chart-table.csv")
+    matrix = table.to_numpy().T
     fig, ax = plt.subplots(figsize=(12, 3), layout="constrained")
     im = ax.imshow(matrix, aspect="auto", cmap="viridis_r", vmin=1, vmax=max(2, len(configs)))
     ax.set_xticks(x, configs, rotation=30, ha="right")
     ax.set_yticks(range(3), ["development", "validation", "final"])
-    ax.set_title("daily Sharpe ranks across all successful candidates; selection eligibility is in the table")
+    ax.set_title("daily Sharpe ranks in the displayed candidates only; ties use average rank")
     fig.colorbar(im, ax=ax, label="rank (1 is highest)")
     fig.savefig(output / "ranks.png", dpi=140)
     plt.close(fig)

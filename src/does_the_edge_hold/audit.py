@@ -180,8 +180,8 @@ def audit_file(path: str | Path, resolution: str, market: str,
     }
 
 
-def audit_sources(root: str | Path, *, include_seconds: bool = True) -> dict:
-    files = [(market, "1m") for market in ("NQ", "ES", "YM", "GC", "CL")]
+def audit_sources(root: str | Path, *, include_seconds: bool = True, markets=None) -> dict:
+    files = [(market, "1m") for market in (markets if markets is not None else ("NQ", "ES", "YM", "GC", "CL"))]
     if include_seconds:
         files.append(("NQ", "1s"))
     results = []

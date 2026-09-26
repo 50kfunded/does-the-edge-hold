@@ -14,7 +14,8 @@ from does_the_edge_hold.rolls import read_schedule
 from does_the_edge_hold.synthetic import make_bars
 from does_the_edge_hold.timing import scheduled_instructions
 
-def test_reader_cache_lock_gate_evaluator_report_and_blocked_primary(tmp_path):
+@pytest.mark.parametrize("primary", ["NQ", "ES"])
+def test_reader_cache_lock_gate_evaluator_report_and_blocked_primary(tmp_path, primary):
     bars_root, cache_root = tmp_path / "bars", tmp_path / "cache"
     bars_root.mkdir(); cache_root.mkdir()
     bars = make_bars(minutes=5760)
@@ -45,8 +46,11 @@ def test_reader_cache_lock_gate_evaluator_report_and_blocked_primary(tmp_path):
             policy_evidence={"kind": "advance_schedule", "reviewed": True, "sha256": sha256_file(source)})
     evidence_path.write_text(json.dumps(evidence))
     plan = example_plan()
-    plan.update(version=3, prior_exposure="synthetic software fixture", universe={"primary": "NQ", "required": ["NQ"],
-        "optional": ["ES", "GC"], "allowed_exclusions": ["ES", "GC"]})
+    optional = [m for m in ("NQ", "ES", "GC") if m != primary]
+    plan.update(version=3, prior_exposure="synthetic software fixture", universe={"primary": primary, "required": [primary],
+        "optional": optional, "allowed_exclusions": optional})
+    plan["execution"]["starting_capital_usd_per_market"] = 123456
+    plan["execution"]["scenarios"][1]["commission_usd_per_side"] = 3.25
     plan["signal_families"] = {"momentum": {"lookback_bars": [2]}}
     plan["configuration_count"] = 1
     plan["splits_utc"] = {"development": ["2024-01-08", "2024-01-10"], "validation": ["2024-01-10", "2024-01-11"],
@@ -61,10 +65,14 @@ def test_reader_cache_lock_gate_evaluator_report_and_blocked_primary(tmp_path):
     assert set(result["markets"]) == {"NQ", "ES"}
     assert all(v["failed_runs"] == 0 for v in result["markets"].values())
     assert (output / "NQ/report.md").is_file()
+    saved = json.loads((output / f"{primary}_results.json").read_text())
+    assert saved["primary"] == primary and saved["protocol"] == plan
+    assert "selected_config_from_primary" in saved and "selected_config_from_NQ" not in saved
+    assert "3.25" in (output / f"{primary}/report.md").read_text()
     universe = json.loads((output / "universe.json").read_text())
     assert "GC" in universe["excluded"]
     assert json.loads((output / "NQ_execution.json").read_text())["identity"]["evidence"]["additional"]
-    (mapping / "NQ_policy-source.json").unlink()
+    (mapping / f"{primary}_policy-source.json").unlink()
     with pytest.raises(RuntimeError, match="blocked by roll gate"):
         run_empirical(bars_root, mapping, *files, tmp_path / "blocked")
     assert not (tmp_path / "blocked").exists()

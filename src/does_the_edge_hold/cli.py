@@ -32,10 +32,13 @@ def main() -> None:
     gate.add_argument("--audit", type=Path, required=True)
     gate.add_argument("--provenance", type=Path, required=True)
     gate.add_argument("--mapping-root", type=Path)
+    gate.add_argument("--plan", type=Path, default=Path("research-plan.json"))
     gate.add_argument("--output", type=Path, default=Path("runs/roll-gate.json"))
     resolve = commands.add_parser("resolve-rolls", help="use Databento's free symbol resolver")
     resolve.add_argument("--audit", type=Path, required=True)
     resolve.add_argument("--provenance", type=Path, required=True)
+    resolve.add_argument("--plan", type=Path, default=Path("research-plan.json"))
+    resolve.add_argument("--markets", nargs="+")
     resolve.add_argument("--output", type=Path, default=Path("runs/roll-mapping"))
     freeze = commands.add_parser("freeze", help="lock the research plan before grid runs")
     freeze.add_argument("--plan", type=Path, default=Path("research-plan.json"))
@@ -94,7 +97,10 @@ def main() -> None:
 
         audit_report = json.loads(args.audit.read_text(encoding="utf-8"))
         origin_report = json.loads(args.provenance.read_text(encoding="utf-8"))
-        decision = assess(audit_report, origin_report, args.mapping_root)
+        from .plan import validate
+        plan = json.loads(args.plan.read_text(encoding="utf-8"))
+        validate(plan)
+        decision = assess(audit_report, origin_report, args.mapping_root, plan=plan)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(decision, indent=2) + "\n", encoding="utf-8")
         print(f"roll gate: {decision['status']} ({args.output})")
@@ -104,7 +110,8 @@ def main() -> None:
 
         audit_report = json.loads(args.audit.read_text(encoding="utf-8"))
         origin_report = json.loads(args.provenance.read_text(encoding="utf-8"))
-        path = resolve_free(audit_report, origin_report, args.output)
+        plan = json.loads(args.plan.read_text(encoding="utf-8"))
+        path = resolve_free(audit_report, origin_report, args.output, plan=plan, markets=args.markets)
         print(f"saved local roll evidence at {path}")
     elif args.command == "freeze":
         from .plan import freeze as freeze_plan

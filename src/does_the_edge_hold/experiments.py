@@ -115,14 +115,14 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
     return results, base_daily
 
 
-def rank_changes(results: list[dict], minimum_trades: int) -> dict:
+def rank_changes(results: list[dict], minimum_trades: int, *, baselines=("flat", "always_long"), tie_field="fills") -> dict:
     rank = {}
     for period in ("development", "validation", "historical_final"):
         rows = [row for row in results if row.get("period") == period and
                 row.get("scenario") == "base" and row.get("status") == "ok" and
-                row["config_id"] not in ("flat", "always_long") and
+                row["config_id"] not in baselines and
                 row["entry_trades"] >= minimum_trades and row["sharpe"] is not None]
-        rows.sort(key=lambda row: (-row["sharpe"], row["fills"], row["config_id"]))
+        rows.sort(key=lambda row: (-row["sharpe"], row[tie_field], row["config_id"]))
         rank[period] = [row["config_id"] for row in rows]
     return {"ranks": rank, "development_winner": next(iter(rank["development"]), None)}
 
@@ -135,7 +135,7 @@ def winner_uncertainty(winner: str | None, daily: dict[str, pd.Series],
     capital = float(plan["execution"]["starting_capital_usd_per_market"])
     for period in ("validation", "historical_final"):
         start, end = plan["splits_utc"][period]
-        for baseline in ("flat", "always_long"):
+        for baseline in plan.get("baseline_ids", ("flat", "always_long")):
             if winner not in daily or baseline not in daily:
                 comparisons.append({"period": period, "baseline": baseline,
                                     "status": "missing_run"})
@@ -145,6 +145,7 @@ def winner_uncertainty(winner: str | None, daily: dict[str, pd.Series],
                 comparisons.append({"period": period, "baseline": baseline,
                                     **paired_block_bootstrap(daily[winner], daily[baseline], start, end, capital,
                                         block_days=block, replicates=stats.get("replicates", 2000),
+                                        seed=stats.get("seed", 1729),
                                         periods_per_year=DailyClock.from_plan(plan).periods_per_year)})
     return comparisons
 
@@ -186,9 +187,10 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
         if market == primary:
             primary_winner = ranking["development_winner"]
         report = {"market": market, "status": "historical_evaluation",
+                  "schema_version": 2, "primary": primary, "protocol": plan,
                   "plan_sha256": lock["plan_sha256"], "source_sha256": hashes[market],
                   "roll_gate": decision, "rank_changes": ranking,
-                  "selected_config_from_NQ": primary_winner,
+                  "selected_config_from_primary": primary_winner,
                   "winner_uncertainty": winner_uncertainty(primary_winner,
                                                             daily, plan),
                   "walk_forward": walk_forward(daily, rows,
