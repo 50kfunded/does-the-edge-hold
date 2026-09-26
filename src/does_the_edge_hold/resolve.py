@@ -54,7 +54,7 @@ def write_resolution(response: dict, audit: dict, provenance: dict,
             "source_sha256": audits[market]["sha256"],
             "schedule_sha256": sha256_file(file),
             "coverage_end": ends[-1].isoformat(),
-            "roll_count": len(schedule) - 1,
+            "roll_count": int(schedule["contract"].ne(schedule["contract"].shift()).sum()) - 1,
         }
     output = destination / "evidence.json"
     output.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")

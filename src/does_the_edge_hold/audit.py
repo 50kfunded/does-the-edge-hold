@@ -23,6 +23,18 @@ TICKS = {"NQ": 0.25, "ES": 0.25, "YM": 1.0, "GC": 0.1, "CL": 0.01}
 HOLIDAYS = set(USFederalHolidayCalendar().holidays("2016-01-01", "2027-01-01").date)
 
 
+def public_summary(report: dict) -> dict:
+    """Keep aggregate metadata for publishing; investigation samples stay local."""
+    import copy
+
+    summary = copy.deepcopy(report)
+    for source in summary["files"]:
+        source.pop("largest_changes", None)
+        source.pop("largest_gaps", None)
+    summary["publication_scope"] = "aggregate metadata only; per-bar investigation samples stay local"
+    return summary
+
+
 def _weekly_open(local: pd.DatetimeIndex) -> np.ndarray:
     day = local.dayofweek.to_numpy()
     hour = local.hour.to_numpy()
