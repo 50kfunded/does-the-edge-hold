@@ -28,8 +28,7 @@ def callable_identity(fn):
         if inspect.isfunction(value):
             return {"code": hashlib.sha256(marshal.dumps(_portable_code(value.__code__))).hexdigest()}
         try:
-            json.dumps(value, allow_nan=False)
-            return value
+            return json.loads(json.dumps(value, allow_nan=False))
         except (TypeError, ValueError):
             raise ValueError("unregistered non-serializable closure/default in execution callable")
     return {"module": fn.__module__, "name": fn.__qualname__,

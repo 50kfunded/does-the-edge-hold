@@ -15,6 +15,10 @@ def controlled(bars, spec):
 def future(bars, spec):
     return pd.DataFrame({"known_at": bars.known_at, "target": (bars.close.shift(-1) > bars.close).astype(int)})
 
+def counter(bars, spec, *, settings={"count": 0}):
+    settings["count"] += 1
+    return pd.DataFrame({"known_at": bars.known_at, "target": 0})
+
 @pytest.fixture(autouse=True)
 def clean_extensions(monkeypatch):
     monkeypatch.setattr("does_the_edge_hold.signals.REGISTRY", REGISTRY.copy())
@@ -50,3 +54,10 @@ def test_future_close_callback_cannot_enter_research():
                           "contract": "x", "close": range(8)})
     with pytest.raises(ValueError, match="causal prefix"):
         decisions(frame, SignalSpec("future", 1))
+
+def test_state_mutation_during_a_callback_is_detected_even_if_targets_stay_flat():
+    register_signal("counter", counter, inputs=["known_at", "contract", "close"])
+    frame = pd.DataFrame({"known_at": pd.date_range("2020-01-01", periods=8, freq="h", tz="UTC"),
+                          "contract": "x", "close": range(8)})
+    with pytest.raises(ValueError, match="changed its state"):
+        decisions(frame, SignalSpec("counter", 1))

@@ -37,8 +37,10 @@ def extension_identity(name):
     declaration = DECLARATIONS[name]
     fn = REGISTRY[name]
     referenced = inspect.getclosurevars(fn)
-    for value in (*tuple(fn.__defaults__ or ()), *(fn.__kwdefaults__ or {}).values()):
-        if inspect.isfunction(value) and (inspect.getclosurevars(value).globals or value.__closure__):
+    for value in (*tuple(fn.__defaults__ or ()), *(fn.__kwdefaults__ or {}).values(), *referenced.nonlocals.values()):
+        if inspect.isclass(value):
+            raise ValueError("captured classes have unsupported undeclared state")
+        if inspect.isfunction(value) and (inspect.getclosurevars(value).globals or value.__closure__ or value.__defaults__ or value.__kwdefaults__):
             raise ValueError("default helper has unsupported captured state")
     if set(referenced.builtins) & {"open", "input", "eval", "exec", "__import__", "globals", "locals"}:
         raise ValueError("extension uses unsupported hidden I/O or dynamic state")
