@@ -11,7 +11,8 @@ import pandas as pd
 def paired_block_bootstrap(strategy: pd.Series, baseline: pd.Series,
                            start: str, end: str, capital: float,
                            *, block_days: int = 5, replicates: int = 2_000,
-                           seed: int = 1_729, periods_per_year: int = 365) -> dict:
+                           seed: int = 1_729, periods_per_year: int = 365,
+                           minimum_days: int | None = None) -> dict:
     """Resample paired calendar days in circular blocks; report a descriptive CI."""
     if capital <= 0 or block_days < 1 or replicates < 1:
         raise ValueError("capital, block_days and replicates must be positive")
@@ -24,8 +25,9 @@ def paired_block_bootstrap(strategy: pd.Series, baseline: pd.Series,
     if not np.isfinite(difference).all():
         raise ValueError("daily P&L must be finite")
     n = len(difference)
-    if n < block_days:
-        return {"status": "too_few_days", "days": n, "block_days": block_days}
+    if n < max(block_days, minimum_days or 1):
+        return {"status": "too_few_days", "days": n, "block_days": block_days,
+                "minimum_days": max(block_days, minimum_days or 1)}
     rng = np.random.default_rng(seed)
     draws = np.empty(replicates, dtype=float)
     block_count = math.ceil(n / block_days)

@@ -78,6 +78,8 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
         signal_error = None
         try:
             targets = decisions(hourly, signal) if isinstance(signal, SignalSpec) else signal
+            if any(extension_identity(name) != execution_manifest["identity"]["evidence"]["extensions"][name] for name in REGISTRY):
+                raise ValueError("extension state differs from the sealed runtime")
         except Exception as exc:
             signal_error = exc
         for scenario in scenarios:
@@ -146,6 +148,7 @@ def winner_uncertainty(winner: str | None, daily: dict[str, pd.Series],
                                     **paired_block_bootstrap(daily[winner], daily[baseline], start, end, capital,
                                         block_days=block, replicates=stats.get("replicates", 2000),
                                         seed=stats.get("seed", 1729),
+                                        minimum_days=stats.get("minimum_paired_observations"),
                                         periods_per_year=DailyClock.from_plan(plan).periods_per_year)})
     return comparisons
 
