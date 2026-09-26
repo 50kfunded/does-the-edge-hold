@@ -25,3 +25,9 @@ def test_roll_resets_signal_history() -> None:
     bars.loc[4:, "contract"] = "B"
     output = decisions(bars, SignalSpec("momentum", 2))
     assert output.loc[4:5, "target"].tolist() == [0, 0]
+def test_a_returning_contract_starts_a_new_signal_history() -> None:
+    hourly = pd.DataFrame({"known_at": pd.date_range("2024-01-01", periods=6, freq="h", tz="UTC"),
+                           "close": [100, 101, 200, 201, 102, 103],
+                           "contract": ["A", "A", "B", "B", "A", "A"]})
+    targets = decisions(hourly, SignalSpec("momentum", 2))
+    assert targets["target"].tolist() == [0, 0, 0, 0, 0, 0]

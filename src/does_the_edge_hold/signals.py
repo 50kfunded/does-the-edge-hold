@@ -48,7 +48,8 @@ def decisions(hourly: pd.DataFrame, spec: SignalSpec) -> pd.DataFrame:
     if not hourly["known_at"].is_monotonic_increasing:
         raise ValueError("signal bars must be time ordered")
     target = np.zeros(len(hourly), dtype=np.int8)
-    for _, group in hourly.groupby("contract", sort=False, observed=True):
+    segments = hourly["contract"].ne(hourly["contract"].shift()).cumsum()
+    for _, group in hourly.groupby(segments, sort=False, observed=True):
         indices = group.index.to_numpy()
         close = group["close"].astype(float).reset_index(drop=True)
         if spec.family == "momentum":

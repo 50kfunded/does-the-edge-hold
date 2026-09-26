@@ -25,8 +25,6 @@ def read_schedule(path: str | Path) -> pd.DataFrame:
         raise RollGateError("roll dates must be strictly increasing")
     if schedule["contract"].astype(str).str.strip().eq("").any():
         raise RollGateError("roll schedule has blank contracts")
-    if schedule["contract"].duplicated().any():
-        raise RollGateError("a contract cannot reappear later in one schedule")
     return schedule
 
 
