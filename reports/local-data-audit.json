@@ -50,8 +50,8 @@
         "2025": 348918,
         "2026": 211933
       },
-      "runtime_seconds": 2.95,
-      "sampled_peak_process_rss_bytes": 140210176,
+      "runtime_seconds": 3.15,
+      "sampled_peak_process_rss_bytes": 140328960,
       "schema": {
         "close": "float",
         "high": "float",
@@ -113,8 +113,8 @@
         "2025": 350009,
         "2026": 212599
       },
-      "runtime_seconds": 2.78,
-      "sampled_peak_process_rss_bytes": 145047552,
+      "runtime_seconds": 2.93,
+      "sampled_peak_process_rss_bytes": 143409152,
       "schema": {
         "close": "float",
         "high": "float",
@@ -176,8 +176,8 @@
         "2025": 335617,
         "2026": 206379
       },
-      "runtime_seconds": 3.45,
-      "sampled_peak_process_rss_bytes": 165941248,
+      "runtime_seconds": 3.62,
+      "sampled_peak_process_rss_bytes": 163082240,
       "schema": {
         "close": "float",
         "high": "float",
@@ -239,8 +239,8 @@
         "2025": 350874,
         "2026": 210272
       },
-      "runtime_seconds": 3.06,
-      "sampled_peak_process_rss_bytes": 172417024,
+      "runtime_seconds": 3.17,
+      "sampled_peak_process_rss_bytes": 171028480,
       "schema": {
         "close": "float",
         "high": "float",
@@ -302,8 +302,8 @@
         "2025": 346890,
         "2026": 211355
       },
-      "runtime_seconds": 2.55,
-      "sampled_peak_process_rss_bytes": 161411072,
+      "runtime_seconds": 2.5,
+      "sampled_peak_process_rss_bytes": 160796672,
       "schema": {
         "close": "float",
         "high": "float",
@@ -360,8 +360,8 @@
         "2025": 11783367,
         "2026": 8374528
       },
-      "runtime_seconds": 19.31,
-      "sampled_peak_process_rss_bytes": 509911040,
+      "runtime_seconds": 19.46,
+      "sampled_peak_process_rss_bytes": 513560576,
       "schema": {
         "close": "float",
         "high": "float",
@@ -374,7 +374,7 @@
       "sha256": "4d8393cf93ea1c5188288ada8cd623c536c6985b9ce741986f7f208f73baf6a7"
     }
   ],
-  "generated_utc": "2026-09-26T10:24:45.325190+00:00",
+  "generated_utc": "2026-09-26T10:32:22.093014+00:00",
   "overlap_note": "NQ second and minute files overlap; aggregates are not independent markets",
   "publication_scope": "aggregate metadata only; per-bar investigation samples stay local",
   "roll_gate": "unresolved until date-to-contract mapping is verified",

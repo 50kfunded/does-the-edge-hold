@@ -23,12 +23,14 @@
     "GC": {
       "ready": false,
       "problems": [
+        "volume-ranked mapping alone cannot justify an exit at the final old-contract minute open; the current runner needs a reviewed policy extension with additional contract prices or advance schedule evidence",
         "no verified mapping supplied"
       ]
     },
     "CL": {
       "ready": false,
       "problems": [
+        "volume-ranked mapping alone cannot justify an exit at the final old-contract minute open; the current runner needs a reviewed policy extension with additional contract prices or advance schedule evidence",
         "no verified mapping supplied"
       ]
     }
@@ -38,7 +40,9 @@
     "NQ: no verified mapping supplied",
     "ES: no verified mapping supplied",
     "YM: no verified mapping supplied",
+    "GC: volume-ranked mapping alone cannot justify an exit at the final old-contract minute open; the current runner needs a reviewed policy extension with additional contract prices or advance schedule evidence",
     "GC: no verified mapping supplied",
+    "CL: volume-ranked mapping alone cannot justify an exit at the final old-contract minute open; the current runner needs a reviewed policy extension with additional contract prices or advance schedule evidence",
     "CL: no verified mapping supplied"
   ],
   "scope": "five minute-bar exports; NQ second bars require a separate source match"

@@ -2,7 +2,9 @@
 
 i checked the six local Parquet files and compared the five minute exports with their source cache.
 
-**the roll mapping is still missing, so i haven't run the empirical P&L grid.** the source rules are known, but they don't identify each bar's contract. the public example uses synthetic contracts and stays separate.
+**the roll gate is unresolved, so i haven't run the empirical P&L grid.** it needs verified contract mapping and causal execution timing. the public example uses synthetic contracts and stays separate.
+
+GC and CL also need a causal volume-roll policy: a historical switch date alone doesn't justify exiting at the last old-contract minute's open. the current runner blocks that case.
 
 | file | rows | first UTC bar | last UTC bar |
 | --- | ---: | --- | --- |
