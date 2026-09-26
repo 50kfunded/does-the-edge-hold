@@ -18,6 +18,10 @@ def test_all_grid_runs_are_kept() -> None:
     assert not any(row["status"] == "failed" for row in rows)
     assert {row["scenario"] for row in rows} == {
         "gross_reference", "base", "higher_cost", "one_bar_late"}
+    repeated, repeated_daily = run_market(make_bars(minutes=600), "SYN", plan, "plan", "source")
+    assert rows == repeated
+    for config, values in daily.items():
+        assert values.equals(repeated_daily[config])
 
 
 def test_empirical_pnl_stops_at_roll_gate(tmp_path) -> None:

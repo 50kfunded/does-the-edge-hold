@@ -9,7 +9,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="edge-hold")
     parser.add_argument("--version", action="version", version="%(prog)s 0.1.0")
     commands = parser.add_subparsers(dest="command")
-    example = commands.add_parser("example", help="make a small synthetic market")
+    example = commands.add_parser("example", help="run the complete synthetic audit and report")
     example.add_argument("--output", type=Path, default=Path("runs/example"))
     audit = commands.add_parser("audit", help="inspect local Parquet bars without changing them")
     audit.add_argument("--data-root", type=Path, required=True)
@@ -42,15 +42,19 @@ def main() -> None:
     research.add_argument("--plan", type=Path, default=Path("research-plan.json"))
     research.add_argument("--lock", type=Path, default=Path("research-plan.lock.json"))
     research.add_argument("--output", type=Path, default=Path("runs/empirical"))
+    local = commands.add_parser("local-report", help="regenerate the local audit and study status")
+    local.add_argument("--data-root", type=Path, required=True)
+    local.add_argument("--cache-root", type=Path, required=True)
+    local.add_argument("--mapping-root", type=Path)
+    local.add_argument("--plan", type=Path, default=Path("research-plan.json"))
+    local.add_argument("--lock", type=Path, default=Path("research-plan.lock.json"))
+    local.add_argument("--output", type=Path, default=Path("runs/local"))
     args = parser.parse_args()
     if args.command == "example":
-        from .synthetic import make_bars
+        from .example import run_example
 
-        args.output.mkdir(parents=True, exist_ok=True)
-        path = args.output / "synthetic_bars.parquet"
-        bars = make_bars()
-        bars.to_parquet(path, index=False)
-        print(f"made {len(bars):,} synthetic minute bars at {path}")
+        report = run_example(args.output)
+        print(f"ran 44 synthetic cases on {report['minute_rows']:,} minute bars; report: {args.output / 'report.md'}")
     elif args.command == "audit":
         from .audit import audit_sources, public_summary, write_audit
 
@@ -98,6 +102,12 @@ def main() -> None:
         report = run_empirical(args.data_root, args.mapping_root, args.audit,
                                args.provenance, args.plan, args.lock, args.output)
         print(f"completed historical evaluation for {len(report['markets'])} markets at {args.output}")
+    elif args.command == "local-report":
+        from .local_report import run_local_report
+
+        status = run_local_report(args.data_root, args.cache_root, args.output,
+                                  args.plan, args.lock, args.mapping_root)
+        print(f"local study: {status['status']}; report: {args.output / 'report.md'}")
     else:
         parser.print_help()
 

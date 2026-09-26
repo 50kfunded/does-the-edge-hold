@@ -146,6 +146,8 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
                       plan["selection"]["minimum_entry_trades"]), "runs": rows}
         (output / f"{market}_results.json").write_text(json.dumps(report, indent=2) + "\n",
                                                        encoding="utf-8")
+        from .reporting import market_report
+        market_report(report, output / market, daily)
         reports[market] = {"run_count": len({row["run_id"] for row in rows}),
                            "failed_runs": sum(row["status"] == "failed" for row in rows),
                            "development_winner": report["rank_changes"]["development_winner"]}
