@@ -32,6 +32,19 @@ class Window:
     closes: np.ndarray
     bars: pd.DataFrame
 
+@dataclass(frozen=True)
+class CompiledTargets:
+    date_ns: int
+    decisions: tuple
+
+def compile_targets(window, targets):
+    if not {"known_at", "target"}.issubset(targets) or not targets.target.isin([0, 1]).all():
+        raise ValueError("aligned long/flat targets required")
+    known = pd.to_datetime(targets.known_at, utc=True).dt.as_unit("ns")
+    if not known.is_monotonic_increasing or known.duplicated().any(): raise ValueError("decisions must be unique and ordered")
+    if len(known) and not known.dt.floor("D").eq(window.date).all(): raise ValueError("decisions cannot cross source dates")
+    return CompiledTargets(window.date.value, tuple((int(ts), int(target)) for ts, target in zip(known.astype("int64"), targets.target)))
+
 def prepare_window(minutes, source_segment_id):
     if minutes.empty: raise ValueError("empty source-day window")
     semantic_digest([minutes])
@@ -86,19 +99,16 @@ def window_decisions(window, spec):
         target[i] = holding
     return pd.DataFrame({"known_at": bars.known_at, "target": target})
 
-def simulate_window(window, targets, spec, costs, delay_minutes, *, starting_capital=100000):
+def simulate_window(window, targets, spec, costs, delay_minutes, *, starting_capital=100000, keep_events=True):
     """Pending fills use earlier information; the scheduled terminal instruction has priority."""
     if not isinstance(delay_minutes, int) or delay_minutes < 0: raise ValueError("delay must be nonnegative integer minutes")
-    if not {"known_at", "target"}.issubset(targets) or not targets.target.isin([0, 1]).all():
-        raise ValueError("aligned long/flat targets required")
-    known = pd.to_datetime(targets.known_at, utc=True).dt.as_unit("ns")
-    if not known.is_monotonic_increasing or known.duplicated().any(): raise ValueError("decisions must be unique and ordered")
     date = window.date
-    if len(known) and not known.dt.floor("D").eq(date).all(): raise ValueError("decisions cannot cross source dates")
+    compiled = targets if isinstance(targets, CompiledTargets) else compile_targets(window, targets)
+    if compiled.date_ns != date.value: raise ValueError("compiled decisions cannot cross source dates")
     ledger = WindowLedger(spec, costs, starting_capital=starting_capital)
     warmup, cutoff, terminal, end = [(date + pd.Timedelta(minutes=m)).value for m in (540, 690, 710, 720)]
     delay = delay_minutes * MINUTE
-    decisions = [(int(ts), int(target)) for ts, target in zip(known.astype("int64"), targets.target) if warmup <= ts < terminal]
+    decisions = [(ts, target) for ts, target in compiled.decisions if warmup <= ts < terminal]
     pending = None
     exposure_ns, active_since = 0, None
     events = []
@@ -115,8 +125,9 @@ def simulate_window(window, targets, spec, costs, delay_minutes, *, starting_cap
             exposure_ns += ts.value - active_since
             active_since = None
         ledger.fills[-1] = replace(ledger.fills[-1], known_at=pd.Timestamp(known_ns, tz="UTC"))
-        events.append({"at": ts.isoformat(), "known_at": pd.Timestamp(known_ns, tz="UTC").isoformat(), "reason": reason,
-                       "position": ledger.position, "net_pnl_usd": ledger.net_pnl})
+        if keep_events:
+            events.append({"at": ts.isoformat(), "known_at": pd.Timestamp(known_ns, tz="UTC").isoformat(), "reason": reason,
+                           "position": ledger.position, "net_pnl_usd": ledger.net_pnl})
     def execute_pending(before, *, inclusive):
         nonlocal pending
         if pending is None: return

@@ -9,6 +9,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="edge-hold")
     parser.add_argument("--version", action="version", version="%(prog)s 0.1.0")
     commands = parser.add_subparsers(dest="command")
+    intraday_example = commands.add_parser("intraday-example", help="run the source-day study on made-up multi-window prices")
+    intraday_example.add_argument("--output", type=Path, required=True)
+    intraday_run = commands.add_parser("intraday-study", help="run only the separately locked source-day market subset")
+    intraday_run.add_argument("--data-root", type=Path, required=True)
+    intraday_run.add_argument("--cache-root", type=Path, required=True)
+    intraday_run.add_argument("--plan", type=Path, default=Path("research/intraday/plan.json"))
+    intraday_run.add_argument("--lock", type=Path, default=Path("research/intraday/plan.lock.json"))
+    intraday_run.add_argument("--audit-root", type=Path, default=Path("reports/intraday/source-audit"))
+    intraday_run.add_argument("--output", type=Path, required=True)
     intraday_audit = commands.add_parser("intraday-audit", help="check exact-precision sources and fixed weekday windows")
     intraday_audit.add_argument("--data-root", type=Path, required=True)
     intraday_audit.add_argument("--cache-root", type=Path, required=True)
@@ -70,7 +79,15 @@ def main() -> None:
     local.add_argument("--lock", type=Path, default=Path("research-plan.lock.json"))
     local.add_argument("--output", type=Path, default=Path("runs/local"))
     args = parser.parse_args()
-    if args.command == "intraday-audit":
+    if args.command == "intraday-example":
+        from .intraday_example import run_example
+        result = run_example(args.output)
+        print(f"synthetic source-day cases: {result['runtime']['cases']}; {args.output / 'study/report.md'}")
+    elif args.command == "intraday-study":
+        from .intraday_study import run_study
+        result = run_study(args.data_root, args.cache_root, args.plan, args.lock, args.audit_root, args.output)
+        print(f"source-day cases: {result['runtime']['cases']}; {args.output / 'report.md'}")
+    elif args.command == "intraday-audit":
         from .intraday_audit import run_audit
         result = run_audit(args.data_root, args.cache_root, args.plan, args.output, local_code_paths=args.source_code)
         print(f"source-day evidence: {result['readiness']['status']}; {args.output / 'audit.json'}")
