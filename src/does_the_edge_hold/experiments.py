@@ -41,13 +41,18 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
     scenarios = plan["execution"]["scenarios"]
     results = []
     base_daily: dict[str, pd.Series] = {}
-    candidates: list[tuple[str, pd.DataFrame, str]] = [
-        (item.id, decisions(hourly, item), item.config_hash) for item in grid]
+    candidates: list[tuple[str, SignalSpec | pd.DataFrame, str]] = [
+        (item.id, item, item.config_hash) for item in grid]
     empty = pd.DataFrame({"known_at": pd.DatetimeIndex([], tz="UTC"), "target": pd.Series(dtype=int)})
     long = pd.DataFrame({"known_at": [pd.to_datetime(minutes["ts"].iloc[0], utc=True)], "target": [1]})
     candidates.extend([("flat", empty, "baseline-flat"),
                        ("always_long", long, "baseline-always-long")])
-    for config_id, targets, config_hash in candidates:
+    for config_id, signal, config_hash in candidates:
+        signal_error = None
+        try:
+            targets = decisions(hourly, signal) if isinstance(signal, SignalSpec) else signal
+        except Exception as exc:
+            signal_error = exc
         for scenario in scenarios:
             run_id = _run_id(source_hash, config_id, scenario, plan_hash)
             common = {"market": market, "config_id": config_id,
@@ -57,6 +62,8 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
                       "slippage_ticks_per_side": scenario["slippage_ticks_per_side"],
                       "delay_minutes": scenario["delay_minutes"]}
             try:
+                if signal_error is not None:
+                    raise signal_error
                 run = simulate(minutes, targets, SPECS[market],
                                Costs(scenario["commission_usd_per_side"],
                                      scenario["slippage_ticks_per_side"]),

@@ -32,3 +32,20 @@ def test_empirical_pnl_stops_at_roll_gate(tmp_path) -> None:
                       ROOT / "research-plan.json", ROOT / "research-plan.lock.json",
                       tmp_path / "output")
     assert not (tmp_path / "output").exists()
+
+
+def test_signal_failures_are_saved_without_dropping_other_runs(monkeypatch) -> None:
+    import does_the_edge_hold.experiments as experiments
+
+    original = experiments.decisions
+    def failing_signal(hourly, spec):
+        if spec.id == "mom-24":
+            raise ValueError("deliberate signal failure")
+        return original(hourly, spec)
+    monkeypatch.setattr(experiments, "decisions", failing_signal)
+    plan = json.loads((ROOT / "research-plan.json").read_text(encoding="utf-8"))
+    rows, _ = run_market(make_bars(minutes=600), "SYN", plan, "plan", "source")
+    failures = [row for row in rows if row["status"] == "failed"]
+    assert len(failures) == 4
+    assert {row["config_id"] for row in failures} == {"mom-24"}
+    assert len({row["run_id"] for row in rows}) == 44
