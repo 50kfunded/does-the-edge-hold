@@ -1,0 +1,49 @@
+{
+  "scope": "real public spot; complete 192-run declared grid",
+  "rows": 7060,
+  "run_count": 192,
+  "matches_published_financial_metrics": true,
+  "phases": {
+    "provenance_and_replay": {
+      "seconds": 0.31320530000084545,
+      "peak_rss_bytes": 144928768,
+      "initial_rss_bytes": 129470464
+    },
+    "ingestion": {
+      "seconds": 0.004605300004186574,
+      "peak_rss_bytes": 141758464,
+      "initial_rss_bytes": 141295616
+    },
+    "audit": {
+      "seconds": 0.015621700003976002,
+      "peak_rss_bytes": 141758464,
+      "initial_rss_bytes": 141754368
+    },
+    "evaluation": {
+      "seconds": 127.24450989999605,
+      "peak_rss_bytes": 158724096,
+      "initial_rss_bytes": 141754368
+    },
+    "uncertainty_and_report": {
+      "seconds": 4.164213299998664,
+      "peak_rss_bytes": 252469248,
+      "initial_rss_bytes": 158670848
+    }
+  },
+  "environment": {
+    "python": "3.12.10",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "logical_cpus": 12,
+    "physical_cpus": 6,
+    "ram_bytes": 25674412032,
+    "packages": {
+      "numpy": "2.5.3",
+      "pandas": "3.0.5",
+      "pyarrow": "25.0.1",
+      "psutil": "7.2.2"
+    },
+    "git_revision": "2a59fed34f520fc14f5a579c7c1b45be31f4a3bc",
+    "rss_method": "absolute process RSS sampled every 10 ms; includes retained inputs and allocator memory, excludes child processes; one fresh worker per size",
+    "background_activity": "public example and test work overlapped briefly; financial equality asserted for every published run"
+  }
+}
