@@ -70,7 +70,14 @@ def run_audit(data_root, cache_root, plan_path, output, *, docs=None, local_code
     sources, origins, tables = [], [], []
     for market in plan["audit_markets"]:
         print(f"checking original-precision {market} windows", flush=True)
-        path = source_path(data_root, market)
+        try:
+            path = source_path(data_root, market)
+        except FileNotFoundError:
+            table = coverage(pd.DataFrame({"ts": pd.DatetimeIndex([], tz="UTC")}), plan, market, "unavailable")
+            table.to_csv(output / f"{market}-coverage.csv", index=False)
+            tables.append(table)
+            origins.append({"market": market, "verified_match": False, "source_files": [], "reason": "source file absent"})
+            continue
         bars = load_minutes(data_root, market)
         identity = semantic_digest([bars])
         precise = all(str(bars[c].dtype) == "float64" for c in ("open", "high", "low", "close")) and str(bars.volume.dtype) == "int64"

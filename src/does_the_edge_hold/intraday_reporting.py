@@ -11,7 +11,8 @@ def render(output, *, plots=True):
     synthetic = summary["status"] == "synthetic_source_day"
     plan = summary["protocol"]
     winner = summary["markets"]["NQ"]["primary_pick"]
-    lines = ["# the within-day study", "", f"i ran {summary['runtime']['cases']} cases. status: {summary['status']}.", "",
+    markets = ', '.join(summary['markets'])
+    lines = ["# the within-day study", "", f"i ran {summary['runtime']['cases']} cases across {markets}, with nine rules, two baselines and five cost/delay scenarios.", "",
              f"the NQ development pick was `{summary['markets']['NQ']['primary_pick']}`. i kept it in later dates and the other markets.", "",
              "these prices are made up. this checks the software, not a market edge." if synthetic else
              "this is a historical, conditional source-day comparison. i already knew related research through 2026; the final period isn't untouched data.", "",

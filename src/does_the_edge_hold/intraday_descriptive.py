@@ -6,8 +6,12 @@ from .data import iter_parquet, source_path
 def describe_sources(data_root, plan):
     out = {}
     for market in plan["audit_markets"]:
+        try:
+            path = source_path(data_root, market)
+        except FileNotFoundError:
+            out[market] = {"status": "source_absent", "note": "unscored"}; continue
         parts = []
-        for batch in iter_parquet(source_path(data_root, market)):
+        for batch in iter_parquet(path):
             ts = batch.ts
             keep = (ts.dt.dayofweek < 5) & (ts.dt.hour >= 8) & (ts.dt.hour < 12)
             keep &= (ts >= pd.Timestamp(plan["splits_utc"]["development"][0], tz="UTC")) & (ts < pd.Timestamp(plan["splits_utc"]["historical_final"][1], tz="UTC"))
