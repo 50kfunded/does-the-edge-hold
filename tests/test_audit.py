@@ -29,3 +29,17 @@ def test_audit_flags_values_and_order(tmp_path) -> None:
     assert audit["out_of_order_timestamps"] == 1
     assert audit["invalid_ohlc"] == 1
     assert audit["nonpositive_volume"] == 1
+    assert audit["gap_counts"]["short_no_trade_or_missing_candidate"] == 1
+
+
+def test_unknown_timestamps_do_not_create_a_fake_gap(tmp_path) -> None:
+    path = tmp_path / "NQ_1m.parquet"
+    ts = pd.to_datetime([None, "2024-01-09T14:00Z", None, "2024-01-09T14:02Z"], utc=True)
+    pd.DataFrame({"ts": ts, "open": 10, "high": 10, "low": 10, "close": 10,
+                  "volume": 1}).to_parquet(path)
+    audit = audit_file(path, "1m", "NQ", batch_size=2)
+    assert audit["missing_values"]["ts"] == 2
+    assert audit["first_utc"] == "2024-01-09T14:00:00+00:00"
+    assert audit["out_of_order_timestamps"] == 0
+    assert audit["duplicate_timestamps"] == 0
+    assert not audit["largest_gaps"]

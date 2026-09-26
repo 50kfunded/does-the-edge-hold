@@ -49,6 +49,8 @@ def classify_gap(previous: pd.Timestamp, current: pd.Timestamp,
     missing = int((current - previous) // step) - 1
     if missing <= (300 if resolution == "1s" else 5):
         return "short_no_trade_or_missing_candidate", 0
+    if current - previous > pd.Timedelta(days=7):
+        return "long_gap_investigate", 0
     interior = pd.date_range(previous + pd.Timedelta(minutes=1),
                              current - pd.Timedelta(seconds=1), freq="min", tz="UTC")
     if len(interior) == 0:
@@ -92,9 +94,10 @@ def audit_file(path: str | Path, resolution: str, market: str,
         peak_rss_bytes = max(peak_rss_bytes, process.memory_info().rss)
         peak_batch_rows = max(peak_batch_rows, len(batch))
         stamps = batch["ts"]
-        batch_min, batch_max = stamps.min(), stamps.max()
-        first = batch_min if first is None else min(first, batch_min)
-        last = batch_max if last is None else max(last, batch_max)
+        if stamps.notna().any():
+            batch_min, batch_max = stamps.min(), stamps.max()
+            first = batch_min if first is None else min(first, batch_min)
+            last = batch_max if last is None else max(last, batch_max)
         years.update(stamps.dt.year.value_counts().to_dict())
         for col in ("ts", "open", "high", "low", "close", "volume"):
             missing[col] += int(batch[col].isna().sum())
@@ -108,11 +111,14 @@ def audit_file(path: str | Path, resolution: str, market: str,
                                               (lo > np.minimum.reduce([op, cl, hi])))))
         nonpositive_volume += int(np.sum(np.isfinite(vol) & (vol <= 0)))
         ns = stamps.array.asi8
-        before = np.r_[previous_ns if previous_ns is not None else ns[0] - step_ns, ns[:-1]]
-        delta = ns - before
-        duplicate += int(np.sum(delta == 0))
-        out_of_order += int(np.sum(delta < 0))
-        gap_indices = np.flatnonzero(delta > step_ns)
+        nat = np.iinfo(np.int64).min
+        before = np.r_[previous_ns if previous_ns is not None else nat, ns[:-1]]
+        valid_pair = (ns != nat) & (before != nat)
+        delta = np.zeros(len(ns), dtype=np.int64)
+        np.subtract(ns, before, out=delta, where=valid_pair)
+        duplicate += int(np.sum(valid_pair & (delta == 0)))
+        out_of_order += int(np.sum(valid_pair & (delta < 0)))
+        gap_indices = np.flatnonzero(valid_pair & (delta > step_ns))
         gap_slots = delta[gap_indices] // step_ns - 1
         short_limit = 300 if resolution == "1s" else 5
         short = gap_slots <= short_limit
@@ -134,7 +140,7 @@ def audit_file(path: str | Path, resolution: str, market: str,
         prior = np.r_[previous_close if previous_close is not None else cl[0], cl[:-1]]
         changes = np.abs(cl - prior)
         threshold = np.maximum(0.01 * np.abs(prior), 100 * TICKS[market])
-        flagged = np.flatnonzero(np.isfinite(changes) & (changes >= threshold))
+        flagged = np.flatnonzero(stamps.notna().to_numpy() & np.isfinite(changes) & (changes >= threshold))
         large_change_count += len(flagged)
         for index in flagged:
             item = (float(changes[index]), stamps.iloc[index].isoformat(),
@@ -143,7 +149,7 @@ def audit_file(path: str | Path, resolution: str, market: str,
                 heapq.heappush(largest_changes, item)
             elif item > largest_changes[0]:
                 heapq.heapreplace(largest_changes, item)
-        previous_ns = int(ns[-1])
+        previous_ns = int(ns[-1]) if ns[-1] != nat else None
         previous_close = float(cl[-1])
     peak_rss_bytes = max(peak_rss_bytes, process.memory_info().rss)
     return {

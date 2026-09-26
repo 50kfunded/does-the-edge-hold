@@ -39,7 +39,7 @@ def iter_parquet(path: str | Path, batch_size: int = 65_536) -> Iterator[pd.Data
         frame = batch.to_pandas()
         if "ts" not in frame.columns and frame.index.name == "ts":
             frame = frame.reset_index()
-        frame["ts"] = pd.to_datetime(frame["ts"], utc=True)
+        frame["ts"] = pd.to_datetime(frame["ts"], utc=True).dt.as_unit("ns")
         yield frame[list(BAR_COLUMNS)]
 
 
