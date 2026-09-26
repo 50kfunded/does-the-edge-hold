@@ -19,4 +19,3 @@ for a new snapshot, keep the original plan and results. copy the plan to a new d
 canonical input is ordered UTC start-stamped `ts,open,high,low,close,volume,contract`. `MarketAdapter` supplies the instrument specification, bar duration, asset kind and ledger. a one-minute adapter makes hourly signals; longer bars are already signal bars. adapters must disclose that choice and provide genuine source provenance.
 
 this keeps the scope small: audits, long/flat rules, execution assumptions and reports. there's no live trading, broker connection, optimization service or claim of outside users.
-

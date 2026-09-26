@@ -28,4 +28,3 @@ the review's requirement table is covered too: adapters/provenance and scale →
 i used the approved twelve-stage sequence, with a separate spot branch and real follow-up fixes for timestamp units and the split helper. [the clean check](clean-run.md) records the tested revision and install. [the handover](../reports/repair/handover.json) lists protocols, execution identities and the remaining blocker.
 
 **what remains:** genuine date-valid futures identities and independent advance roll availability for the actual exports. [the required files](roll-gate.md) are specified. NQ can't be replaced silently. second-bar reconstruction and a full product holiday calendar aren't established. no paid request, new account or outside contact was used.
-

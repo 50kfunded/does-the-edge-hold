@@ -45,4 +45,3 @@ this reads without changing the source files. it writes an audit and a blocked s
 [research choices](docs/research-plan.md) · [accounting](docs/methods.md) · [measured scale](docs/benchmarks.md) · [clean-run check](docs/clean-run.md) · [repair log](docs/repair-log.md)
 
 the repo contains code, aggregate audits and derived results. raw vendor bars, contract mappings and public response snapshots stay in ignored local folders.
-

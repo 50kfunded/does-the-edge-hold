@@ -25,4 +25,3 @@ both plans predeclare gross-to-net survival, selected vs typical later results, 
 i'd already seen futures results through 2026 in the older project. broad crypto history was also known. these are historical evaluations, not pristine holdouts. a prospective check needs its future dates and fixed choices committed before those results exist.
 
 the protocol lock records choices and audited source hashes. a separate execution manifest seals code, actual callables, instrument/accounting metadata, roll evidence and dependency versions. output folders refuse overwrites; implementation changes get new run identities.
-

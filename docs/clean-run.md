@@ -13,4 +13,3 @@ the tracked-file and reachable-history scan found no vendor bars, mapping/instru
 [reproducibility.json](../reports/reproducibility.json) records the wheel, package versions, source digests and checked revisions. [the older receipt](../reports/repair/pre-review-reproducibility.json) remains separate evidence for the original pre-Push-5 check.
 
 later commits update docs and derived sample artifacts. they don't turn synthetic checks into futures validation.
-

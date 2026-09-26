@@ -25,4 +25,3 @@ the local gap labels are closure/no-trade/missing **candidates**. the weekly tem
 the public spot case blocks any missing calendar day. [Coinbase's candle notes](https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-candles) say missing intervals can have no ticks, so that choice is stricter than merely accepting the API response.
 
 bar opens are assumed execution prices. OHLCV doesn't measure spread, queue position, impact or the exact timing of the first trade inside a bucket. the second data remains an overlapping audit source, not independent evidence or a validated fill study.
-

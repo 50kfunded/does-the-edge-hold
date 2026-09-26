@@ -5,4 +5,3 @@
 - tested causal roll instructions, cash/inventory and futures accounting, execution identities and independent inputs; measured larger runs and checked a clean public install.
 
 i wouldn't claim validated futures returns, a proven trading edge, a streaming backtester, measured fills, outside adoption or a prospective holdout. [the benchmarks](benchmarks.md) and [clean-run notes](clean-run.md) hold the actual measurements.
-

@@ -11,4 +11,3 @@ real futures need reviewed date-valid identities and advance roll instructions. 
 run the tests and public example. keep old plans and results, freeze changes before strategy returns, and retain failed configurations. source files stay read-only; vendor bars and mapping evidence stay in ignored folders.
 
 [the independent-input walkthrough](docs/independent-input.md) shows the working public case and how to handle a revised snapshot.
-

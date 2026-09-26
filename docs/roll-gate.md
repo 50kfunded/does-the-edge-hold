@@ -24,4 +24,3 @@ the exit uses the first observed old-contract open after executable time plus th
 NQ must pass identity, advance-policy and quality checks. ES/GC/CL/YM may be excluded only as the protocol allows, with reasons in the run's universe manifest. calendar mapping alone doesn't establish causal liquidation, and a volume mapping needs the same advance evidence.
 
 someone with saved resolver/DBN metadata can supply those artifacts without a new account. otherwise the next required action is obtaining genuine historical identities and an independently defensible execution policy from an authorized source. this project makes no billable request and doesn't estimate a price for unavailable evidence.
-
