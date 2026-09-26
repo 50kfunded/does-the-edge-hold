@@ -21,7 +21,7 @@ def count_splits(path: Path, splits: dict, clock=None) -> dict[str, int]:
     boundaries = {name: (pd.to_datetime(start, utc=True), pd.to_datetime(end, utc=True))
                   for name, (start, end) in splits.items()}
     for batch in iter_parquet(path):
-        labels = (clock or DailyClock()).labels(batch["ts"])
+        labels = clock.labels(batch["ts"]) if clock is not None else batch["ts"]
         for name, (start, end) in boundaries.items():
             counts[name] += int(((labels >= start) & (labels < end)).sum())
     return counts
