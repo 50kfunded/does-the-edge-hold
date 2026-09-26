@@ -11,6 +11,7 @@ import pandas as pd
 from .data import load_minutes, sha256_file, source_path
 from .ledger import Costs
 from .daily_clock import DailyClock
+from .execution import seal, write_manifest
 from .metrics import daily_pnl, summarize
 from .plan import verify
 from .roll_gate import assess, require_ready, read_instructions
@@ -22,8 +23,8 @@ from .uncertainty import paired_block_bootstrap
 from .walk_forward import evaluate as walk_forward
 
 
-def _run_id(source_hash: str, config_id: str, scenario: dict, plan_hash: str) -> str:
-    payload = json.dumps([source_hash, config_id, scenario, plan_hash], sort_keys=True)
+def _run_id(source_hash: str, config_id: str, scenario: dict, plan_hash: str, execution_hash="legacy") -> str:
+    payload = json.dumps([source_hash, config_id, scenario, plan_hash, execution_hash], sort_keys=True)
     return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
 
@@ -34,9 +35,13 @@ def _periods(plan: dict) -> dict[str, tuple[str | None, str | None]]:
 
 
 def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
-               source_hash: str, *, roll_instructions=None) -> tuple[list[dict], dict[str, pd.Series]]:
+               source_hash: str, *, roll_instructions=None, execution_manifest=None) -> tuple[list[dict], dict[str, pd.Series]]:
     """Run one market at a time; keep base-scenario daily P&L for diagnostics."""
     hourly = hourly_from_minutes(minutes)
+    execution_manifest = execution_manifest or seal(plan_hash, {market: source_hash},
+        evidence={"roll_instructions": [] if roll_instructions is None else roll_instructions.astype(str).to_dict("records")},
+        callables={"decisions": decisions, "simulate": simulate, "aggregate": hourly_from_minutes,
+                   "summarize": summarize, "daily_pnl": daily_pnl, "grid": grid_from_plan})
     grid = grid_from_plan(plan)
     capital = float(plan["execution"]["starting_capital_usd_per_market"])
     clock = DailyClock.from_plan(plan)
@@ -56,10 +61,10 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
         except Exception as exc:
             signal_error = exc
         for scenario in scenarios:
-            run_id = _run_id(source_hash, config_id, scenario, plan_hash)
+            run_id = _run_id(source_hash, config_id, scenario, plan_hash, execution_manifest["execution_sha256"])
             common = {"market": market, "config_id": config_id,
                       "config_hash": config_hash, "run_id": run_id,
-                      "scenario": scenario["name"],
+                      "scenario": scenario["name"], "execution_sha256": execution_manifest["execution_sha256"],
                       "commission_per_side": scenario["commission_usd_per_side"],
                       "slippage_ticks_per_side": scenario["slippage_ticks_per_side"],
                       "delay_minutes": scenario["delay_minutes"]}
@@ -145,8 +150,14 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
     for market in [primary] + [m for m in decision["included"] if m != primary]:
         minutes = attach_contracts(load_minutes(data_root, market),
                                    read_schedule(Path(mapping_root) / f"{market}_rolls.csv"))
+        evidence_hashes = {p.name: sha256_file(p) for p in sorted(Path(mapping_root).iterdir()) if p.is_file()}
+        manifest = seal(lock["plan_sha256"], {market: hashes[market]}, evidence=evidence_hashes,
+                        callables={"decisions": decisions, "simulate": simulate, "aggregate": hourly_from_minutes,
+                                   "summarize": summarize, "daily_pnl": daily_pnl, "grid": grid_from_plan})
+        write_manifest(manifest, output / f"{market}_execution.json")
         rows, daily = run_market(minutes, market, plan, lock["plan_sha256"], hashes[market],
-                                 roll_instructions=read_instructions(Path(mapping_root) / f"{market}_instructions.csv"))
+                                 roll_instructions=read_instructions(Path(mapping_root) / f"{market}_instructions.csv"),
+                                 execution_manifest=manifest)
         ranking = rank_changes(rows, plan["selection"]["minimum_entry_trades"])
         if market == primary:
             primary_winner = ranking["development_winner"]
