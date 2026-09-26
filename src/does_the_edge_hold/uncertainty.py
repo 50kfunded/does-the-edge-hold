@@ -11,7 +11,7 @@ import pandas as pd
 def paired_block_bootstrap(strategy: pd.Series, baseline: pd.Series,
                            start: str, end: str, capital: float,
                            *, block_days: int = 5, replicates: int = 2_000,
-                           seed: int = 1_729) -> dict:
+                           seed: int = 1_729, periods_per_year: int = 365) -> dict:
     """Resample paired calendar days in circular blocks; report a descriptive CI."""
     if capital <= 0 or block_days < 1 or replicates < 1:
         raise ValueError("capital, block_days and replicates must be positive")
@@ -33,11 +33,12 @@ def paired_block_bootstrap(strategy: pd.Series, baseline: pd.Series,
     for index in range(replicates):
         starts = rng.integers(0, n, size=block_count)
         sampled = (starts[:, None] + offsets[None, :]) % n
-        draws[index] = difference[sampled.ravel()[:n]].mean() * 252 / capital
-    observed = float(difference.mean() * 252 / capital)
+        draws[index] = difference[sampled.ravel()[:n]].mean() * periods_per_year / capital
+    observed = float(difference.mean() * periods_per_year / capital)
     return {"status": "ok", "days": n, "block_days": block_days,
             "replicates": replicates, "seed": seed,
             "observed_annual_return_difference": observed,
             "ci95_annual_return_difference": [float(v) for v in np.quantile(draws, [0.025, 0.975])],
             "bootstrap_fraction_nonpositive": float(np.mean(draws <= 0)),
-            "note": "paired five-day circular block bootstrap; this is not proof of a future edge"}
+            "periods_per_year": periods_per_year,
+            "note": "paired circular block bootstrap of declared daily observations; descriptive, not a correction for selection or proof of future returns"}

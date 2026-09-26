@@ -10,6 +10,7 @@ import pandas as pd
 
 from .data import load_minutes, sha256_file, source_path
 from .ledger import Costs
+from .daily_clock import DailyClock
 from .metrics import daily_pnl, summarize
 from .plan import verify
 from .roll_gate import assess, require_ready, read_instructions
@@ -38,6 +39,7 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
     hourly = hourly_from_minutes(minutes)
     grid = grid_from_plan(plan)
     capital = float(plan["execution"]["starting_capital_usd_per_market"])
+    clock = DailyClock.from_plan(plan)
     scenarios = plan["execution"]["scenarios"]
     results = []
     base_daily: dict[str, pd.Series] = {}
@@ -71,13 +73,13 @@ def run_market(minutes: pd.DataFrame, market: str, plan: dict, plan_hash: str,
                                starting_capital=capital, roll_instructions=roll_instructions)
                 for period, (start, end) in _periods(plan).items():
                     results.append({**common, "period": period,
-                                    **summarize(run, start, end)})
+                                    **summarize(run, start, end, clock=clock)})
                 for year in sorted(run.curve["ts"].dt.year.unique()):
                     results.append({**common, "period": str(year),
                                     **summarize(run, f"{year}-01-01T00:00:00Z",
-                                                f"{year+1}-01-01T00:00:00Z")})
+                                                f"{year+1}-01-01T00:00:00Z", clock=clock)})
                 if scenario["name"] == "base":
-                    base_daily[config_id] = daily_pnl(run)
+                    base_daily[config_id] = daily_pnl(run, clock)
             except Exception as exc:
                 results.append({**common, "period": "whole", "status": "failed",
                                 "error": f"{type(exc).__name__}: {exc}"})
@@ -109,9 +111,12 @@ def winner_uncertainty(winner: str | None, daily: dict[str, pd.Series],
                 comparisons.append({"period": period, "baseline": baseline,
                                     "status": "missing_run"})
                 continue
-            comparisons.append({"period": period, "baseline": baseline,
-                                **paired_block_bootstrap(daily[winner], daily[baseline],
-                                                         start, end, capital)})
+            stats = plan.get("statistics", {})
+            for block in stats.get("block_lengths", [3, 5, 10]):
+                comparisons.append({"period": period, "baseline": baseline,
+                                    **paired_block_bootstrap(daily[winner], daily[baseline], start, end, capital,
+                                        block_days=block, replicates=stats.get("replicates", 2000),
+                                        periods_per_year=DailyClock.from_plan(plan).periods_per_year)})
     return comparisons
 
 
@@ -153,7 +158,8 @@ def run_empirical(data_root: str | Path, mapping_root: str | Path,
                                                             daily, plan),
                   "walk_forward": walk_forward(daily, rows,
                       plan["execution"]["starting_capital_usd_per_market"],
-                      plan["selection"]["minimum_entry_trades"]), "runs": rows}
+                      plan["selection"]["minimum_entry_trades"],
+                      periods_per_year=DailyClock.from_plan(plan).periods_per_year), "runs": rows}
         (output / f"{market}_results.json").write_text(json.dumps(report, indent=2) + "\n",
                                                        encoding="utf-8")
         from .reporting import market_report
