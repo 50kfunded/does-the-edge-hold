@@ -7,7 +7,7 @@ i made a small Python tool to check whether a backtest holds up on later data, o
 i finished two historical cases. neither establishes a lasting tradable edge.
 
 - [BTC/ETH spot](reports/public-spot/report.md): 192 cases. the BTC pick's Sharpe was 0.956 in development, 0.064 in validation and 0.674 in the final period. all 24 later advantage intervals include zero. i kept the original results and added [corrected rank figures](reports/public-spot/corrections/report.md).
-- [within-day NQ/ES/YM](reports/intraday/report.md): 165 cases on complete 08:00â€“12:00 UTC windows. none of the nine NQ rules made money after base costs in any split. the selected rule also lost in every ES/YM split. [what survived](reports/intraday/conclusions.md) keeps the numbers and limits.
+- [within-day NQ/ES/YM](reports/intraday/report.md): 165 cases on complete 08:00â€“12:00 UTC windows. none of the nine NQ rules made money after base costs in any split. the selected rule also lost in every ES/YM split. [why the rules failed](reports/intraday/conclusions.md) separates weak gross gains, trading frequency and costs. this is a documented negative experiment, not a successful strategy claim.
 - the [original roll-aware futures study](reports/local-study.md) is still blocked. i matched the local minute exports to their cache, but real contract IDs and advance roll evidence are unresolved.
 
 the within-day case is conditional on complete windows, which i only know after noon. it uses a narrower inference about each UTC date, not recovered contract IDs. GC and CL stay descriptive. i already knew related research through 2026, so the final periods aren't untouched holdouts.
@@ -26,6 +26,14 @@ python -m venv .venv
 ```
 
 the example needs no account or market files. it generates made-up bars, freezes its own plan and runs the same 165-case study and report path. the output is `runs/intraday-example/study/report.md`; [the saved sample](reports/intraday-synthetic/report.md) shows what it writes. `edge-hold example` also runs the older 55-case accounting example. on macOS or Linux, use `.venv/bin/python` and `.venv/bin/edge-hold`.
+
+## inspect the saved trade costs
+
+```powershell
+.\.venv\Scripts\edge-hold.exe intraday-report --study reports/intraday
+```
+
+this rebuilds the trade tables and fixed-path cost figure from the saved results without vendor files or a new strategy run. the selected NQ rule earned about $4.80 and $3.26 gross per trip in the first two splits against $15 base costs, then lost before costs in the final split. [the explanation guide](docs/intraday-execution.md#explaining-the-choices) covers the assumptions.
 
 ## repeat the spot case
 
