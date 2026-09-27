@@ -1,0 +1,43 @@
+{
+  "scope": "all outcome fields, uncertainty, ranks, carried pick and available daily panels",
+  "excluded_row_fields": [
+    "causal_check",
+    "execution_sha256",
+    "run_id"
+  ],
+  "tolerance": {
+    "relative": 1e-10,
+    "absolute": 2e-08
+  },
+  "markets": {
+    "NQ": {
+      "matched": true,
+      "result_rows": 825,
+      "common_rows": 825,
+      "panels": [
+        "daily-pnl-all-scenarios.csv"
+      ]
+    },
+    "ES": {
+      "matched": true,
+      "result_rows": 825,
+      "common_rows": 825,
+      "panels": [
+        "daily-pnl-all-scenarios.csv"
+      ]
+    },
+    "YM": {
+      "matched": true,
+      "result_rows": 825,
+      "common_rows": 825,
+      "panels": [
+        "daily-pnl-all-scenarios.csv"
+      ]
+    }
+  },
+  "common_date_population_and_uncertainty_matched": true,
+  "failures_and_descriptive_variation_matched": true,
+  "earlier_revision": "127b118",
+  "replay_revision": "72c0a9e",
+  "cases": 165
+}

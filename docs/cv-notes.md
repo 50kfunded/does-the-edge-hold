@@ -1,7 +1,6 @@
 # what i'd put on a cv
 
-- built a Python research audit that inspected 17.3m futures minute bars and 60.8m second bars, matched five exports to their cache, and kept unresolved contract mapping out of empirical P&L.
-- ran a separately frozen public BTC/ETH case with 14 settings, six matched cost/delay scenarios and 192 historical runs. reported every candidate, later rank changes and paired uncertainty; all declared later advantage intervals included zero.
-- tested causal roll instructions, cash/inventory and futures accounting, execution identities and independent inputs; measured larger runs and checked a clean public install.
+- built a Python research tool with source audits, semantic data identities, declared signal state, causal execution checks and reconciled ledgers; audited 17.3m futures minute bars and kept unresolved roll evidence out of cross-date P&L.
+- ran separately frozen BTC/ETH and conditional NQ/ES/YM studies with 192 and 165 cases, retaining all settings, costs, delays and paired uncertainty; checked a clean public install and measured the full within-day workload of 1.59m eligible minute observations.
 
-i wouldn't claim validated futures returns, a proven trading edge, a streaming backtester, measured fills, outside adoption or a prospective holdout. [the benchmarks](benchmarks.md) and [clean-run notes](clean-run.md) hold the actual measurements.
+i wouldn't claim a proven edge, recovered contract IDs, unconditional futures returns, a prospective holdout, measured fills, streaming execution or outside adoption. [the measurements](benchmarks.md) and [clean-run notes](clean-run.md) keep the evidence.

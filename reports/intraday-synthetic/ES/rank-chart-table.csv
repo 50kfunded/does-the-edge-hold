@@ -1,0 +1,10 @@
+config_id,development,validation,historical_final
+mom-3,6.0,8.0,9.0
+mom-6,3.0,4.0,7.0
+mom-12,5.0,6.0,8.0
+revert-6-0.5,8.0,9.0,5.0
+revert-6-1,7.0,7.0,4.0
+revert-6-1.5,9.0,5.0,6.0
+revert-12-0.5,4.0,2.0,2.0
+revert-12-1,2.0,3.0,3.0
+revert-12-1.5,1.0,1.0,1.0

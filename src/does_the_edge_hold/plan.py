@@ -70,8 +70,12 @@ def _digest(value: object) -> str:
     return hashlib.sha256(data.encode("utf-8")).hexdigest()
 
 
-def source_hashes(audit: dict) -> dict[str, str]:
-    return {f"{item['market']}_{item['resolution']}": item["sha256"]
+def source_hashes(audit: dict, *, semantic=False) -> dict[str, str]:
+    if semantic:
+        from .semantic import SCHEMA
+        if any(not row.get("semantic") or row["semantic"].get("schema") != SCHEMA for row in audit["files"]):
+            raise ValueError("semantic lock needs a valid canonical identity for every audited source")
+    return {f"{item['market']}_{item['resolution']}": item["semantic"]["sha256"] if semantic else item["sha256"]
             for item in audit["files"]}
 
 
@@ -80,9 +84,14 @@ def freeze(plan_path: str | Path, audit_path: str | Path,
     plan = json.loads(Path(plan_path).read_text(encoding="utf-8"))
     audit = json.loads(Path(audit_path).read_text(encoding="utf-8"))
     validate(plan)
-    lock = {"plan_sha256": _digest(plan), "source_hashes": source_hashes(audit),
+    semantic = plan.get("data_identity") == "ohlcv-utc-ns-f64-v1"
+    if plan.get("data_identity") not in (None, "ohlcv-utc-ns-f64-v1"):
+        raise ValueError("unsupported data identity version")
+    lock = {"plan_sha256": _digest(plan), "source_hashes": source_hashes(audit, semantic=semantic),
             "frozen_utc": datetime.now(timezone.utc).isoformat(),
             "version": plan["version"]}
+    if semantic:
+        lock.update(identity_version=2, data_identity=plan["data_identity"], artifact_hashes=source_hashes(audit))
     path = Path(lock_path)
     if path.exists():
         raise FileExistsError("a frozen lock exists; document a revision before replacing it")
@@ -93,6 +102,6 @@ def freeze(plan_path: str | Path, audit_path: str | Path,
 def verify(plan: dict, audit: dict, lock: dict) -> None:
     if _digest(plan) != lock["plan_sha256"]:
         raise ValueError("research plan changed after it was frozen")
-    if source_hashes(audit) != lock["source_hashes"]:
+    if source_hashes(audit, semantic=lock.get("identity_version") == 2) != lock["source_hashes"]:
         raise ValueError("source data changed after the research plan was frozen")
     validate(plan)

@@ -6,6 +6,7 @@ import pytest
 
 from does_the_edge_hold.resolve import intervals, with_raw_symbols, write_resolution
 from does_the_edge_hold.rolls import attach_contracts, read_schedule
+from does_the_edge_hold.example import example_plan
 
 
 @pytest.fixture
@@ -58,3 +59,14 @@ def test_raw_names_intersect_date_valid_ids(response):
     raw["result"]["123"][0]["d0"] = "2023-01-02"
     with pytest.raises(ValueError, match="incomplete"):
         with_raw_symbols(ids, raw)
+
+def test_subset_does_not_demand_every_audited_market(response, tmp_path):
+    plan = example_plan()
+    plan.update(version=1, prior_exposure="fixture", universe={"primary": "ES", "required": ["ES"],
+        "optional": ["NQ"], "allowed_exclusions": ["NQ"]})
+    audit = {"files": [{"market": m, "resolution": "1m", "sha256": "fixture",
+                       "first_utc": "2023-01-02T00:00Z", "last_utc": "2023-05-31T23:59Z"} for m in ("ES", "NQ")]}
+    origins = {"markets": [{"market": "ES", "verified_match": True, "selected_root": "ESc0"}]}
+    path = write_resolution(response, audit, origins, tmp_path / "subset", plan=plan, markets=["ES"])
+    saved = json.loads(path.read_text())
+    assert saved["included"] == ["ES"] and "NQ" in saved["excluded"]

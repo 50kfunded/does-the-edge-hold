@@ -1,0 +1,15 @@
+{
+  "artifact_hashes": {
+    "BTC-USD_1d": "4bab0fac667351f73517e42e5d1d40e923467e544345636d7ebdb8ca72e272ff",
+    "ETH-USD_1d": "d268c8ec8a1e08a3e3ea6c9378d2cf6b174852af1671e302b5a0ac2de72ade36"
+  },
+  "data_identity": "ohlcv-utc-ns-f64-v1",
+  "frozen_utc": "2026-09-26T23:00:44.408466+00:00",
+  "identity_version": 2,
+  "plan_sha256": "e4e6544bb1922511a13aa08aa288ec72bd0dc3d42f80316b04305fbb58d99ca5",
+  "source_hashes": {
+    "BTC-USD_1d": "7d03e6ab4b5b17f85b639c5179dc16e51decef1136b1bb4a2501f63de2022f8a",
+    "ETH-USD_1d": "7f352e3418ea17e42420b4450b2703edde57d28c641dad126326d64a3016ac63"
+  },
+  "version": 2
+}

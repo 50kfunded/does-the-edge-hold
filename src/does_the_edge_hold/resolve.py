@@ -56,13 +56,25 @@ def with_raw_symbols(ids: pd.DataFrame, response: dict) -> pd.DataFrame:
 
 def write_resolution(response: dict, audit: dict, provenance: dict,
                      destination: str | Path, *, raw_response: dict | None = None,
-                     request: dict | None = None, retrieved_at: str | None = None) -> Path:
+                     request: dict | None = None, retrieved_at: str | None = None,
+                     plan: dict | None = None, markets: list[str] | None = None) -> Path:
     """Save resolver output locally; never place it under the tracked reports dir."""
     destination = Path(destination)
     audits = {row["market"]: row for row in audit["files"] if row["resolution"] == "1m"}
     origins = {row["market"]: row for row in provenance["markets"]}
     prepared = {}
-    for market in audits:
+    from .roll_gate import universe
+    from .plan import validate
+    if plan is not None:
+        validate(plan)
+    roles = universe(plan or {})
+    declared = roles["required"] + roles["optional"]
+    selected = markets if markets is not None else declared if plan is not None else list(audits)
+    if not selected or len(selected) != len(set(selected)) or (plan is not None and not set(selected).issubset(declared)):
+        raise ValueError("resolver subset must be unique markets from the validated plan")
+    for market in selected:
+        if market not in audits or market not in origins:
+            raise ValueError(f"{market} source evidence is absent")
         if not origins[market].get("verified_match"):
             raise ValueError(f"{market} export origin is not verified")
         root = origins[market]["selected_root"]
@@ -87,7 +99,8 @@ def write_resolution(response: dict, audit: dict, provenance: dict,
                 "request": request or {"stype_in": "continuous", "stype_out": "instrument_id",
                                        "symbols": [v[0] for v in prepared.values()]},
                 "response_sha256": sha256_file(destination / "resolution.json"),
-                "policy_status": "requires separate advance instruction evidence", "markets": {}}
+                "policy_status": "requires separate advance instruction evidence", "markets": {},
+                "included": selected, "excluded": {m: "outside requested resolver subset" for m in declared if m not in selected}}
     if raw_response is not None:
         manifest["raw_response_sha256"] = sha256_file(destination / "raw-resolution.json")
     for market, (symbol, schedule) in prepared.items():
@@ -106,7 +119,7 @@ def write_resolution(response: dict, audit: dict, provenance: dict,
     return output
 
 
-def resolve_free(audit: dict, provenance: dict, destination: str | Path) -> Path:
+def resolve_free(audit: dict, provenance: dict, destination: str | Path, *, plan=None, markets=None) -> Path:
     """Call only symbology.resolve. No paid time-series request is made."""
     key = os.getenv("DATABENTO_API_KEY")
     if not key:
@@ -114,16 +127,24 @@ def resolve_free(audit: dict, provenance: dict, destination: str | Path) -> Path
     import databento as db
 
     origins = {row["market"]: row for row in provenance["markets"]}
+    from .roll_gate import universe
+    from .plan import validate
+    if plan is not None:
+        validate(plan)
+    roles = universe(plan or {})
+    selected = markets if markets is not None else roles["required"] + roles["optional"]
+    if not selected or len(selected) != len(set(selected)) or not set(selected).issubset(roles["required"] + roles["optional"]):
+        raise ValueError("resolver subset is outside the validated plan")
     symbols = [market + "." + origins[market]["selected_root"][-2] + ".0"
-               for market in ("NQ", "ES", "YM", "GC", "CL")]
-    minutes = [row for row in audit["files"] if row["resolution"] == "1m"]
+               for market in selected]
+    minutes = [row for row in audit["files"] if row["resolution"] == "1m" and row["market"] in selected]
     start = min(pd.Timestamp(row["first_utc"]) for row in minutes).date().isoformat()
     end = (max(pd.Timestamp(row["last_utc"]) for row in minutes) +
            pd.Timedelta(days=1)).date().isoformat()
     response = db.Historical(key).symbology.resolve(
         dataset="GLBX.MDP3", symbols=symbols, stype_in="continuous",
         stype_out="instrument_id", start_date=start, end_date=end)
-    return write_resolution(response, audit, provenance, destination,
+    return write_resolution(response, audit, provenance, destination, plan=plan, markets=selected,
                             request={"dataset": "GLBX.MDP3", "symbols": symbols,
                                      "stype_in": "continuous", "stype_out": "instrument_id",
                                      "start_date": start, "end_date": end})

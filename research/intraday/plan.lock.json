@@ -1,0 +1,64 @@
+{
+  "artifact_hashes": {
+    "CL": "7130d457edd6be2f81b8c53492d911e5d9ec59af07840618b6891a3f571d765b",
+    "ES": "f037d66570d55faea5738785209b5124c08127362bff8587700d7a511a2be25b",
+    "GC": "bfc6b7289fe0917368d41086197430918974b4e177f18aae86a179aa8c854176",
+    "NQ": "e821f06b57d03fab2e83ec153a70b53fe9c075abb11b597cedf51d051e061eff",
+    "YM": "173cea9d028bdac283e7b790fb95d450ef4eacda747a777b6204c7366be54270"
+  },
+  "audit_sha256": "d57bafa5f6bf402e1c947f2e401d3229fdaaf407bed8b49365c8e430489c3bb0",
+  "frozen_utc": "2026-09-26T23:07:48.833772+00:00",
+  "identity_version": 2,
+  "instrument_specs": {
+    "ES": {
+      "multiplier": 50.0,
+      "symbol": "ES",
+      "tick_size": 0.25
+    },
+    "NQ": {
+      "multiplier": 20.0,
+      "symbol": "NQ",
+      "tick_size": 0.25
+    },
+    "YM": {
+      "multiplier": 5.0,
+      "symbol": "YM",
+      "tick_size": 1.0
+    }
+  },
+  "masks": {
+    "CL": "a3abdc007f9f1845ee98a9cc516a387ba3c983d7a555e2f2a1e521596ab6bd9f",
+    "ES": "1e27b084bd7d65c7a25a9ad28cecc9fe6c42168cea48d5f1f581965ab4839745",
+    "GC": "4e2c00301de7840a1665dcac0b9bd505b1459f2ebf62cafae49236e3fd7958ee",
+    "NQ": "7453d8f230dd1ef7fc361e23f107762c1d6acd102f692da6cec81296535d87ef",
+    "YM": "b8602e632fb6940db0d5eba01c45a618c5ff287df0d70740384aee615a551e4a"
+  },
+  "plan_sha256": "71cbc574f4f600b13617517c5b6808fd43bcd2d80608cc4c17588156f827e522",
+  "readiness": {
+    "basis": "historical source-rule inference within UTC date only",
+    "contract_identity": "unknown",
+    "excluded": {
+      "CL": [
+        "descriptive only; volume mapping as-of availability not established in this protocol"
+      ],
+      "GC": [
+        "descriptive only; volume mapping as-of availability not established in this protocol"
+      ]
+    },
+    "included": [
+      "NQ",
+      "ES",
+      "YM"
+    ],
+    "original_roll_aware_study": "blocked independently; this decision cannot authorize it",
+    "primary_ready": true,
+    "status": "conditional_source_day_ready"
+  },
+  "source_hashes": {
+    "CL": "8bef19bd3e7a43f17419d67f2a0c533ba77bd4ff44b75dbddc4100a405293790",
+    "ES": "9b39f85c03df363ba4ec3fd9c8d9d9ea40a7d9fe7ada204984aa02e97e9e159c",
+    "GC": "8c902250361f7be632a22bb60db53e94a1a42d0fd814f75c27f9cbb69ed40416",
+    "NQ": "31730f2167fe84b8f8e8b5b729a9805062db7fd4f015d6ad02bc7af19566cfaf",
+    "YM": "55a86372f17ce7ee52edb4f9e44881f0d74152d80ea9d87ab311a9cbc075f306"
+  }
+}

@@ -21,16 +21,20 @@ def callable_identity(fn):
     filename = inspect.getsourcefile(fn)
     source = Path(filename).read_text(encoding="utf-8-sig").replace("\r\n", "\n") if filename and Path(filename).is_file() else None
     def captured(value):
+        if inspect.isclass(value):
+            filename = inspect.getsourcefile(value)
+            source = Path(filename).read_text(encoding="utf-8-sig").replace("\r\n", "\n") if filename and Path(filename).is_file() else None
+            return {"class": value.__module__ + "." + value.__qualname__, "source_sha256": hashlib.sha256(source.encode()).hexdigest() if source else None}
         if inspect.isfunction(value):
             return {"code": hashlib.sha256(marshal.dumps(_portable_code(value.__code__))).hexdigest()}
         try:
-            json.dumps(value, allow_nan=False)
-            return value
+            return json.loads(json.dumps(value, allow_nan=False))
         except (TypeError, ValueError):
             raise ValueError("unregistered non-serializable closure/default in execution callable")
     return {"module": fn.__module__, "name": fn.__qualname__,
             "code_sha256": hashlib.sha256(marshal.dumps(_portable_code(fn.__code__))).hexdigest(),
             "defaults": [captured(v) for v in fn.__defaults__ or ()],
+            "keyword_defaults": {k: captured(v) for k, v in (fn.__kwdefaults__ or {}).items()},
             "closure": [captured(c.cell_contents) for c in fn.__closure__ or ()],
             "source_sha256": hashlib.sha256(source.encode()).hexdigest() if source else None}
 

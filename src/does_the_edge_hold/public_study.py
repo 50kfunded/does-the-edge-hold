@@ -19,7 +19,7 @@ def run_public(snapshot, plan_path, lock_path, output):
     snapshot, output = Path(snapshot), Path(output)
     plan = json.loads(Path(plan_path).read_text())
     lock = json.loads(Path(lock_path).read_text())
-    audit = audit_snapshot(snapshot)
+    audit = audit_snapshot(snapshot, semantic=lock.get("identity_version") == 2)
     verify(plan, audit, lock)
     if any(f["quality_status"] != "ready" for f in audit["files"]):
         raise ValueError("public spot quality gate is blocked")
@@ -36,9 +36,10 @@ def run_public(snapshot, plan_path, lock_path, output):
     for market in [primary] + [m for m in required if m != primary]:
         bars = pd.read_parquet(snapshot / f"{market}.parquet")
         adapter = MarketAdapter(ContractSpec(market, 1, .01), "spot", 1440, SpotLedger)
-        source_hash = sha256_file(snapshot / f"{market}.parquet")
+        source_hash = lock["source_hashes"][f"{market}_1d"]
         manifest = market_manifest(market, lock["plan_sha256"], source_hash, adapter,
                                    extra_evidence={"snapshot_manifest_sha256": sha256_file(snapshot / "snapshot.json")})
+        manifest["artifact_sha256"] = sha256_file(snapshot / f"{market}.parquet")
         folder = output / market
         folder.mkdir()
         write_manifest(manifest, folder / "execution.json")

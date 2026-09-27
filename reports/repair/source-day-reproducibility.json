@@ -1,0 +1,347 @@
+{
+  "schema": 1,
+  "checked_revision": "72c0a9ecd27ff92fd7df544b7e32f2f43d8b436d",
+  "install": "noneditable wheel in fresh venv; system site packages disabled; no Databento package",
+  "wheel_sha256": "c2588f8e0627682e2bd289f94ff6f82061112acc0797dabb2c9efff1bdaea9de",
+  "python": "3.12.10",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "packages": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "pyarrow": "25.0.1",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2",
+    "psutil": "7.2.2",
+    "pytest": "9.1.1"
+  },
+  "installed_artifact_sha256": {
+    "adapters.py": "93ddf1b5d9250121a81d94cb0695a9fb46b00359177f0719529bf8d6e061c4f0",
+    "audit.py": "e350dcd7edb0ebb8c27f1750cba430d6e56ea2d40080b224018eb0f858608241",
+    "cli.py": "0b07ad3a488a90f34e657f737863c49ac303f9ac78e90328d310a054b8f14111",
+    "daily_clock.py": "44018cfb6f180faa79383a791f95c9dcf1d5cb43f03039b4d33d607091f0ead2",
+    "data.py": "aa23cd7528a69ad8450fcce9fe08cf1cd362f2d92380f0ab63cc77fa78d24ff0",
+    "example.py": "aaf8f18e544591da018cd07835a5f4b56e54aa01aa250d28967374998377767f",
+    "execution.py": "f8837f4434ae6e68fa889c0bc1b4ede5bfd833a70139e2cda4fb3d7d820ca40e",
+    "experiments.py": "4cc5479dda969468435a5055c94ef58cf022470e526f557746abe1307936a2a4",
+    "intraday.py": "5bc2466d99fbdbb8d20a1d6d5d6d1bcd95beb052aebacc0db80edb9d66eeadb4",
+    "intraday_audit.py": "571eeced1d486bb20c71988ee0a246d1ce05874fc10b89ab7bc9ed9c8b0a95a9",
+    "intraday_descriptive.py": "12f60cc2ac3dcfa6cf5a7e55b66e94cc5197b118732a250213d59af267f7569c",
+    "intraday_example.py": "2597a88709677f31ace111e640414ce80f639c2b69ed1d33e6bc72f5dbfc2a2d",
+    "intraday_plan.py": "8a495db4ad9995418ee7167bae55778b015df17dc190873f0e451b2f855eee6f",
+    "intraday_reporting.py": "569d9bbadd7c93c03b4094a2dba7e0907c8eac5ae4ad6a8108d95031d87f77cc",
+    "intraday_study.py": "2b4de1505b28128c704490a1c64c8b7aafe5df1bed1fd872a98c61b6dbb37728",
+    "ledger.py": "327d6f5ac68528e5d1d72c8b4161f3ce9afc6d6c7c5cc92a4e19a2b656074f71",
+    "local_report.py": "d3179a378a21c7d09af69a8da92c4185a7caf3adf5646767662b844f9a7637c0",
+    "metrics.py": "bf3404190d8a1b07a06478ad74a0914ccbffeec85a60badb42cb80b9c30369d3",
+    "plan.py": "2e19796c2841f4d6dd7b0aaa0d555a980a4a21144ad8988152de9d955446f225",
+    "provenance.py": "a4e6f10eed6f48ff5771b344c5a9bf708c9e07252c4df9808f4ab8fdc0cbd788",
+    "public_data.py": "42b4cf824d0cf471e1363c2600769e88135e0b1bd937f3bd5a0efb52d00044ee",
+    "public_study.py": "346e92f1c328ce9c8cfdfc03a6206dd2afa100c53d0771d07d6868d8876057ee",
+    "reporting.py": "eb39818fe49d7490171edea072cc141967d32afc831a784604583fa009b3ef4a",
+    "resolve.py": "e9db850f8f5a3f654e681d4da0cccc5e7409f4047fe0af6a7e524d24e3141c9e",
+    "rolls.py": "7c6806c46074a739a3412b136203153ee375fc0a4b42d8c86fcecb5bd4c57dee",
+    "roll_gate.py": "5e2c6f57816b595d2e6a0b65709e0a48d1f5c03019b42b4ca2500d042844746f",
+    "semantic.py": "4f1cf284feaebf112a995d27b018b6c8c984925a8d4b1d079250ecec07112786",
+    "signals.py": "dd6ae36cadd7e55a7aac17885f34fc166a50cc5b91458b618fe19a08c91e6903",
+    "specs.py": "777fe2ee72bbb85defd8c3f107472c1519afa452fc3d13a92f54b2196f8ad1c1",
+    "spot.py": "b8f53292611e4efbe965bf25d23f27cb975212df567f9e81f36d5dbc3721ad40",
+    "synthetic.py": "d19a68b9d52eced702986d9ca7ccea2531cd5984ffc3e4350c852ee678af2019",
+    "timing.py": "621b880d3c6049259ff8eaa380e9327e965196471ec9afe4a0224b962ce6aa16",
+    "uncertainty.py": "6ffdabaa63ef8e48f81da7d2207739b918bf71018571ae715f7043d30ba9c56a",
+    "walk_forward.py": "8383677cb3965ddca5e5afd8802a145f93b872b4fe0e91469ba56d4dbb6d31fe",
+    "__init__.py": "fd98484b303ec33364eff752a9d679435bd7792084c8c9b19faca2e8e140ed85"
+  },
+  "development_artifact_sha256": {
+    "adapters.py": "93ddf1b5d9250121a81d94cb0695a9fb46b00359177f0719529bf8d6e061c4f0",
+    "audit.py": "2d82222cd5360c4e15753a8d48c2796cf65ccea07034d428daf37bde7f158edd",
+    "cli.py": "6dd2f9b7442d56edee2d029721bce50fa5f724ff52ceb39e95a985000a29a062",
+    "daily_clock.py": "44018cfb6f180faa79383a791f95c9dcf1d5cb43f03039b4d33d607091f0ead2",
+    "data.py": "811c4f5d52987cfe0da080e56a244dd6094b1bab57f677825537dfdff7c004cf",
+    "example.py": "aaf8f18e544591da018cd07835a5f4b56e54aa01aa250d28967374998377767f",
+    "execution.py": "19fe161a45be0fae5ec48a227a6a18c5f40da7797da02a1b633384af43f46dcb",
+    "experiments.py": "615ae67d33772bc0b92602d2d8158ab877f82a737c6d82ae43500179eb2b1a5b",
+    "intraday.py": "e6eeccb324cfacd2b0175c015ea533564e84dd7d8b1de1690f4194d025f8504a",
+    "intraday_audit.py": "5e8692e1b3e5bbfec71fcccc059cae214c83a217919a6ece6ce72d12eb0a4623",
+    "intraday_descriptive.py": "0d478d1cfb50ea23e1c902fe54c63e112359efdcbf8e62e83c22e8d41aec4186",
+    "intraday_example.py": "527550f6af3db58c690058f2520749734e12746532cf13f945962a6eb38c24e1",
+    "intraday_plan.py": "dab34e9ebd1fc5e78e667164cf095fa2c65bbe0a3e0b5abaa0ed7e66cbdb9cba",
+    "intraday_reporting.py": "9151e97433cd3943ac7f7ba8e3cbb8dfb16dd05290b010dd7f1b5793a7f6f3c0",
+    "intraday_study.py": "a6f4923c5f38f6d24d95bfcf0c879f3a088a9287b7bc1ad2128da5ba07822590",
+    "ledger.py": "327d6f5ac68528e5d1d72c8b4161f3ce9afc6d6c7c5cc92a4e19a2b656074f71",
+    "local_report.py": "14105ccff1dff13bdbd618b74e4947dc1bd3d6606dfd777815c47a55eaf70682",
+    "metrics.py": "bf3404190d8a1b07a06478ad74a0914ccbffeec85a60badb42cb80b9c30369d3",
+    "plan.py": "4fc84d9cb2b1edf45b42b61c61e0128aab3abf93889e2b086d2436c7c7cc24d1",
+    "provenance.py": "621e95c881b873e70d22371f1331aac1b67116fe9dbd4d729f0b4009cf1dff7e",
+    "public_data.py": "5c9ad5fd4505bb4c7bcfbeb4dcd4070ac86dd87217abfa85aaf252aaaf8117f2",
+    "public_study.py": "246e0e946e960918024fd57171ef6a297d01c08c98275fa7376db4c276998f3a",
+    "reporting.py": "e4706308badcc4ee93e0eec82cbc1cc97d729a26669f55a626470628857740a1",
+    "resolve.py": "f9330323ba7cada3a4be74c2f7117d27b31a3b8ea6b1d6f6c2787c028b95236f",
+    "rolls.py": "7c6806c46074a739a3412b136203153ee375fc0a4b42d8c86fcecb5bd4c57dee",
+    "roll_gate.py": "5e2c6f57816b595d2e6a0b65709e0a48d1f5c03019b42b4ca2500d042844746f",
+    "semantic.py": "2977c9e53024b8d8cf50f14b1391bbeb5857f0ef4c1d2da39f8296cf59d21041",
+    "signals.py": "3a19dc3d8746f1abb331f0f7784be0658b7f57bacf3f3a9130b6cfd407b2c8de",
+    "specs.py": "777fe2ee72bbb85defd8c3f107472c1519afa452fc3d13a92f54b2196f8ad1c1",
+    "spot.py": "b8f53292611e4efbe965bf25d23f27cb975212df567f9e81f36d5dbc3721ad40",
+    "synthetic.py": "71badced0678ea224967eec8bcdb2df5810cf3bb3efa56a0544533713c9aae4d",
+    "timing.py": "621b880d3c6049259ff8eaa380e9327e965196471ec9afe4a0224b962ce6aa16",
+    "uncertainty.py": "256bcca705a2b04bf014d033854e15938f9346e1556fc932a990b650c68cfe1b",
+    "walk_forward.py": "8383677cb3965ddca5e5afd8802a145f93b872b4fe0e91469ba56d4dbb6d31fe",
+    "__init__.py": "844ac694e3ad0f2c6d6db30ff23c5a229578a26a031807d148a2ad8019cf29bc"
+  },
+  "normalized_source_sha256": {
+    "adapters.py": "d846d0a2b48b672dee4ad72598e28249593c79049ca38a62a8ed54fa0e5ae26a",
+    "audit.py": "d71d55063a487a80068bd36514d2e2e874223b07e447f3e49bd4053dc550e636",
+    "cli.py": "b55891558b7704823d3bac07e9493ad8d3079878d299ae66531ea17f625917c9",
+    "daily_clock.py": "e3c0e0f87af24f0b59b4882c2da1e9107969b78a8019f63eb00543c60b58d246",
+    "data.py": "61e26c165696eb866a2e5c4f6f4e55a113ba6ef47f37eb090f38197f530448ce",
+    "example.py": "3a2c4c1d71cc561c0b4a638c559229e90df37edc1bca58f539b885a023e137b5",
+    "execution.py": "a554fdfc94a4ef7b1115f0fb221bff887f6aad66196d61953c19a0f96d6f7d08",
+    "experiments.py": "d0ea36aeae82e00734ea01e98a4baeaddb6b4a47962cbcc8cafe75657fc0902b",
+    "intraday.py": "e6eeccb324cfacd2b0175c015ea533564e84dd7d8b1de1690f4194d025f8504a",
+    "intraday_audit.py": "5e8692e1b3e5bbfec71fcccc059cae214c83a217919a6ece6ce72d12eb0a4623",
+    "intraday_descriptive.py": "0d478d1cfb50ea23e1c902fe54c63e112359efdcbf8e62e83c22e8d41aec4186",
+    "intraday_example.py": "527550f6af3db58c690058f2520749734e12746532cf13f945962a6eb38c24e1",
+    "intraday_plan.py": "dab34e9ebd1fc5e78e667164cf095fa2c65bbe0a3e0b5abaa0ed7e66cbdb9cba",
+    "intraday_reporting.py": "b4cd51dbb26ecdbecf2e54eec8ae4e8ad57bd37673f68cf70261080434d63989",
+    "intraday_study.py": "a6f4923c5f38f6d24d95bfcf0c879f3a088a9287b7bc1ad2128da5ba07822590",
+    "ledger.py": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329",
+    "local_report.py": "c33e29cec20a277e52bccc18d878a294ce9408f8442a07e24e0df326700e0e66",
+    "metrics.py": "13ca8d80f27f9e8e4cdc15cd6abf48f18ab3dfbddd5d11afe917aefbbd21877b",
+    "plan.py": "a8a352b74363057bf596bce2945d3b2b1aa398ddbd1ced423a323b19005c0594",
+    "provenance.py": "f2eab59b14c2390944a2864ac742d4b28127a19c049c99b2de9a0782ceb6f87d",
+    "public_data.py": "6ca01922c2d3d64cffa42450d2a4cb32e27dd97785681364a347bceae97fe5cd",
+    "public_study.py": "1ba47ad62494dc9a29ca10269b07196cc2ac10679c45b4cbd173ec3cfe131e26",
+    "reporting.py": "67d5e079e116eec28a8e3dccddb72b2fd257ba6c843405b35868b296cf1eded9",
+    "resolve.py": "587279c32b373bcae7e34179d1c495c89a735b12fd456521d4bd70be72c64435",
+    "rolls.py": "d47a9189b800e32885bb1c1f977bf7cd20c58da9559cc4b150c427952e98cb98",
+    "roll_gate.py": "94f85b8a205d6215bf60573210e62cddf191ff3eab0ceff5eeb3b9778cce734c",
+    "semantic.py": "2977c9e53024b8d8cf50f14b1391bbeb5857f0ef4c1d2da39f8296cf59d21041",
+    "signals.py": "8b9713debcbe6b93f2179aa2bc4ad90a1bfbc1376de22fc3ce0b8d7a11424e67",
+    "specs.py": "a11d9eb9709a088a89e257e91143fded6a7ba852356befeb2c15530d277ce68e",
+    "spot.py": "8d1c8eb668736f38c12ecfd0732627339239199210dcde02733570608b7598c5",
+    "synthetic.py": "71badced0678ea224967eec8bcdb2df5810cf3bb3efa56a0544533713c9aae4d",
+    "timing.py": "5ce257d5e922e01d7ac3bbdc3a245dfa3c4d6c2c8dd5814c0d06b0bd47783603",
+    "uncertainty.py": "51c4ea67ccad841283ee88f9891178793929b45809c9d58711308661c483c01b",
+    "walk_forward.py": "6f38018c3600a4cf2af5edc94e10af4b709e01d76b851ffe3e207a102d32f66b",
+    "__init__.py": "844ac694e3ad0f2c6d6db30ff23c5a229578a26a031807d148a2ad8019cf29bc"
+  },
+  "installed_source_text_matches_development": true,
+  "source_comparison_note": "fresh checkout CRLF conversion changed raw module bytes; source text normalizes line endings and matches exactly",
+  "public_check": {
+    "vendor_files_copied": false,
+    "tests_passed": 82,
+    "test_seconds": 73.45,
+    "synthetic_status": "synthetic_source_day",
+    "cases": 165,
+    "failed_windows": 0,
+    "report_generated": true,
+    "seconds": 29.853938500004006
+  },
+  "empirical_check": {
+    "source_root": "G:/localview.backup-preaudit-2026-08-22/data/bars",
+    "cache_root": "G:/nq-powell/data/cache",
+    "read_only": true,
+    "plan_sha256": "71cbc574f4f600b13617517c5b6808fd43bcd2d80608cc4c17588156f827e522",
+    "frozen_utc": "2026-09-26T23:07:48.833772+00:00",
+    "audit_sha256": "d57bafa5f6bf402e1c947f2e401d3229fdaaf407bed8b49365c8e430489c3bb0",
+    "runtime": {
+      "total_seconds": 325.29350369999884,
+      "verification_seconds": 15.1320846999879,
+      "markets": {
+        "NQ": {
+          "source_window_loading_seconds": 16.897429199991166,
+          "window_rows": 544080,
+          "complete_windows": 2267,
+          "feature_cache_seconds": 57.303163199991104,
+          "evaluation_seconds": 28.666702599992277,
+          "uncertainty_seconds": 0.6833727999910479
+        },
+        "ES": {
+          "source_window_loading_seconds": 15.49424650000583,
+          "window_rows": 570720,
+          "complete_windows": 2378,
+          "feature_cache_seconds": 59.53578320000088,
+          "evaluation_seconds": 29.071253300004173,
+          "uncertainty_seconds": 0.6759178000065731
+        },
+        "YM": {
+          "source_window_loading_seconds": 12.705165899998974,
+          "window_rows": 471120,
+          "complete_windows": 1963,
+          "feature_cache_seconds": 48.49236889999884,
+          "evaluation_seconds": 24.909863100008806,
+          "uncertainty_seconds": 0.6292738999909488
+        }
+      },
+      "descriptive_seconds": 8.713507599997683,
+      "sampled_peak_rss_mib": 452.921875,
+      "sampling_seconds": 0.05,
+      "audited_source_rows": 17335808,
+      "evaluated_source_rows": 10355317,
+      "evaluated_window_rows": 1585920,
+      "cases": 165,
+      "feature_policy": "each setting computed once per source-day; reused by all five scenarios",
+      "scale_limit": "single-machine measured workload, not streaming execution",
+      "report_seconds": 2.6295017000084044
+    },
+    "comparison": {
+      "scope": "all outcome fields, uncertainty, ranks, carried pick and available daily panels",
+      "excluded_row_fields": [
+        "causal_check",
+        "execution_sha256",
+        "run_id"
+      ],
+      "tolerance": {
+        "relative": 1e-10,
+        "absolute": 2e-08
+      },
+      "markets": {
+        "NQ": {
+          "matched": true,
+          "result_rows": 825,
+          "common_rows": 825,
+          "panels": [
+            "daily-pnl-all-scenarios.csv"
+          ]
+        },
+        "ES": {
+          "matched": true,
+          "result_rows": 825,
+          "common_rows": 825,
+          "panels": [
+            "daily-pnl-all-scenarios.csv"
+          ]
+        },
+        "YM": {
+          "matched": true,
+          "result_rows": 825,
+          "common_rows": 825,
+          "panels": [
+            "daily-pnl-all-scenarios.csv"
+          ]
+        }
+      },
+      "common_date_population_and_uncertainty_matched": true,
+      "failures_and_descriptive_variation_matched": true,
+      "earlier_revision": "127b118",
+      "replay_revision": "72c0a9e",
+      "cases": 165
+    },
+    "execution_sha256": {
+      "NQ": "2354060058c8498ad69c397726d3d77068989c4f3a2a03df8d7cb42b93007edb",
+      "ES": "a646df6c30c316ab957667aae6ae623a1f9d6dbc780538aeffd631c21784c53e",
+      "YM": "84650db70559423ed6d3a99343cb21b9906380b1caa22c206bd1824738b9e5a1"
+    }
+  },
+  "spot_check": {
+    "revision": "127b118",
+    "cases": 192,
+    "comparison": {
+      "scope": "all outcome fields, uncertainty, ranks, carried pick and available daily panels",
+      "excluded_row_fields": [
+        "causal_check",
+        "execution_sha256",
+        "run_id"
+      ],
+      "tolerance": {
+        "relative": 1e-10,
+        "absolute": 2e-08
+      },
+      "markets": {
+        "BTC-USD": {
+          "matched": true,
+          "result_rows": 1344,
+          "common_rows": 0,
+          "panels": [
+            "daily-pnl.csv"
+          ]
+        },
+        "ETH-USD": {
+          "matched": true,
+          "result_rows": 1344,
+          "common_rows": 0,
+          "panels": [
+            "daily-pnl.csv"
+          ]
+        }
+      }
+    },
+    "note": "post-results semantic migration; original records preserved"
+  },
+  "limits": [
+    "synthetic path works without vendor files; empirical reproduction requires local licensed source files and cache",
+    "minute opens are assumed fills; complete-window conditioning is retrospective",
+    "unknown contract IDs; original roll-aware futures gate remains unresolved",
+    "single-machine timing with background work; tests and synthetic example overlapped, empirical replay overlapped briefly with their tail"
+  ],
+  "figures_checked": [
+    "NQ/grid.png",
+    "NQ/equity.png",
+    "NQ/ranks.png",
+    "ES/ranks.png",
+    "YM/ranks.png"
+  ],
+  "report_followup": {
+    "revision": "0ab87999e5a72bb58a04aa043b6aa94c02cae907",
+    "wheel_sha256": "9a1d9785d809cc3f656f93275123dfc367fed792c3d18e009562036f9b8cf367",
+    "scope": "report labels only; empirical outcomes and original execution identities retained",
+    "targeted_integration_tests_passed": 3,
+    "targeted_test_seconds": 12.91,
+    "fresh_public_example": {
+      "cases": 165,
+      "failed_windows": 0,
+      "seconds": 18.97091439999349,
+      "peak_rss_mib": 219.28515625,
+      "no_vendor_files_required": true
+    },
+    "comparison": {
+      "scope": "all outcome fields, uncertainty, ranks, carried pick and available daily panels",
+      "excluded_row_fields": [
+        "causal_check",
+        "execution_sha256",
+        "run_id"
+      ],
+      "tolerance": {
+        "relative": 1e-10,
+        "absolute": 2e-08
+      },
+      "markets": {
+        "NQ": {
+          "matched": true,
+          "result_rows": 275,
+          "common_rows": 275,
+          "panels": [
+            "daily-pnl-all-scenarios.csv"
+          ]
+        },
+        "ES": {
+          "matched": true,
+          "result_rows": 275,
+          "common_rows": 275,
+          "panels": [
+            "daily-pnl-all-scenarios.csv"
+          ]
+        },
+        "YM": {
+          "matched": true,
+          "result_rows": 275,
+          "common_rows": 275,
+          "panels": [
+            "daily-pnl-all-scenarios.csv"
+          ]
+        }
+      }
+    },
+    "normalized_sources_match_current_development": true
+  },
+  "install_context_note": "installed module hashes identify executed code; Git metadata can refer to the containing development checkout because the wheel venv lives under ignored runs; the explicitly checked checkout revisions are recorded here",
+  "publication_check": {
+    "status": "passed",
+    "tracked_files": 245,
+    "reachable_history_scanned": true,
+    "included_staged_artifacts": true,
+    "checked_head": "b21cc6f194e7ea24103e64ad998c29c665ee1d82",
+    "command": "python scripts/check_public.py",
+    "result": "no vendor bars, raw response snapshots, mapping files, keys or per-bar audit samples found"
+  }
+}

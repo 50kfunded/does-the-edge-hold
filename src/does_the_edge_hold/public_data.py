@@ -61,14 +61,15 @@ def fetch(root, *, products=("BTC-USD", "ETH-USD"), start="2017-01-01", end="202
     (root / "snapshot.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return audit_snapshot(root)
 
-def audit_snapshot(root):
+def audit_snapshot(root, *, semantic=False):
     root = Path(root)
     manifest = json.loads((root / "snapshot.json").read_text(encoding="utf-8"))
     files = []
     expected = pd.date_range(manifest["start_inclusive"], manifest["end_exclusive"], freq="D", inclusive="left")
     for product, meta in manifest["products"].items():
         file = root / meta["file"]
-        if sha256_file(file) != meta["sha256"]:
+        artifact_hash = sha256_file(file)
+        if not semantic and artifact_hash != meta["sha256"]:
             raise ValueError("snapshot bars changed")
         for request in meta["requests"]:
             if sha256_file(root / request["file"]) != request["sha256"]:
@@ -86,12 +87,20 @@ def audit_snapshot(root):
         replayed["contract"] = product
         bars["ts"] = bars.ts.dt.as_unit("ns")
         replayed["ts"] = replayed.ts.dt.as_unit("ns")
-        pd.testing.assert_frame_equal(bars, replayed, check_exact=True)
+        from .semantic import semantic_digest
+        observed_identity = semantic_digest([bars])
+        replay_identity = semantic_digest([replayed])
+        if semantic:
+            if observed_identity != replay_identity or not bars.contract.eq(product).all():
+                raise ValueError("snapshot observations changed from raw response replay")
+        else:
+            pd.testing.assert_frame_equal(bars, replayed, check_exact=True)
         MarketAdapter(ContractSpec(product, 1, .01), "spot", 1440).validate(bars)
         observed = pd.DatetimeIndex(bars.ts)
         missing = expected.difference(observed)
         outside = observed.difference(expected)
-        files.append({"market": product, "resolution": "1d", "sha256": meta["sha256"], "rows": len(bars),
+        files.append({"market": product, "resolution": "1d", "sha256": artifact_hash,
+                      "semantic": observed_identity, "rows": len(bars),
                       "first_utc": bars.ts.iloc[0].isoformat(), "last_utc": bars.ts.iloc[-1].isoformat(),
                       "missing_calendar_days": len(missing), "outside_window_days": len(outside),
                       "maximum_open_usd": float(bars.open.max()), "quality_status": "ready" if not len(missing) and not len(outside) else "blocked",
