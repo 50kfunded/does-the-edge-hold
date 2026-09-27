@@ -25,6 +25,7 @@ from does_the_edge_hold.reporting import market_report
 from does_the_edge_hold.spot import SpotLedger
 from does_the_edge_hold.synthetic import make_bars
 from does_the_edge_hold.timing import scheduled_instructions
+from compare_studies import EXCLUDED_ROW_FIELDS, compare_value
 
 def measured(name, callback, records):
     process = psutil.Process()
@@ -105,9 +106,9 @@ def public_worker(snapshot, output):
     def report():
         for market, (rows, daily) in results.items():
             earlier = json.loads(Path(f"reports/public-spot/{market}/results.json").read_text())["runs"]
-            excluded = {"run_id", "execution_sha256"}
-            assert [{k: v for k, v in r.items() if k not in excluded} for r in rows] == [{k: v for k, v in r.items() if k not in excluded} for r in earlier]
-            summary = {"market": market, "status": "historical_public_spot", "primary": "BTC-USD", "plan_sha256": _digest(plan),
+            clean = lambda values: [{k: v for k, v in r.items() if k not in EXCLUDED_ROW_FIELDS} for r in values]
+            compare_value(clean(rows), clean(earlier), market + "/financial outcomes")
+            summary = {"market": market, "status": "historical_public_spot", "primary": plan["universe"]["primary"], "protocol": plan, "plan_sha256": _digest(plan),
                 "source_sha256": sha256_file(snapshot / f"{market}.parquet"), "runs": rows,
                 "selected_config_from_primary": winner, "rank_changes": rank_changes(rows, 10),
                 "winner_uncertainty": winner_uncertainty(winner, daily, plan)}
