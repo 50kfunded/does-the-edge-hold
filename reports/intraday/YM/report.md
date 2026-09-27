@@ -28,6 +28,55 @@ this is conditional historical P&L under the within-date source-rule inference, 
 | flat | 0.00 | 0.00 | 0.00 | n/a | n/a | n/a |
 | intraday_long | 590.00 | -9,235.00 | -7,555.00 | 0.023 | -0.765 | -0.432 |
 
+## what each completed trade earned
+
+these are aggregate dollars divided by actual completed round trips, not averages of yearly ratios. frequency means entries or filled sides per eligible window; it isn't portfolio notional turnover.
+
+| part | round trips | entries / window | fills / window | gross $ / trip | commission $ / trip | tick cost $ / trip | rounding $ / trip | net $ / trip |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| development | 1,644 | 1.60 | 3.20 | 4.58 | 5.00 | 10.00 | 0.00 | -10.42 |
+| validation | 728 | 1.55 | 3.10 | -8.25 | 5.00 | 10.00 | 0.00 | -23.25 |
+| historical_final | 757 | 1.62 | 3.24 | -10.68 | 5.00 | 10.00 | 0.00 | -25.68 |
+
+the recorded tick value is $5.00. base uses two $2.50 commissions and 2 adverse ticks per round trip: $15.00 before any rounding residual. the rounding column is recorded slippage minus that declared tick cost.
+
+## all candidates per trade
+
+each cell shows gross / total costs / net dollars per round trip. the adjacent frequency is completed trips per eligible window. totals and sample counts remain above.
+
+| setting | dev gross / cost / net | dev trips / window | val gross / cost / net | val trips / window | final gross / cost / net | final trips / window |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| mom-3 | 0.67 / 15.00 / -14.33 | 4.51 | -0.62 / 15.00 / -15.62 | 4.49 | 1.96 / 15.00 / -13.04 | 4.36 |
+| mom-6 | -0.12 / 15.00 / -15.12 | 3.30 | 3.71 / 15.00 / -11.29 | 3.21 | 1.84 / 15.00 / -13.16 | 3.28 |
+| mom-12 | 2.05 / 15.00 / -12.95 | 2.51 | 2.06 / 15.00 / -12.94 | 2.49 | 0.33 / 15.00 / -14.67 | 2.54 |
+| revert-6-0.5 | 4.46 / 15.00 / -10.54 | 3.32 | -0.15 / 15.00 / -15.15 | 3.29 | -1.30 / 15.00 / -16.30 | 3.29 |
+| revert-6-1 | 6.18 / 15.00 / -8.82 | 2.62 | -0.82 / 15.00 / -15.82 | 2.62 | -5.17 / 15.00 / -20.17 | 2.61 |
+| revert-6-1.5 | 4.58 / 15.00 / -10.42 | 1.60 | -8.25 / 15.00 / -23.25 | 1.55 | -10.68 / 15.00 / -25.68 | 1.62 |
+| revert-12-0.5 | 1.80 / 15.00 / -13.20 | 2.11 | 2.38 / 15.00 / -12.62 | 2.19 | -1.75 / 15.00 / -16.75 | 2.21 |
+| revert-12-1 | -0.46 / 15.00 / -15.46 | 1.63 | -1.02 / 15.00 / -16.02 | 1.71 | 0.55 / 15.00 / -14.45 | 1.75 |
+| revert-12-1.5 | 4.29 / 15.00 / -10.71 | 1.20 | -6.20 / 15.00 / -21.20 | 1.22 | -1.35 / 15.00 / -16.35 | 1.29 |
+
+### baselines on the same windows
+
+| setting | dev gross / cost / net | dev trips / window | val gross / cost / net | val trips / window | final gross / cost / net | final trips / window |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| flat | n/a / n/a / n/a | 0.00 | n/a / n/a / n/a | 0.00 | n/a / n/a / n/a | 0.00 |
+| intraday_long | 15.58 / 15.00 / 0.58 | 1.00 | -4.65 / 15.00 / -19.65 | 1.00 | -1.18 / 15.00 / -16.18 | 1.00 |
+
+flat has no completed trades, so its per-trade ratios are undefined. missing, failed or inconsistent accounting also gives n/a; the diagnostic artifact records the reason.
+
+## the pick versus intraday long
+
+these differences use the same market's eligible windows: pick minus baseline. net difference equals gross difference minus the extra modelled costs. this is an accounting decomposition, not a claim about the cause of a market regime.
+
+| part | pick trips / window | long trips / window | gross difference $ / window | cost difference $ / window | net difference $ / window |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| development | 1.60 | 1.00 | -8.24 | 9.04 | -17.28 |
+| validation | 1.55 | 1.00 | -8.13 | 8.23 | -16.36 |
+| historical_final | 1.62 | 1.00 | -16.13 | 9.31 | -25.45 |
+
+[saved trade economics for every scenario and sample](../trade-economics.json). this is post-results descriptive arithmetic; the original evaluation identities stay unchanged.
+
 ## did the gross winners survive costs?
 
 | part | positive gross settings | positive after base costs | median scaled mean | pick rank among eligible settings |
@@ -88,7 +137,7 @@ the common population has 1,901 complete UTC dates in every included market. it 
 
 | year | windows | pick net $ | pick Sharpe | intraday long net $ |
 | --- | ---: | ---: | ---: | ---: |
-| 2016 | 39 | -1,420.00 | -8.684 | -1,290.00 |
+| 2016 (partial: 2016-08-12 to 2017-01-01, end exclusive) | 39 | -1,420.00 | -8.684 | -1,290.00 |
 | 2017 | 67 | -1,700.00 | -6.629 | 490.00 |
 | 2018 | 220 | -4,590.00 | -1.882 | 845.00 |
 | 2019 | 232 | -6,150.00 | -3.127 | -1,205.00 |
@@ -98,9 +147,9 @@ the common population has 1,901 complete UTC dates in every included market. it 
 | 2023 | 231 | -9,050.00 | -4.056 | -7,320.00 |
 | 2024 | 216 | -6,820.00 | -2.522 | -7,235.00 |
 | 2025 | 142 | -9,880.00 | -2.798 | -9,825.00 |
-| 2026 | 109 | -2,740.00 | -1.311 | 9,505.00 |
+| 2026 (partial: 2026-01-01 to 2026-08-10, end exclusive) | 109 | -2,740.00 | -1.311 | 9,505.00 |
 
-i don't execute a switching or newly reselected yearly portfolio.
+partial labels describe the protocol's calendar span, not full observed coverage. profitable individual years remain visible; they don't replace the frozen split conclusion. i don't execute a switching or newly reselected yearly portfolio.
 
 protocol: `71cbc574f4f600b13617517c5b6808fd43bcd2d80608cc4c17588156f827e522`. semantic source: `55a86372f17ce7ee52edb4f9e44881f0d74152d80ea9d87ab311a9cbc075f306`. execution: `84650db70559423ed6d3a99343cb21b9906380b1caa22c206bd1824738b9e5a1`. the manifest retains the input file hash separately.
 

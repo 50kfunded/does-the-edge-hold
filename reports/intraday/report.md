@@ -6,7 +6,7 @@ the NQ development pick was `revert-6-1.5`. i kept it in later dates and the oth
 
 this is a historical, conditional source-day comparison. i already knew related research through 2026; the final period isn't untouched data.
 
-i score exact 08:00â€“12:00 UTC weekday windows and reset every date. completeness is known after noon. this isn't a live 09:00 filter, unconditional investment curve or claim that missing dates have zero returns.
+i score exact 08:00–12:00 UTC weekday windows and reset every date. completeness is known after noon. this isn't a live 09:00 filter, unconditional investment curve or claim that missing dates have zero returns.
 
 real contract identities are unknown. local cache matching and historical source-rule evidence support the narrower within-date inference. the original roll-aware study stays blocked. GC and CL have no scored strategy P&L here.
 
@@ -36,7 +36,6 @@ common complete dates: 1,901. the paired common-date intervals are saved in `sum
 
 the actual run checked 17,335,808 source rows, evaluated 1,585,920 minute observations and cached features once per setting/date before the five scenarios. total measured time: 325.3s; sampled peak RSS: 452.9 MiB. this is one machine, not a throughput guarantee.
 
-[unscored source price variation](descriptive-price-variation.json) Â· [the frozen plan](https://github.com/50kfunded/does-the-edge-hold/blob/main/research/intraday/plan.json) Â· [within-day methods](https://github.com/50kfunded/does-the-edge-hold/blob/main/docs/intraday-plan.md)
+[unscored source price variation](descriptive-price-variation.json) · [the frozen plan](https://github.com/50kfunded/does-the-edge-hold/blob/main/research/intraday/plan.json) · [within-day methods](https://github.com/50kfunded/does-the-edge-hold/blob/main/docs/intraday-plan.md)
 
-
-[what held up](conclusions.md) · [clean-run evidence](../../docs/clean-run.md)
+[post-results trade economics and source identities](trade-economics.json)

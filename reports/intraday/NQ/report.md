@@ -28,6 +28,63 @@ this is conditional historical P&L under the within-date source-rule inference, 
 | flat | 0.00 | 0.00 | 0.00 | n/a | n/a | n/a |
 | intraday_long | -22,400.00 | -19,655.00 | 8,670.00 | -0.502 | -0.673 | 0.154 |
 
+## what each completed trade earned
+
+these are aggregate dollars divided by actual completed round trips, not averages of yearly ratios. frequency means entries or filled sides per eligible window; it isn't portfolio notional turnover.
+
+| part | round trips | entries / window | fills / window | gross $ / trip | commission $ / trip | tick cost $ / trip | rounding $ / trip | net $ / trip |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| development | 1,853 | 1.65 | 3.30 | 4.80 | 5.00 | 10.00 | 0.00 | -10.20 |
+| validation | 852 | 1.69 | 3.39 | 3.26 | 5.00 | 10.00 | 0.00 | -11.74 |
+| historical_final | 1,014 | 1.58 | 3.16 | -5.18 | 5.00 | 10.00 | 0.00 | -20.18 |
+
+the recorded tick value is $5.00. base uses two $2.50 commissions and 2 adverse ticks per round trip: $15.00 before any rounding residual. the rounding column is recorded slippage minus that declared tick cost.
+
+## all candidates per trade
+
+each cell shows gross / total costs / net dollars per round trip. the adjacent frequency is completed trips per eligible window. totals and sample counts remain above.
+
+| setting | dev gross / cost / net | dev trips / window | val gross / cost / net | val trips / window | final gross / cost / net | final trips / window |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| mom-3 | 0.04 / 15.00 / -14.96 | 4.52 | -2.53 / 15.00 / -17.53 | 4.53 | -2.50 / 15.00 / -17.50 | 4.47 |
+| mom-6 | -3.19 / 15.00 / -18.19 | 3.35 | -1.88 / 15.00 / -16.88 | 3.23 | 12.85 / 15.00 / -2.15 | 3.34 |
+| mom-12 | 0.85 / 15.00 / -14.15 | 2.52 | -9.95 / 15.00 / -24.95 | 2.56 | 1.69 / 15.00 / -13.31 | 2.58 |
+| revert-6-0.5 | -1.48 / 15.00 / -16.48 | 3.31 | 1.64 / 15.00 / -13.36 | 3.29 | -0.10 / 15.00 / -15.10 | 3.28 |
+| revert-6-1 | -1.58 / 15.00 / -16.58 | 2.63 | 5.25 / 15.00 / -9.75 | 2.58 | 5.33 / 15.00 / -9.67 | 2.59 |
+| revert-6-1.5 | 4.80 / 15.00 / -10.20 | 1.65 | 3.26 / 15.00 / -11.74 | 1.69 | -5.18 / 15.00 / -20.18 | 1.58 |
+| revert-12-0.5 | -5.09 / 15.00 / -20.09 | 2.15 | 2.78 / 15.00 / -12.22 | 2.20 | -7.69 / 15.00 / -22.69 | 2.20 |
+| revert-12-1 | -8.37 / 15.00 / -23.37 | 1.64 | -8.48 / 15.00 / -23.48 | 1.71 | -10.16 / 15.00 / -25.16 | 1.67 |
+| revert-12-1.5 | -7.06 / 15.00 / -22.06 | 1.22 | -9.25 / 15.00 / -24.25 | 1.28 | -7.40 / 15.00 / -22.40 | 1.24 |
+
+### baselines on the same windows
+
+| setting | dev gross / cost / net | dev trips / window | val gross / cost / net | val trips / window | final gross / cost / net | final trips / window |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| flat | n/a / n/a / n/a | 0.00 | n/a / n/a / n/a | 0.00 | n/a / n/a / n/a | 0.00 |
+| intraday_long | -4.96 / 15.00 / -19.96 | 1.00 | -24.08 / 15.00 / -39.08 | 1.00 | 28.50 / 15.00 / 13.50 | 1.00 |
+
+flat has no completed trades, so its per-trade ratios are undefined. missing, failed or inconsistent accounting also gives n/a; the diagnostic artifact records the reason.
+
+## the pick versus intraday long
+
+these differences use the same market's eligible windows: pick minus baseline. net difference equals gross difference minus the extra modelled costs. this is an accounting decomposition, not a claim about the cause of a market regime.
+
+| part | pick trips / window | long trips / window | gross difference $ / window | cost difference $ / window | net difference $ / window |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| development | 1.65 | 1.00 | 12.90 | 9.77 | 3.12 |
+| validation | 1.69 | 1.00 | 29.60 | 10.41 | 19.19 |
+| historical_final | 1.58 | 1.00 | -36.68 | 8.69 | -45.37 |
+
+## the cost budget on the fixed paths
+
+net at total cost C per round trip is G - R*C. break-even is G/R, the gross column above. a positive budget allows positive net only below that cost; a zero or negative budget allows none. a negative budget isn't an achievable fee reduction.
+
+![net per trade as assumed total cost changes](cost-budget.png)
+
+the circles start at zero cost, hollow circles mark positive break-even budgets, and diamonds show recorded base costs. these trades and timestamps stay fixed. this isn't an estimate of executable costs and doesn't change fill probabilities, spread, queueing or impact. delay changes can change the path and have separate saved economics.
+
+[saved trade economics for every scenario and sample](../trade-economics.json). this is post-results descriptive arithmetic; the original evaluation identities stay unchanged.
+
 ## did the gross winners survive costs?
 
 | part | positive gross settings | positive after base costs | median scaled mean | pick rank among eligible settings |
@@ -88,7 +145,7 @@ the common population has 1,901 complete UTC dates in every included market. it 
 
 | year | windows | pick net $ | pick Sharpe | intraday long net $ |
 | --- | ---: | ---: | ---: | ---: |
-| 2016 | 39 | -2,310.00 | -9.688 | -1,740.00 |
+| 2016 (partial: 2016-08-12 to 2017-01-01, end exclusive) | 39 | -2,310.00 | -9.688 | -1,740.00 |
 | 2017 | 117 | -2,615.00 | -4.613 | 500.00 |
 | 2018 | 228 | -7,610.00 | -2.413 | -1,280.00 |
 | 2019 | 244 | -5,615.00 | -1.659 | -1,685.00 |
@@ -98,9 +155,9 @@ the common population has 1,901 complete UTC dates in every included market. it 
 | 2023 | 251 | -9,650.00 | -1.525 | -15,995.00 |
 | 2024 | 251 | -4,940.00 | -0.663 | 4,300.00 |
 | 2025 | 244 | -28,950.00 | -2.219 | -19,485.00 |
-| 2026 | 147 | 13,430.00 | 1.746 | 23,855.00 |
+| 2026 (partial: 2026-01-01 to 2026-08-10, end exclusive) | 147 | 13,430.00 | 1.746 | 23,855.00 |
 
-i don't execute a switching or newly reselected yearly portfolio.
+partial labels describe the protocol's calendar span, not full observed coverage. profitable individual years remain visible; they don't replace the frozen split conclusion. i don't execute a switching or newly reselected yearly portfolio.
 
 protocol: `71cbc574f4f600b13617517c5b6808fd43bcd2d80608cc4c17588156f827e522`. semantic source: `31730f2167fe84b8f8e8b5b729a9805062db7fd4f015d6ad02bc7af19566cfaf`. execution: `2354060058c8498ad69c397726d3d77068989c4f3a2a03df8d7cb42b93007edb`. the manifest retains the input file hash separately.
 

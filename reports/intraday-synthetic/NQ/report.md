@@ -28,6 +28,63 @@ these are made-up prices and software checks.
 | flat | 0.00 | 0.00 | 0.00 | n/a | n/a | n/a |
 | intraday_long | -1,115.00 | -1,770.00 | -255.00 | -4.314 | -5.747 | -0.860 |
 
+## what each completed trade earned
+
+these are aggregate dollars divided by actual completed round trips, not averages of yearly ratios. frequency means entries or filled sides per eligible window; it isn't portfolio notional turnover.
+
+| part | round trips | entries / window | fills / window | gross $ / trip | commission $ / trip | tick cost $ / trip | rounding $ / trip | net $ / trip |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| development | 43 | 1.43 | 2.87 | 5.58 | 5.00 | 10.00 | 0.00 | -9.42 |
+| validation | 42 | 1.45 | 2.90 | -11.43 | 5.00 | 10.00 | 0.00 | -26.43 |
+| historical_final | 44 | 1.47 | 2.93 | 16.48 | 5.00 | 10.00 | 0.00 | 1.48 |
+
+the recorded tick value is $5.00. base uses two $2.50 commissions and 2 adverse ticks per round trip: $15.00 before any rounding residual. the rounding column is recorded slippage minus that declared tick cost.
+
+## all candidates per trade
+
+each cell shows gross / total costs / net dollars per round trip. the adjacent frequency is completed trips per eligible window. totals and sample counts remain above.
+
+| setting | dev gross / cost / net | dev trips / window | val gross / cost / net | val trips / window | final gross / cost / net | final trips / window |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| mom-3 | -2.12 / 15.00 / -17.12 | 4.40 | -4.96 / 15.00 / -19.96 | 4.76 | -2.16 / 15.00 / -17.16 | 4.63 |
+| mom-6 | -2.20 / 15.00 / -17.20 | 3.10 | -10.71 / 15.00 / -25.71 | 3.38 | 0.42 / 15.00 / -14.58 | 3.20 |
+| mom-12 | -8.86 / 15.00 / -23.86 | 2.63 | -10.91 / 15.00 / -25.91 | 2.28 | 8.26 / 15.00 / -6.74 | 2.30 |
+| revert-6-0.5 | -1.75 / 15.00 / -16.75 | 3.43 | -7.68 / 15.00 / -22.68 | 3.41 | 6.19 / 15.00 / -8.81 | 3.37 |
+| revert-6-1 | -4.81 / 15.00 / -19.81 | 2.60 | -12.83 / 15.00 / -27.83 | 2.62 | 2.47 / 15.00 / -12.53 | 2.83 |
+| revert-6-1.5 | -12.35 / 15.00 / -27.35 | 1.63 | -30.95 / 15.00 / -45.95 | 1.45 | 12.06 / 15.00 / -2.94 | 1.70 |
+| revert-12-0.5 | -6.44 / 15.00 / -21.44 | 2.20 | -9.38 / 15.00 / -24.38 | 2.24 | 0.00 / 15.00 / -15.00 | 2.10 |
+| revert-12-1 | -0.18 / 15.00 / -15.18 | 1.90 | -11.57 / 15.00 / -26.57 | 1.76 | 2.36 / 15.00 / -12.64 | 1.77 |
+| revert-12-1.5 | 5.58 / 15.00 / -9.42 | 1.43 | -11.43 / 15.00 / -26.43 | 1.45 | 16.48 / 15.00 / 1.48 | 1.47 |
+
+### baselines on the same windows
+
+| setting | dev gross / cost / net | dev trips / window | val gross / cost / net | val trips / window | final gross / cost / net | final trips / window |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| flat | n/a / n/a / n/a | 0.00 | n/a / n/a / n/a | 0.00 | n/a / n/a / n/a | 0.00 |
+| intraday_long | -22.17 / 15.00 / -37.17 | 1.00 | -46.03 / 15.00 / -61.03 | 1.00 | 6.50 / 15.00 / -8.50 | 1.00 |
+
+flat has no completed trades, so its per-trade ratios are undefined. missing, failed or inconsistent accounting also gives n/a; the diagnostic artifact records the reason.
+
+## the pick versus intraday long
+
+these differences use the same market's eligible windows: pick minus baseline. net difference equals gross difference minus the extra modelled costs. this is an accounting decomposition, not a claim about the cause of a market regime.
+
+| part | pick trips / window | long trips / window | gross difference $ / window | cost difference $ / window | net difference $ / window |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| development | 1.43 | 1.00 | 30.17 | 6.50 | 23.67 |
+| validation | 1.45 | 1.00 | 29.48 | 6.72 | 22.76 |
+| historical_final | 1.47 | 1.00 | 17.67 | 7.00 | 10.67 |
+
+## the cost budget on the fixed paths
+
+net at total cost C per round trip is G - R*C. break-even is G/R, the gross column above. a positive budget allows positive net only below that cost; a zero or negative budget allows none. a negative budget isn't an achievable fee reduction.
+
+![net per trade as assumed total cost changes](cost-budget.png)
+
+the circles start at zero cost, hollow circles mark positive break-even budgets, and diamonds show recorded base costs. these trades and timestamps stay fixed. this isn't an estimate of executable costs and doesn't change fill probabilities, spread, queueing or impact. delay changes can change the path and have separate saved economics.
+
+[saved trade economics for every scenario and sample](../trade-economics.json). this is post-results descriptive arithmetic; the original evaluation identities stay unchanged.
+
 ## did the gross winners survive costs?
 
 | part | positive gross settings | positive after base costs | median scaled mean | pick rank among eligible settings |
@@ -88,9 +145,9 @@ the common population has 89 complete UTC dates in every included market. it is 
 
 | year | windows | pick net $ | pick Sharpe | intraday long net $ |
 | --- | ---: | ---: | ---: | ---: |
-| 2020 | 89 | -1,450.00 | -2.980 | -3,140.00 |
+| 2020 (partial: 2020-01-02 to 2020-05-07, end exclusive) | 89 | -1,450.00 | -2.980 | -3,140.00 |
 
-i don't execute a switching or newly reselected yearly portfolio.
+partial labels describe the protocol's calendar span, not full observed coverage. profitable individual years remain visible; they don't replace the frozen split conclusion. i don't execute a switching or newly reselected yearly portfolio.
 
 protocol: `09d0b4e88f1c004a9e8be39eb874d41060e66ed302ba974289560d0533eaf57a`. semantic source: `c11dc66add6d1079e3b3f015950440c1485c2b27250fcbaaf796380b94b26b69`. execution: `69f0ad5e89bf5a25df8f38dbc276ec7b232dab4b3f32e9a8e5cd11779c78c784`. the manifest retains the input file hash separately.
 

@@ -2,6 +2,8 @@
 from pathlib import Path
 from .intraday_plan import read
 from .reporting import diagnostics, plot_market, pct
+from .trade_economics import write_diagnostics
+from .trade_reporting import cost_curve, plot_cost_curve, economics_sections, year_label
 import json
 import pandas as pd
 
@@ -21,11 +23,16 @@ def render(output, *, plots=True):
              "real contract identities are unknown. local cache matching and historical source-rule evidence support the narrower within-date inference. the original roll-aware study stays blocked. GC and CL have no scored strategy P&L here.", "",
              "| market | development windows | validation windows | final windows | pick dev Sharpe | pick val Sharpe | pick final Sharpe |",
              "| --- | ---: | ---: | ---: | ---: | ---: | ---: |"]
-    reports = {}
     own_intervals = []
+    reports = {market: read(output / market / "results.json") for market in summary["markets"]}
+    trade_data = write_diagnostics(output, summary, reports)
+    trade_data["cost_sensitivity"] = cost_curve(trade_data, summary["primary"], winner, list(plan["splits_utc"]))
+    (output / "trade-economics.json").write_text(json.dumps(trade_data, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    if plots:
+        plot_cost_curve(trade_data["cost_sensitivity"], output, synthetic=synthetic)
     for market in summary["markets"]:
         folder = output / market
-        report = read(folder / "results.json")
+        report = reports[market]
         reports[market] = report
         rows = report["runs"]
         diag = diagnostics(report)
@@ -60,6 +67,7 @@ def render(output, *, plots=True):
             values = [f"{row(config, p).get('net_pnl_usd', 0):,.2f}" for p in periods]
             scores = [score(row(config, p).get("sharpe")) for p in periods]
             text.append(f"| {config} | {' | '.join(values + scores)} |")
+        text += economics_sections(trade_data, market, winner, plan)
         text += ["", "## did the gross winners survive costs?", "", "| part | positive gross settings | positive after base costs | median scaled mean | pick rank among eligible settings |", "| --- | ---: | ---: | ---: | ---: |"]
         for part, info in diag["periods"].items():
             text.append(f"| {part} | {info['positive_gross_candidates']} | {info['positive_gross_surviving_base_costs']} | {pct(info['median_annual_mean_return'])} | {info['selected_rank']} |")
@@ -86,8 +94,8 @@ def render(output, *, plots=True):
                  "## yearly check of the fixed pick", "", "| year | windows | pick net $ | pick Sharpe | intraday long net $ |", "| --- | ---: | ---: | ---: | ---: |"]
         for year in sorted({r["period"] for r in rows if r["period"].isdigit()}):
             r, long = row(winner, year), row("intraday_long", year)
-            text.append(f"| {year} | {r.get('days', 'n/a')} | {r.get('net_pnl_usd', 0):,.2f} | {score(r.get('sharpe'))} | {long.get('net_pnl_usd', 0):,.2f} |")
-        text += ["", "i don't execute a switching or newly reselected yearly portfolio.", "",
+            text.append(f"| {year_label(year, plan)} | {r.get('days', 'n/a')} | {r.get('net_pnl_usd', 0):,.2f} | {score(r.get('sharpe'))} | {long.get('net_pnl_usd', 0):,.2f} |")
+        text += ["", "partial labels describe the protocol's calendar span, not full observed coverage. profitable individual years remain visible; they don't replace the frozen split conclusion. i don't execute a switching or newly reselected yearly portfolio.", "",
                  f"protocol: `{report['plan_sha256']}`. semantic source: `{report['source_sha256']}`. execution: `{report['execution_sha256']}`. the manifest retains the input file hash separately.", "",
                  "![scaled means for every candidate](grid.png)", "", "![conditional complete-window sum; no live equity claim](equity.png)", "",
                  "![displayed candidate ranks only](ranks.png)", "",
@@ -107,4 +115,5 @@ def render(output, *, plots=True):
               f"the actual run checked {summary['runtime']['audited_source_rows']:,} source rows, evaluated {summary['runtime']['evaluated_window_rows']:,} minute observations and cached features once per setting/date before the five scenarios. total measured time: {summary['runtime']['total_seconds']:.1f}s; sampled peak RSS: {summary['runtime']['sampled_peak_rss_mib']:.1f} MiB. this is one machine, not a throughput guarantee.", "",
               "[unscored sample price variation](descriptive-price-variation.json) · [the example's plan and settings](summary.json)" if synthetic else
               "[unscored source price variation](descriptive-price-variation.json) · [the frozen plan](https://github.com/50kfunded/does-the-edge-hold/blob/main/research/intraday/plan.json) · [within-day methods](https://github.com/50kfunded/does-the-edge-hold/blob/main/docs/intraday-plan.md)", ""]
-    (output / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    lines += ["[post-results trade economics and source identities](trade-economics.json)", ""]
+    (output / "report.md").write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
