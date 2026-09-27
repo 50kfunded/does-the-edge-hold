@@ -1,21 +1,22 @@
 # using another input
 
-the public spot case is the independent source walkthrough. it uses a different source, timeframe, cash ledger and daily clock through the same evaluator. it doesn't turn imported P&L into proof of execution.
+i can run the examples and tests without an account or market files. `edge-hold intraday-example --output runs/intraday-example` makes fake minutes and uses the same audit, freeze, evaluation and report path as the separate within-day case.
 
-1. install the project and run the public example and tests.
-2. run `edge-hold public-fetch --output runs/your-snapshot`. no account is needed.
-3. inspect the snapshot's raw-response hashes and audit. each API request stays local, and bars must replay exactly from those responses.
-4. run `edge-hold public-study --snapshot runs/your-snapshot --output runs/your-study`.
-5. read `summary.json`, each `execution.json`, `results.json`, `daily-pnl.csv` and `report.md`. the BTC choice stays fixed for ETH.
+## the spot snapshot
 
-the frozen lock requires the original Parquet SHA-256. a different writer version can change file bytes without changing bars. if the lock fails, compare normalized timestamps and exact OHLCV against a snapshot you actually possess. the repo includes request/body hashes, not raw candles, so it cannot prove bar equality for a new download by itself.
+1. run `edge-hold public-fetch --output runs/your-snapshot`.
+2. inspect the audit and raw-response hashes. the bars must replay exactly from those responses.
+3. run `edge-hold public-study --snapshot runs/your-snapshot --plan research/public-spot/plan.semantic-v2.json --lock research/public-spot/plan.semantic-v2.lock.json --output runs/your-study`.
+4. read the summary, execution identities, results, daily panel and report. the BTC choice stays fixed for ETH.
 
-for a new snapshot, keep the original plan and results. copy the plan to a new directory, increment its version, disclose that the old results have now been seen, and record whether the change was only serialization or revised data. audit it, then use `edge-hold freeze --plan ... --audit ... --output ...`. pass that new plan and lock to `public-study`. don't relabel it as the original exact reproduction or an untouched evaluation.
+i preserved the original version-one plan, byte lock and results. the separate [semantic migration](../research/public-spot/semantic-migration.json) was made after seeing those results. it allows a different Parquet writer when the normalized observations match exactly. it still checks the original raw-response bytes and candle replay. a revised response or changed candle fails; this isn't a new untouched evaluation.
+
+the repo has hashes, not the original raw candles. a new download that doesn't match can't prove equivalence by itself. keep the old plan and results, copy the plan to a new directory, disclose prior exposure, audit the new snapshot and freeze its new lock before a new grid. record whether the change was serialization or changed data.
 
 ## a small signal extension
 
-[examples/breakout.py](../examples/breakout.py) registers a past-high breakout using the canonical completed-bar interface. a plan can list `extensions: ["examples.breakout"]` and a `breakout` family with `lookback_bars`. the independent-extension test adds its own instrument specification without editing the evaluator.
+[the breakout example](../examples/breakout.py) declares its inputs, settings and helpers. a plan can list `extensions: ["examples.breakout"]` and a `breakout` family with `lookback_bars`. [the extension notes](extensions.md) explain identity and sampled causal checks. Python extensions aren't a sandbox or a proof against future access.
 
-canonical input is ordered UTC start-stamped `ts,open,high,low,close,volume,contract`. `MarketAdapter` supplies the instrument specification, bar duration, asset kind and ledger. a one-minute adapter makes hourly signals; longer bars are already signal bars. adapters must disclose that choice and provide genuine source provenance.
+canonical input is ordered UTC start-stamped `ts,open,high,low,close,volume,contract`. `MarketAdapter` supplies the instrument specification, bar duration, asset kind and ledger. a one-minute adapter makes hourly signals; longer bars are already signal bars. the within-day case has separate five-minute definitions and date resets. each source needs its own provenance and clock evidence.
 
-this keeps the scope small: audits, long/flat rules, execution assumptions and reports. there's no live trading, broker connection, optimization service or claim of outside users.
+there's no live trading, broker connection or claim of outside users.

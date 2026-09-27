@@ -1,0 +1,206 @@
+{
+  "selected_config": "revert-12-1.5",
+  "periods": {
+    "development": {
+      "successful_candidates": 9,
+      "eligible_candidates": 9,
+      "positive_gross_candidates": 4,
+      "positive_gross_surviving_base_costs": 0,
+      "positive_net_candidates": 0,
+      "median_annual_mean_return": -0.0861,
+      "selected_annual_mean_return": -0.07265999999999999,
+      "selected_rank": 3,
+      "selected_entries": 35,
+      "observed_sessions": 30,
+      "selected_sharpe": -4.397110909062821
+    },
+    "validation": {
+      "successful_candidates": 9,
+      "eligible_candidates": 9,
+      "positive_gross_candidates": 3,
+      "positive_gross_surviving_base_costs": 0,
+      "positive_net_candidates": 0,
+      "median_annual_mean_return": -0.12469655172413795,
+      "selected_annual_mean_return": -0.040406896551724136,
+      "selected_rank": 1,
+      "selected_entries": 42,
+      "observed_sessions": 29,
+      "selected_sharpe": -2.027141905783484
+    },
+    "historical_final": {
+      "successful_candidates": 9,
+      "eligible_candidates": 9,
+      "positive_gross_candidates": 4,
+      "positive_gross_surviving_base_costs": 0,
+      "positive_net_candidates": 0,
+      "median_annual_mean_return": -0.09912000000000001,
+      "selected_annual_mean_return": -0.03402,
+      "selected_rank": 1,
+      "selected_entries": 48,
+      "observed_sessions": 30,
+      "selected_sharpe": -2.200099692709308
+    }
+  },
+  "rank_stability": {
+    "validation": {
+      "common_eligible_candidates": 9,
+      "spearman": -0.38333333333333336
+    },
+    "historical_final": {
+      "common_eligible_candidates": 9,
+      "spearman": -0.13333333333333333
+    }
+  },
+  "matched_effects": [
+    {
+      "period": "development",
+      "scenario": "base",
+      "net_change_usd_from_base": 0.0,
+      "annual_mean_return_change": 0.0,
+      "gross_change_usd": 0.0,
+      "fill_change": 0,
+      "delay_minutes": 1,
+      "comparison": "reference"
+    },
+    {
+      "period": "development",
+      "scenario": "gross_reference",
+      "net_change_usd_from_base": 525.0,
+      "annual_mean_return_change": 0.044099999999999986,
+      "gross_change_usd": 0.0,
+      "fill_change": 0,
+      "delay_minutes": 1,
+      "comparison": "cost only"
+    },
+    {
+      "period": "development",
+      "scenario": "cost_stress",
+      "net_change_usd_from_base": -525.0,
+      "annual_mean_return_change": -0.044100000000000014,
+      "gross_change_usd": 0.0,
+      "fill_change": 0,
+      "delay_minutes": 1,
+      "comparison": "cost only"
+    },
+    {
+      "period": "development",
+      "scenario": "delay_stress",
+      "net_change_usd_from_base": -110.0,
+      "annual_mean_return_change": -0.009240000000000012,
+      "gross_change_usd": -125.0,
+      "fill_change": -2,
+      "delay_minutes": 5,
+      "comparison": "delay only"
+    },
+    {
+      "period": "development",
+      "scenario": "combined_stress",
+      "net_change_usd_from_base": -620.0,
+      "annual_mean_return_change": -0.052080000000000015,
+      "gross_change_usd": -125.0,
+      "fill_change": -2,
+      "delay_minutes": 5,
+      "comparison": "combined cost and delay"
+    },
+    {
+      "period": "validation",
+      "scenario": "base",
+      "net_change_usd_from_base": 0.0,
+      "annual_mean_return_change": 0.0,
+      "gross_change_usd": 0.0,
+      "fill_change": 0,
+      "delay_minutes": 1,
+      "comparison": "reference"
+    },
+    {
+      "period": "validation",
+      "scenario": "gross_reference",
+      "net_change_usd_from_base": 630.0,
+      "annual_mean_return_change": 0.05474482758620689,
+      "gross_change_usd": 0.0,
+      "fill_change": 0,
+      "delay_minutes": 1,
+      "comparison": "cost only"
+    },
+    {
+      "period": "validation",
+      "scenario": "cost_stress",
+      "net_change_usd_from_base": -630.0,
+      "annual_mean_return_change": -0.05474482758620691,
+      "gross_change_usd": 0.0,
+      "fill_change": 0,
+      "delay_minutes": 1,
+      "comparison": "cost only"
+    },
+    {
+      "period": "validation",
+      "scenario": "delay_stress",
+      "net_change_usd_from_base": 265.0,
+      "annual_mean_return_change": 0.02302758620689655,
+      "gross_change_usd": 250.0,
+      "fill_change": -2,
+      "delay_minutes": 5,
+      "comparison": "delay only"
+    },
+    {
+      "period": "validation",
+      "scenario": "combined_stress",
+      "net_change_usd_from_base": -350.0,
+      "annual_mean_return_change": -0.030413793103448272,
+      "gross_change_usd": 250.0,
+      "fill_change": -2,
+      "delay_minutes": 5,
+      "comparison": "combined cost and delay"
+    },
+    {
+      "period": "historical_final",
+      "scenario": "base",
+      "net_change_usd_from_base": 0.0,
+      "annual_mean_return_change": 0.0,
+      "gross_change_usd": 0.0,
+      "fill_change": 0,
+      "delay_minutes": 1,
+      "comparison": "reference"
+    },
+    {
+      "period": "historical_final",
+      "scenario": "gross_reference",
+      "net_change_usd_from_base": 720.0,
+      "annual_mean_return_change": 0.060480000000000006,
+      "gross_change_usd": 0.0,
+      "fill_change": 0,
+      "delay_minutes": 1,
+      "comparison": "cost only"
+    },
+    {
+      "period": "historical_final",
+      "scenario": "cost_stress",
+      "net_change_usd_from_base": -720.0,
+      "annual_mean_return_change": -0.06048,
+      "gross_change_usd": 0.0,
+      "fill_change": 0,
+      "delay_minutes": 1,
+      "comparison": "cost only"
+    },
+    {
+      "period": "historical_final",
+      "scenario": "delay_stress",
+      "net_change_usd_from_base": -675.0,
+      "annual_mean_return_change": -0.05670000000000001,
+      "gross_change_usd": -720.0,
+      "fill_change": -6,
+      "delay_minutes": 5,
+      "comparison": "delay only"
+    },
+    {
+      "period": "historical_final",
+      "scenario": "combined_stress",
+      "net_change_usd_from_base": -1350.0,
+      "annual_mean_return_change": -0.1134,
+      "gross_change_usd": -720.0,
+      "fill_change": -6,
+      "delay_minutes": 5,
+      "comparison": "combined cost and delay"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "scope": "all outcome fields, uncertainty, ranks, carried pick and available daily panels",
+  "excluded_row_fields": [
+    "causal_check",
+    "execution_sha256",
+    "run_id"
+  ],
+  "tolerance": {
+    "relative": 1e-10,
+    "absolute": 2e-08
+  },
+  "markets": {
+    "BTC-USD": {
+      "matched": true,
+      "result_rows": 1344,
+      "common_rows": 0,
+      "panels": [
+        "daily-pnl.csv"
+      ]
+    },
+    "ETH-USD": {
+      "matched": true,
+      "result_rows": 1344,
+      "common_rows": 0,
+      "panels": [
+        "daily-pnl.csv"
+      ]
+    }
+  }
+}

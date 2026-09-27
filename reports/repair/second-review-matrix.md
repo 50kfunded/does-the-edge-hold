@@ -1,13 +1,15 @@
 # after the second review
 
-i started from `a690ef7`. the reviewer reproduced all 192 spot cases and found five remaining issues. the original roll-aware futures study is still blocked. this round adds a separate within-day study; it doesn't change that decision.
+i started from `a690ef7`. the review reproduced the 192 spot cases and found five remaining issues. i fixed those and added a separate within-day case. the original roll-aware futures study is still blocked.
 
-| issue | change | evidence / status |
+| issue | change | evidence / limit |
 | --- | --- | --- |
-| mutable global setting missing from identity | declared extension state and dependencies | `test_extension_review.py`: undeclared setting rejected; changed setting rejects the old seal |
-| custom signal reads future prices | deterministic output, prefix and future perturbation checks | next-close callback rejected; sampled checks have stated limits |
-| rank chart includes a hidden baseline | pending | saved P&L and selection were unaffected |
-| helpers and reports ignore parts of the plan | pending | use actual primary, universe and assumptions |
-| file-format bytes stand in for data identity | pending | add a versioned semantic identity without changing old locks |
+| mutable setting missing from identity | declare global state and helpers; capture defaults and closures | `test_extension_review.py` rejects undeclared state, stale seals and settings changed inside a signal |
+| custom signal reads future prices | repeat, prefix and future-perturbation checks | the next-close callback fails; checks are sampled on larger inputs and Python isn't a sandbox |
+| chart ranks a hidden baseline | rank exactly the displayed candidates; save the rank table | `test_rank_chart.py`; [replacement spot figures](../public-spot/corrections/report.md); original P&L and selection unchanged |
+| helpers and reports ignore the plan | use actual primary, declared subset, costs, clock and report metadata | `test_empirical_integration.py` uses ES as primary, different capital/costs and an excluded optional market |
+| file bytes stand in for observations | versioned exact semantic hashes, artifact hashes retained separately | `test_semantic.py`; equivalent writers retain identity and results; changed observations fail; [post-results spot migration](../../research/public-spot/semantic-migration.json) preserves the old lock |
 
-the new study will use exact-precision backup minutes, a fixed 08:00–12:00 UTC weekday window and daily resets. NQ is the required primary. ES and YM are related-market checks. GC and CL remain descriptive. complete-window eligibility is retrospective and conditional; it isn't a live signal available at 09:00.
+the clean checkout passed 82 tests and generated the 165-case synthetic example. the separate 165-case empirical replay retained the locked masks and reproduced the outcomes. [the clean-run receipt](../../docs/clean-run.md) records the exact revision and checks.
+
+NQ is required. ES and YM are related checks. GC and CL stay descriptive. completeness is retrospective, fills are assumed minute opens, and real contract identities remain unknown. no positive edge claim follows from this work.

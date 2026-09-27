@@ -7,3 +7,7 @@ the canonical stream has a fixed header, then rows in observed order: signed 64-
 nulls, nonfinite values, duplicate/out-of-order timestamps, invalid OHLC and negative volume fail before hashing. the code never sorts, fills or removes bad input to make its identity pass. source-specific stricter quality gates remain separate.
 
 a migration receipt may reference a historical lock and add semantic hashes after rechecking the observations. it doesn't claim those hashes were frozen before the old research. new execution identities use semantic sources and retain file hashes outside the economic identity.
+
+i kept the original spot lock and added [a separate migration receipt](../research/public-spot/semantic-migration.json). the semantic spot plan still requires the original response hashes and exact candle replay. changing a writer is allowed; changing a candle isn't.
+
+for a new futures protocol, declare the semantic identity in the plan, run `edge-hold audit --semantic`, then freeze that audit. this doesn't bypass the roll gate. the within-day protocol has its own audit and lock. its checked-in audit is the frozen receipt; rerunning an audit produces a new receipt, not a replacement for that lock.
