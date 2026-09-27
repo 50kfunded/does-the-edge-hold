@@ -114,4 +114,44 @@ def test_all_saved_cases_validate_and_preserve_evaluation_identity(tmp_path):
     assert artifact["analysis_status"].startswith("post-results")
     for r in artifact["rows"]:
         assert r["execution_sha256"] == artifact["sources"][r["market"]]["evaluation_execution_sha256"]
+        assert r["source_result"].startswith(r["market"] + "/results.json#/")
     assert json.loads((tmp_path / "trade-economics.json").read_text()) == artifact
+
+
+def test_cost_plot_and_tables_use_the_saved_diagnostic_values(tmp_path, monkeypatch):
+    from does_the_edge_hold.trade_reporting import cost_curve, plot_cost_curve, economics_sections, year_label
+    from matplotlib.figure import Figure
+    rows = []
+    for config in ("revert-6-1.5", "flat", "intraday_long"):
+        for part in ("development", "validation", "historical_final"):
+            row, spec, cost = saved(period=part, config=config)
+            rows.append({**economics(row, spec, cost), "sample": "own_complete_dates"})
+    artifact = {"rows": rows}
+    plan = json.loads((ROOT / "summary.json").read_text())["protocol"]
+    curve = cost_curve(artifact, "NQ", "revert-6-1.5", list(plan["splits_utc"]))
+    artifact["cost_sensitivity"] = curve
+    assert curve["cost_range_usd"][0] == 0 and curve["cost_range_usd"][1] >= 15.
+    for s in curve["series"]:
+        assert min(s["cost_points_usd"]) == 0 and 15. in s["cost_points_usd"]
+        index = s["cost_points_usd"].index(15.)
+        row, _, _ = saved(period=s["period"])
+        assert s["net_per_round_trip_usd"][index] == pytest.approx(row["net_pnl_usd"] / row["entry_trades"])
+        if s["break_even_budget_usd"] > 0:
+            assert s["net_per_round_trip_usd"][s["cost_points_usd"].index(s["break_even_budget_usd"])] == pytest.approx(0.)
+        else:
+            assert all(c >= 0 for c in s["cost_points_usd"])
+    captured = []
+    save = Figure.savefig
+    def record(figure, *args, **kwargs):
+        captured.extend((list(line.get_xdata()), list(line.get_ydata())) for line in figure.axes[0].lines[:3])
+        return save(figure, *args, **kwargs)
+    monkeypatch.setattr(Figure, "savefig", record)
+    (tmp_path / "NQ").mkdir()
+    plot_cost_curve(curve, tmp_path)
+    assert (tmp_path / "NQ/cost-budget.png").exists()
+    assert captured == [(s["cost_points_usd"], s["net_per_round_trip_usd"]) for s in curve["series"]]
+    text = "\n".join(economics_sections(artifact, "NQ", "revert-6-1.5", plan))
+    assert "| development | 1,853 | 1.65 | 3.30 | 4.80 | 5.00 | 10.00 | 0.00 | -10.20 |" in text
+    assert "### baselines on the same windows" in text and "n/a / n/a / n/a" in text
+    assert year_label("2020", plan) == "2020"
+    assert "partial" in year_label("2026", plan) and "2026-08-10" in year_label("2026", plan)

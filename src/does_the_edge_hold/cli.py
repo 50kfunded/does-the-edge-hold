@@ -11,6 +11,8 @@ def main() -> None:
     commands = parser.add_subparsers(dest="command")
     intraday_example = commands.add_parser("intraday-example", help="run the source-day study on made-up multi-window prices")
     intraday_example.add_argument("--output", type=Path, required=True)
+    intraday_report = commands.add_parser("intraday-report", help="refresh reports from saved outcomes; no strategy run")
+    intraday_report.add_argument("--study", type=Path, required=True)
     intraday_run = commands.add_parser("intraday-study", help="run only the separately locked source-day market subset")
     intraday_run.add_argument("--data-root", type=Path, required=True)
     intraday_run.add_argument("--cache-root", type=Path, required=True)
@@ -84,6 +86,10 @@ def main() -> None:
         from .intraday_example import run_example
         result = run_example(args.output)
         print(f"synthetic source-day cases: {result['runtime']['cases']}; {args.output / 'study/report.md'}")
+    elif args.command == "intraday-report":
+        from .intraday_reporting import render
+        render(args.study)
+        print(f"refreshed saved-result report: {args.study / 'report.md'}")
     elif args.command == "intraday-study":
         from .intraday_study import run_study
         result = run_study(args.data_root, args.cache_root, args.plan, args.lock, args.audit_root, args.output)

@@ -6,7 +6,7 @@ the NQ development pick was `revert-12-1.5`. i kept it in later dates and the ot
 
 these prices are made up. this checks the software, not a market edge.
 
-i score exact 08:00â€“12:00 UTC weekday windows and reset every date. completeness is known after noon. this isn't a live 09:00 filter, unconditional investment curve or claim that missing dates have zero returns.
+i score exact 08:00–12:00 UTC weekday windows and reset every date. completeness is known after noon. this isn't a live 09:00 filter, unconditional investment curve or claim that missing dates have zero returns.
 
 the fixtures have made-up source labels and deliberate jumps between dates. each scored date resets independently. this doesn't resolve the real study's roll gate.
 
@@ -36,4 +36,6 @@ common complete dates: 89. the paired common-date intervals are saved in `summar
 
 the actual run checked 107,995 source rows, evaluated 64,080 minute observations and cached features once per setting/date before the five scenarios. total measured time: 19.0s; sampled peak RSS: 219.3 MiB. this is one machine, not a throughput guarantee.
 
-[unscored sample price variation](descriptive-price-variation.json) Â· [the example's plan and settings](summary.json)
+[unscored sample price variation](descriptive-price-variation.json) · [the example's plan and settings](summary.json)
+
+[post-results trade economics and source identities](trade-economics.json)

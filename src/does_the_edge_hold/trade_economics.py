@@ -107,6 +107,10 @@ def _hash(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def _text_hash(path):
+    return hashlib.sha256(Path(path).read_text(encoding="utf-8-sig").encode()).hexdigest()
+
+
 def write_diagnostics(output, summary, reports):
     output = Path(output)
     plan = summary["protocol"]
@@ -115,9 +119,10 @@ def write_diagnostics(output, summary, reports):
     artifact = {"schema_version": 1, "kind": "post_results_trade_economics", "study_status": summary["status"],
                 "analysis_status": "post-results descriptive arithmetic; no new strategy run or independent statistical test",
                 "protocol_sha256": summary["plan_sha256"], "protocol_source": "summary.json#/protocol",
+                "source_hash_policy": "source text hashes normalize UTF-8/LF line endings for Git checkouts; generating-checkout raw artifact hashes remain separate",
                 "primary_pick": summary["markets"][summary["primary"]]["primary_pick"],
                 "reporting_code_sha256": {name: hashlib.sha256((Path(__file__).parent / name).read_text(encoding="utf-8-sig").encode()).hexdigest()
-                                           for name in ("trade_economics.py", "intraday_reporting.py")},
+                                           for name in ("trade_economics.py", "trade_reporting.py", "intraday_reporting.py")},
                 "definitions": {"round_trips": "entries only when every window is flat and filled sides equal 2 * entries",
                     "frequency": "entries or filled sides / eligible windows; not portfolio notional turnover",
                     "ratios": "aggregate period totals / actual completed trades, never an unweighted average of yearly ratios",
@@ -133,8 +138,9 @@ def write_diagnostics(output, summary, reports):
         if manifest["identity"]["protocol_sha256"] != summary["plan_sha256"]:
             raise ValueError("saved execution uses another protocol")
         spec = manifest["identity"]["evidence"].get("instrument")
-        artifact["sources"][market] = {"results": market + "/results.json", "results_sha256": _hash(folder / "results.json"),
-            "all_results_csv_sha256": _hash(folder / "all-results.csv"), "execution": market + "/execution.json",
+        artifact["sources"][market] = {"results": market + "/results.json", "results_text_sha256": _text_hash(folder / "results.json"),
+            "results_artifact_sha256": _hash(folder / "results.json"), "all_results_csv_text_sha256": _text_hash(folder / "all-results.csv"),
+            "execution": market + "/execution.json", "execution_text_sha256": _text_hash(folder / "execution.json"),
             "execution_artifact_sha256": _hash(folder / "execution.json"), "evaluation_execution_sha256": manifest["execution_sha256"],
             "instrument": spec}
         for source_name, sample in (("runs", "own_complete_dates"), ("common_runs", "common_complete_dates")):
@@ -143,7 +149,7 @@ def write_diagnostics(output, summary, reports):
                 if row.get("execution_sha256") != manifest["execution_sha256"]:
                     item.update(status="unsupported", reasons=["row execution identity differs from saved manifest"])
                     item.update(dict.fromkeys(RATIOS))
-                item.update(sample=sample, source_result=market + "/results.json#" + source_name + "/" + str(i))
+                item.update(sample=sample, source_result=market + "/results.json#/" + source_name + "/" + str(i))
                 artifact["rows"].append(item)
     artifact["status_counts"] = dict(Counter(r["status"] for r in artifact["rows"]))
     (output / "trade-economics.json").write_text(json.dumps(artifact, indent=2, allow_nan=False) + "\n", encoding="utf-8")
