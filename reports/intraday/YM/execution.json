@@ -1,0 +1,167 @@
+{
+  "artifact_sha256": "173cea9d028bdac283e7b790fb95d450ef4eacda747a777b6204c7366be54270",
+  "execution_sha256": "84650db70559423ed6d3a99343cb21b9906380b1caa22c206bd1824738b9e5a1",
+  "git_dirty": true,
+  "git_revision": "72c0a9ecd27ff92fd7df544b7e32f2f43d8b436d",
+  "identity": {
+    "callables": {
+      "compile": {
+        "closure": [],
+        "code_sha256": "1e11cb838786d07fdeb2cb6d72d3e9a083ffa56c1f5d9365e05faf8a5d7cc078",
+        "defaults": [],
+        "keyword_defaults": {},
+        "module": "does_the_edge_hold.intraday",
+        "name": "compile_targets",
+        "source_sha256": "e6eeccb324cfacd2b0175c015ea533564e84dd7d8b1de1690f4194d025f8504a"
+      },
+      "execute": {
+        "closure": [],
+        "code_sha256": "1156b61e4f17733e2a82b1bb30691ceedc5c7ead08bb99c779893d867a7260b9",
+        "defaults": [],
+        "keyword_defaults": {
+          "keep_events": true,
+          "starting_capital": 100000
+        },
+        "module": "does_the_edge_hold.intraday",
+        "name": "simulate_window",
+        "source_sha256": "e6eeccb324cfacd2b0175c015ea533564e84dd7d8b1de1690f4194d025f8504a"
+      },
+      "features": {
+        "closure": [],
+        "code_sha256": "8b04d802e19522553d6baba32bba6e7a9ecf12429cf60ecba626b9a7fdfcf432",
+        "defaults": [],
+        "keyword_defaults": {},
+        "module": "does_the_edge_hold.intraday",
+        "name": "window_decisions",
+        "source_sha256": "e6eeccb324cfacd2b0175c015ea533564e84dd7d8b1de1690f4194d025f8504a"
+      },
+      "ledger_buy": {
+        "closure": [],
+        "code_sha256": "5f9428fdb418a9f6ff85280b0f9b74bbed8990d391a4f245ab4419051d939454",
+        "defaults": [
+          "signal"
+        ],
+        "keyword_defaults": {},
+        "module": "does_the_edge_hold.ledger",
+        "name": "Ledger.buy",
+        "source_sha256": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329"
+      },
+      "ledger_fill": {
+        "closure": [],
+        "code_sha256": "4dd28e222c3f9d9538811f90248c2ed892d5d11e3173c65d0aeb8f0018c41054",
+        "defaults": [],
+        "keyword_defaults": {},
+        "module": "does_the_edge_hold.intraday",
+        "name": "WindowLedger._fill",
+        "source_sha256": "e6eeccb324cfacd2b0175c015ea533564e84dd7d8b1de1690f4194d025f8504a"
+      },
+      "ledger_mark": {
+        "closure": [],
+        "code_sha256": "b8b1145a41a67d0484307b806460b054826817873aa07f08cee7225c4596488f",
+        "defaults": [],
+        "keyword_defaults": {},
+        "module": "does_the_edge_hold.ledger",
+        "name": "Ledger.mark",
+        "source_sha256": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329"
+      },
+      "ledger_sell": {
+        "closure": [],
+        "code_sha256": "3b6b6c27211939d04dacde25bf65f2faafe2c1876483c9de2e0f437df7c6d11e",
+        "defaults": [
+          "signal"
+        ],
+        "keyword_defaults": {},
+        "module": "does_the_edge_hold.ledger",
+        "name": "Ledger.sell",
+        "source_sha256": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329"
+      },
+      "prepare": {
+        "closure": [],
+        "code_sha256": "9b6e0621f33200a53a288d7945521bfa537945922f76d332af3854201f1bbc68",
+        "defaults": [],
+        "keyword_defaults": {},
+        "module": "does_the_edge_hold.intraday",
+        "name": "prepare_window",
+        "source_sha256": "e6eeccb324cfacd2b0175c015ea533564e84dd7d8b1de1690f4194d025f8504a"
+      },
+      "summarize": {
+        "closure": [],
+        "code_sha256": "00c3ec6608c24540f1ad92a9952d5ecf43a74a386e31b80df6dd5bdab1aca86b",
+        "defaults": [],
+        "keyword_defaults": {
+          "periods_per_year": 252
+        },
+        "module": "does_the_edge_hold.intraday_study",
+        "name": "summarize_windows",
+        "source_sha256": "a6f4923c5f38f6d24d95bfcf0c879f3a088a9287b7bc1ad2128da5ba07822590"
+      }
+    },
+    "environment": {
+      "packages": {
+        "matplotlib": "3.11.2",
+        "numpy": "2.5.3",
+        "pandas": "3.0.6",
+        "psutil": "7.2.2",
+        "pyarrow": "25.0.1",
+        "scipy": "1.18.1"
+      },
+      "python": "3.12.10"
+    },
+    "evidence": {
+      "causal_check": "built-in date-local features plus prefix and future-perturbation regressions",
+      "contract_identity": "unknown",
+      "instrument": {
+        "multiplier": 5.0,
+        "symbol": "YM",
+        "tick_size": 1.0
+      },
+      "keep_events": false,
+      "mask": "b8602e632fb6940db0d5eba01c45a618c5ff287df0d70740384aee615a551e4a",
+      "source_day_audit": "d57bafa5f6bf402e1c947f2e401d3229fdaaf407bed8b49365c8e430489c3bb0",
+      "source_rule": "YM.c.0"
+    },
+    "protocol_sha256": "71cbc574f4f600b13617517c5b6808fd43bcd2d80608cc4c17588156f827e522",
+    "schema": 1,
+    "source_code": {
+      "__init__.py": "844ac694e3ad0f2c6d6db30ff23c5a229578a26a031807d148a2ad8019cf29bc",
+      "adapters.py": "d846d0a2b48b672dee4ad72598e28249593c79049ca38a62a8ed54fa0e5ae26a",
+      "audit.py": "d71d55063a487a80068bd36514d2e2e874223b07e447f3e49bd4053dc550e636",
+      "cli.py": "b55891558b7704823d3bac07e9493ad8d3079878d299ae66531ea17f625917c9",
+      "daily_clock.py": "e3c0e0f87af24f0b59b4882c2da1e9107969b78a8019f63eb00543c60b58d246",
+      "data.py": "61e26c165696eb866a2e5c4f6f4e55a113ba6ef47f37eb090f38197f530448ce",
+      "example.py": "3a2c4c1d71cc561c0b4a638c559229e90df37edc1bca58f539b885a023e137b5",
+      "execution.py": "a554fdfc94a4ef7b1115f0fb221bff887f6aad66196d61953c19a0f96d6f7d08",
+      "experiments.py": "d0ea36aeae82e00734ea01e98a4baeaddb6b4a47962cbcc8cafe75657fc0902b",
+      "intraday.py": "e6eeccb324cfacd2b0175c015ea533564e84dd7d8b1de1690f4194d025f8504a",
+      "intraday_audit.py": "5e8692e1b3e5bbfec71fcccc059cae214c83a217919a6ece6ce72d12eb0a4623",
+      "intraday_descriptive.py": "0d478d1cfb50ea23e1c902fe54c63e112359efdcbf8e62e83c22e8d41aec4186",
+      "intraday_example.py": "527550f6af3db58c690058f2520749734e12746532cf13f945962a6eb38c24e1",
+      "intraday_plan.py": "dab34e9ebd1fc5e78e667164cf095fa2c65bbe0a3e0b5abaa0ed7e66cbdb9cba",
+      "intraday_reporting.py": "9151e97433cd3943ac7f7ba8e3cbb8dfb16dd05290b010dd7f1b5793a7f6f3c0",
+      "intraday_study.py": "a6f4923c5f38f6d24d95bfcf0c879f3a088a9287b7bc1ad2128da5ba07822590",
+      "ledger.py": "f9db32602ed0c40a3bd0151145673ae4e80b01b8322655ad938085ec33cc5329",
+      "local_report.py": "c33e29cec20a277e52bccc18d878a294ce9408f8442a07e24e0df326700e0e66",
+      "metrics.py": "13ca8d80f27f9e8e4cdc15cd6abf48f18ab3dfbddd5d11afe917aefbbd21877b",
+      "plan.py": "a8a352b74363057bf596bce2945d3b2b1aa398ddbd1ced423a323b19005c0594",
+      "provenance.py": "f2eab59b14c2390944a2864ac742d4b28127a19c049c99b2de9a0782ceb6f87d",
+      "public_data.py": "6ca01922c2d3d64cffa42450d2a4cb32e27dd97785681364a347bceae97fe5cd",
+      "public_study.py": "1ba47ad62494dc9a29ca10269b07196cc2ac10679c45b4cbd173ec3cfe131e26",
+      "reporting.py": "d6ce0436a85cc6f0ccf080d23b3385895768dba67b1b82665b30827db9256cc1",
+      "resolve.py": "587279c32b373bcae7e34179d1c495c89a735b12fd456521d4bd70be72c64435",
+      "roll_gate.py": "94f85b8a205d6215bf60573210e62cddf191ff3eab0ceff5eeb3b9778cce734c",
+      "rolls.py": "d47a9189b800e32885bb1c1f977bf7cd20c58da9559cc4b150c427952e98cb98",
+      "semantic.py": "2977c9e53024b8d8cf50f14b1391bbeb5857f0ef4c1d2da39f8296cf59d21041",
+      "signals.py": "8b9713debcbe6b93f2179aa2bc4ad90a1bfbc1376de22fc3ce0b8d7a11424e67",
+      "specs.py": "a11d9eb9709a088a89e257e91143fded6a7ba852356befeb2c15530d277ce68e",
+      "spot.py": "8d1c8eb668736f38c12ecfd0732627339239199210dcde02733570608b7598c5",
+      "synthetic.py": "71badced0678ea224967eec8bcdb2df5810cf3bb3efa56a0544533713c9aae4d",
+      "timing.py": "5ce257d5e922e01d7ac3bbdc3a245dfa3c4d6c2c8dd5814c0d06b0bd47783603",
+      "uncertainty.py": "51c4ea67ccad841283ee88f9891178793929b45809c9d58711308661c483c01b",
+      "walk_forward.py": "6f38018c3600a4cf2af5edc94e10af4b709e01d76b851ffe3e207a102d32f66b"
+    },
+    "sources": {
+      "YM": "55a86372f17ce7ee52edb4f9e44881f0d74152d80ea9d87ab311a9cbc075f306"
+    }
+  },
+  "note": "revision/dirty state are recorded; identity uses code bytes and actual callable code, not report paths or creation times"
+}

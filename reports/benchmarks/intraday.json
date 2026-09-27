@@ -1,0 +1,103 @@
+{
+  "scope": "full conditional within-day grid, own and common complete-date samples",
+  "code_revision": "72c0a9ecd27ff92fd7df544b7e32f2f43d8b436d",
+  "runtime": {
+    "total_seconds": 325.29350369999884,
+    "verification_seconds": 15.1320846999879,
+    "markets": {
+      "NQ": {
+        "source_window_loading_seconds": 16.897429199991166,
+        "window_rows": 544080,
+        "complete_windows": 2267,
+        "feature_cache_seconds": 57.303163199991104,
+        "evaluation_seconds": 28.666702599992277,
+        "uncertainty_seconds": 0.6833727999910479
+      },
+      "ES": {
+        "source_window_loading_seconds": 15.49424650000583,
+        "window_rows": 570720,
+        "complete_windows": 2378,
+        "feature_cache_seconds": 59.53578320000088,
+        "evaluation_seconds": 29.071253300004173,
+        "uncertainty_seconds": 0.6759178000065731
+      },
+      "YM": {
+        "source_window_loading_seconds": 12.705165899998974,
+        "window_rows": 471120,
+        "complete_windows": 1963,
+        "feature_cache_seconds": 48.49236889999884,
+        "evaluation_seconds": 24.909863100008806,
+        "uncertainty_seconds": 0.6292738999909488
+      }
+    },
+    "descriptive_seconds": 8.713507599997683,
+    "sampled_peak_rss_mib": 452.921875,
+    "sampling_seconds": 0.05,
+    "audited_source_rows": 17335808,
+    "evaluated_source_rows": 10355317,
+    "evaluated_window_rows": 1585920,
+    "cases": 165,
+    "feature_policy": "each setting computed once per source-day; reused by all five scenarios",
+    "scale_limit": "single-machine measured workload, not streaming execution",
+    "report_seconds": 2.6295017000084044
+  },
+  "environment": {
+    "python": "3.12.10",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "packages": {
+      "numpy": "2.5.3",
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "scipy": "1.18.1",
+      "matplotlib": "3.11.2",
+      "psutil": "7.2.2",
+      "pytest": "9.1.1"
+    }
+  },
+  "background_activity": "single-machine timing with background work; tests and synthetic example overlapped, empirical replay overlapped briefly with their tail",
+  "earlier_measurement": {
+    "code_revision": "127b118",
+    "runtime": {
+      "total_seconds": 312.7923082999987,
+      "verification_seconds": 11.346034599999257,
+      "markets": {
+        "NQ": {
+          "source_window_loading_seconds": 14.151872199996433,
+          "window_rows": 544080,
+          "complete_windows": 2267,
+          "feature_cache_seconds": 54.679042300005676,
+          "evaluation_seconds": 27.824350199996843,
+          "uncertainty_seconds": 0.6362626000045566
+        },
+        "ES": {
+          "source_window_loading_seconds": 14.953412499999104,
+          "window_rows": 570720,
+          "complete_windows": 2378,
+          "feature_cache_seconds": 59.861659499998495,
+          "evaluation_seconds": 29.32987509999657,
+          "uncertainty_seconds": 0.6509995000014897
+        },
+        "YM": {
+          "source_window_loading_seconds": 12.122517099996912,
+          "window_rows": 471120,
+          "complete_windows": 1963,
+          "feature_cache_seconds": 46.70894419999968,
+          "evaluation_seconds": 26.589789600002405,
+          "uncertainty_seconds": 0.6366981999963173
+        }
+      },
+      "descriptive_seconds": 6.702928799997608,
+      "sampled_peak_rss_mib": 484.78515625,
+      "sampling_seconds": 0.05,
+      "audited_source_rows": 17335808,
+      "evaluated_source_rows": 10355317,
+      "evaluated_window_rows": 1585920,
+      "cases": 165,
+      "feature_policy": "each setting computed once per source-day; reused by all five scenarios",
+      "scale_limit": "single-machine measured workload, not streaming execution",
+      "report_seconds": 2.830474199996388
+    },
+    "background_activity": "public clone/install overlapped; later tests and spot replay ran concurrently at the tail"
+  },
+  "limits": "single measurements; absolute process RSS sampled at 50 ms; retained input/allocator included; no streaming or isolated throughput claim"
+}

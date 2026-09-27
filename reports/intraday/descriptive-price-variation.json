@@ -1,0 +1,152 @@
+{
+  "NQ": {
+    "status": "descriptive_only",
+    "parts": {
+      "development": {
+        "observed_window_minutes": 329099,
+        "adjacent_same_date_pairs": 325011,
+        "price_change_std_points": 2.4542414999983153,
+        "absolute_price_change_median_points": 0.75,
+        "absolute_price_change_95pct_points": 4.75,
+        "observed_dates": 1391
+      },
+      "validation": {
+        "observed_window_minutes": 123548,
+        "adjacent_same_date_pairs": 122822,
+        "price_change_std_points": 3.9221108262703406,
+        "absolute_price_change_median_points": 2.0,
+        "absolute_price_change_95pct_points": 7.75,
+        "observed_dates": 516
+      },
+      "historical_final": {
+        "observed_window_minutes": 160414,
+        "adjacent_same_date_pairs": 159210,
+        "price_change_std_points": 5.670095712367769,
+        "absolute_price_change_median_points": 2.25,
+        "absolute_price_change_95pct_points": 10.75,
+        "observed_dates": 672
+      }
+    },
+    "note": "observed source price variation in points; excludes cross-date and missing-minute changes; not instrument returns, tradable P&L or annualized investment volatility"
+  },
+  "ES": {
+    "status": "descriptive_only",
+    "parts": {
+      "development": {
+        "observed_window_minutes": 332446,
+        "adjacent_same_date_pairs": 330097,
+        "price_change_std_points": 0.7124322156621884,
+        "absolute_price_change_median_points": 0.25,
+        "absolute_price_change_95pct_points": 1.25,
+        "observed_dates": 1391
+      },
+      "validation": {
+        "observed_window_minutes": 123761,
+        "adjacent_same_date_pairs": 123173,
+        "price_change_std_points": 1.0145421958665177,
+        "absolute_price_change_median_points": 0.5,
+        "absolute_price_change_95pct_points": 2.0,
+        "observed_dates": 516
+      },
+      "historical_final": {
+        "observed_window_minutes": 161044,
+        "adjacent_same_date_pairs": 160192,
+        "price_change_std_points": 1.2204869828492573,
+        "absolute_price_change_median_points": 0.5,
+        "absolute_price_change_95pct_points": 2.25,
+        "observed_dates": 672
+      }
+    },
+    "note": "observed source price variation in points; excludes cross-date and missing-minute changes; not instrument returns, tradable P&L or annualized investment volatility"
+  },
+  "YM": {
+    "status": "descriptive_only",
+    "parts": {
+      "development": {
+        "observed_window_minutes": 327209,
+        "adjacent_same_date_pairs": 322327,
+        "price_change_std_points": 6.14832776996545,
+        "absolute_price_change_median_points": 2.0,
+        "absolute_price_change_95pct_points": 12.0,
+        "observed_dates": 1390
+      },
+      "validation": {
+        "observed_window_minutes": 122156,
+        "adjacent_same_date_pairs": 120839,
+        "price_change_std_points": 7.236245236303686,
+        "absolute_price_change_median_points": 3.0,
+        "absolute_price_change_95pct_points": 14.0,
+        "observed_dates": 516
+      },
+      "historical_final": {
+        "observed_window_minutes": 155976,
+        "adjacent_same_date_pairs": 153267,
+        "price_change_std_points": 8.303817401944718,
+        "absolute_price_change_median_points": 3.0,
+        "absolute_price_change_95pct_points": 14.0,
+        "observed_dates": 672
+      }
+    },
+    "note": "observed source price variation in points; excludes cross-date and missing-minute changes; not instrument returns, tradable P&L or annualized investment volatility"
+  },
+  "GC": {
+    "status": "descriptive_only",
+    "parts": {
+      "development": {
+        "observed_window_minutes": 328684,
+        "adjacent_same_date_pairs": 326086,
+        "price_change_std_points": 0.35926287417178765,
+        "absolute_price_change_median_points": 0.10000000000013642,
+        "absolute_price_change_95pct_points": 0.7000000000000455,
+        "observed_dates": 1389
+      },
+      "validation": {
+        "observed_window_minutes": 122005,
+        "adjacent_same_date_pairs": 120976,
+        "price_change_std_points": 0.4106965038211485,
+        "absolute_price_change_median_points": 0.20000000000004547,
+        "absolute_price_change_95pct_points": 0.7999999999999545,
+        "observed_dates": 515
+      },
+      "historical_final": {
+        "observed_window_minutes": 159779,
+        "adjacent_same_date_pairs": 158466,
+        "price_change_std_points": 1.289850600122219,
+        "absolute_price_change_median_points": 0.40000000000009095,
+        "absolute_price_change_95pct_points": 2.300000000000182,
+        "observed_dates": 671
+      }
+    },
+    "note": "observed source price variation in points; excludes cross-date and missing-minute changes; not instrument returns, tradable P&L or annualized investment volatility"
+  },
+  "CL": {
+    "status": "descriptive_only",
+    "parts": {
+      "development": {
+        "observed_window_minutes": 332891,
+        "adjacent_same_date_pairs": 331116,
+        "price_change_std_points": 0.031553563741674194,
+        "absolute_price_change_median_points": 0.010000000000005116,
+        "absolute_price_change_95pct_points": 0.060000000000002274,
+        "observed_dates": 1389
+      },
+      "validation": {
+        "observed_window_minutes": 123099,
+        "adjacent_same_date_pairs": 122228,
+        "price_change_std_points": 0.06590406452557211,
+        "absolute_price_change_median_points": 0.030000000000001137,
+        "absolute_price_change_95pct_points": 0.13000000000000966,
+        "observed_dates": 515
+      },
+      "historical_final": {
+        "observed_window_minutes": 160823,
+        "adjacent_same_date_pairs": 159976,
+        "price_change_std_points": 0.05979146405307159,
+        "absolute_price_change_median_points": 0.020000000000003126,
+        "absolute_price_change_95pct_points": 0.10000000000000853,
+        "observed_dates": 671
+      }
+    },
+    "note": "observed source price variation in points; excludes cross-date and missing-minute changes; not instrument returns, tradable P&L or annualized investment volatility"
+  }
+}
