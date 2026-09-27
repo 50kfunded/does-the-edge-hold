@@ -9,7 +9,7 @@
   "primary_pick": "revert-6-1.5",
   "reporting_code_sha256": {
     "trade_economics.py": "b143e2deb5837e453682f788bac1bb3b7b898ae3a43cf83a47c3677e61900de9",
-    "trade_reporting.py": "44d435903ab4fe98582077a292694b9f91d5e94fab99302356a212889be954db",
+    "trade_reporting.py": "0892e481dfa986b9fcce8cbfbd8273cef7da24b8c622edb09cb73be5ab7eacf9",
     "intraday_reporting.py": "ec2f6f31664cd37318ded329d22d4378c2a99b406502be832bc7331d8c9f0e02"
   },
   "definitions": {

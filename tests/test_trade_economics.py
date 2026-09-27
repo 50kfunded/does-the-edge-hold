@@ -155,3 +155,13 @@ def test_cost_plot_and_tables_use_the_saved_diagnostic_values(tmp_path, monkeypa
     assert "### baselines on the same windows" in text and "n/a / n/a / n/a" in text
     assert year_label("2020", plan) == "2020"
     assert "partial" in year_label("2026", plan) and "2026-08-10" in year_label("2026", plan)
+    invalid = copy.deepcopy(artifact)
+    source, spec, cost = saved()
+    failed = {**economics({**source, "status": "failed_unresolved"}, spec, cost), "sample": "own_complete_dates"}
+    invalid["rows"][0] = failed
+    invalid["cost_sensitivity"] = cost_curve(invalid, "NQ", "revert-6-1.5", list(plan["splits_utc"]))
+    lines = economics_sections(invalid, "NQ", "revert-6-1.5", plan)
+    assert "| development | n/a | n/a | n/a | n/a | n/a | n/a | n/a | n/a |" in lines
+    note = next(i for i, line in enumerate(lines) if line.startswith("development: not_scored"))
+    final_row = next(i for i, line in enumerate(lines) if line.startswith("| historical_final |"))
+    assert note > final_row  # failure notes cannot split the Markdown table

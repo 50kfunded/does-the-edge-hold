@@ -76,13 +76,15 @@ def economics_sections(artifact, market, pick, plan):
              "these are aggregate dollars divided by actual completed round trips, not averages of yearly ratios. frequency means entries or filled sides per eligible window; it isn't portfolio notional turnover.", "",
              "| part | round trips | entries / window | fills / window | gross $ / trip | commission $ / trip | tick cost $ / trip | rounding $ / trip | net $ / trip |",
              "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"]
+    notes = []
     for part, r in zip(periods, selected):
         fields = ("completed_round_trips", "entries_per_window", "fills_per_window", "gross_per_round_trip_usd",
                   "commission_per_round_trip_usd", "tick_cost_per_round_trip_usd", "rounding_per_round_trip_usd", "net_per_round_trip_usd")
         vals = [_fmt(r.get(k) if r else None, 0 if k == "completed_round_trips" else 2) for k in fields]
         lines.append(f"| {part} | " + " | ".join(vals) + " |")
         if r and r["status"] not in ("ok", "no_trades"):
-            lines += ["", f"{part}: {r['status']}; {'; '.join(r['reasons'])}.", ""]
+            notes += ["", f"{part}: {r['status']}; {'; '.join(r['reasons'])}."]
+    lines += notes
     valid = next((r for r in selected if r and r["status"] == "ok"), None)
     if valid:
         nominal = 2 * (valid["declared_commission_usd_per_side"] + valid["declared_slippage_ticks_per_side"] * valid["tick_value_usd"])
