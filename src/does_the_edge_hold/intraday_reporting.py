@@ -17,6 +17,7 @@ def render(output, *, plots=True):
              "these prices are made up. this checks the software, not a market edge." if synthetic else
              "this is a historical, conditional source-day comparison. i already knew related research through 2026; the final period isn't untouched data.", "",
              "i score exact 08:00–12:00 UTC weekday windows and reset every date. completeness is known after noon. this isn't a live 09:00 filter, unconditional investment curve or claim that missing dates have zero returns.", "",
+             "the fixtures have made-up source labels and deliberate jumps between dates. each scored date resets independently. this doesn't resolve the real study's roll gate." if synthetic else
              "real contract identities are unknown. local cache matching and historical source-rule evidence support the narrower within-date inference. the original roll-aware study stays blocked. GC and CL have no scored strategy P&L here.", "",
              "| market | development windows | validation windows | final windows | pick dev Sharpe | pick val Sharpe | pick final Sharpe |",
              "| --- | ---: | ---: | ---: | ---: | ---: | ---: |"]
@@ -94,12 +95,16 @@ def render(output, *, plots=True):
         (folder / "report.md").write_text("\n".join(text), encoding="utf-8")
     successful = [i for i in own_intervals if i.get("status") == "ok"]
     includes_zero = sum(i["ci95_annual_return_difference"][0] <= 0 <= i["ci95_annual_return_difference"][1] for i in successful)
-    lines += ["", f"{includes_zero} of {len(successful)} declared own-window later intervals include zero. this doesn't establish a lasting tradable edge. the intervals remain historical and descriptive.", "",
+    below_zero = sum(i["ci95_annual_return_difference"][1] < 0 for i in successful)
+    above_zero = sum(i["ci95_annual_return_difference"][0] > 0 for i in successful)
+    lines += ["", f"of {len(successful)} computed own-window later intervals, {includes_zero} include zero, {below_zero} are wholly below zero and {above_zero} are wholly above zero. {len(own_intervals) - len(successful)} declared comparisons lack enough paired observations.", "",
+              "these sample intervals only check the software." if synthetic else "these historical intervals are descriptive. they don't correct selection or establish a lasting tradable edge.", "",
               "## the assumptions", "", "| scenario | commission / side | adverse ticks / side | extra delay minutes |", "| --- | ---: | ---: | ---: |"]
     for case in plan["execution"]["scenarios"]:
         lines.append(f"| {case['name']} | {case['commission_usd_per_side']} | {case['slippage_ticks_per_side']} | {case['delay_minutes']} |")
     lines += ["", "partial windows remain visible in the source audit and aren't scored. missing warmup or terminal minutes aren't filled. successful ledgers end flat and reconcile gross minus commission/slippage to net; failures retain no completed score.", "",
               f"common complete dates: {summary['common_dates']:,}. the paired common-date intervals are saved in `summary.json`, with the actual denominators.", "",
               f"the actual run checked {summary['runtime']['audited_source_rows']:,} source rows, evaluated {summary['runtime']['evaluated_window_rows']:,} minute observations and cached features once per setting/date before the five scenarios. total measured time: {summary['runtime']['total_seconds']:.1f}s; sampled peak RSS: {summary['runtime']['sampled_peak_rss_mib']:.1f} MiB. this is one machine, not a throughput guarantee.", "",
+              "[unscored sample price variation](descriptive-price-variation.json) · [the example's plan and settings](summary.json)" if synthetic else
               "[unscored source price variation](descriptive-price-variation.json) · [the frozen plan](https://github.com/50kfunded/does-the-edge-hold/blob/main/research/intraday/plan.json) · [within-day methods](https://github.com/50kfunded/does-the-edge-hold/blob/main/docs/intraday-plan.md)", ""]
     (output / "report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")

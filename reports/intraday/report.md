@@ -16,7 +16,9 @@ real contract identities are unknown. local cache matching and historical source
 | [ES](ES/report.md) | 1221 | 504 | 653 | -2.789 | -3.159 | -2.069 |
 | [YM](YM/report.md) | 1026 | 470 | 467 | -1.204 | -3.093 | -2.238 |
 
-24 of 36 declared own-window later intervals include zero. this doesn't establish a lasting tradable edge. the intervals remain historical and descriptive.
+of 36 computed own-window later intervals, 24 include zero, 12 are wholly below zero and 0 are wholly above zero. 0 declared comparisons lack enough paired observations.
+
+these historical intervals are descriptive. they don't correct selection or establish a lasting tradable edge.
 
 ## the assumptions
 
